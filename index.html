@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AVERRA - Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif</title>
+<link rel="icon" href="data:,">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap');
+  body { font-family: 'Inter', sans-serif; margin:0; }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+  .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+ 
+<script type="text/babel" data-type="module" data-presets="react">
+import React, { useState, useEffect, useRef } from "https://esm.sh/react@18.2.0";
+import ReactDOM from "https://esm.sh/react-dom@18.2.0/client";
+import {
+  BookOpen, Compass, Cpu, GraduationCap, Home, Search,
+  Settings, User, Map, MessageSquare, PlayCircle, Star,
+  Trophy, Video, Zap, ChevronRight, Lock, Unlock, Shield,
+  LogOut, Camera, Send, Mic, CheckCircle2, XCircle, BarChart,
+  Crown, ScanLine, Clock, FileText, ArrowRight, Globe, MapPin
+} from "https://esm.sh/lucide-react@0.383.0?deps=react@18.2.0&bundle";
+ 
+// --- MOCK DATA ---
+const MOCK_USER = {
+  id: 1,
+  name: "Ahmad Rizqi",
+  email: "ahmad@averra.edu",
+  institution: "Madrasah Aliyah Negeri 1",
+  class: "11 Science",
+  group: "Al-Khawarizmi Squad",
+  level: 5,
+  xp: 2450,
+  nextLevelXp: 3000,
+  currentPhase: 1, // 1: Scholar, 2: Technology, 3: Innovation, 4: Master
+  streak: 12,
+  badges: ["Scholar Explorer", "Early Bird", "Perfect Quiz"],
+  avatar: "https://i.pravatar.cc/150?img=11"
+};
+ 
+const PHASES = [
+  { id: 1, name: "Scholar", icon: BookOpen, color: "bg-blue-500" },
+  { id: 2, name: "Technology", icon: Cpu, color: "bg-emerald-500" },
+  { id: 3, name: "Innovation", icon: Zap, color: "bg-purple-500" },
+  { id: 4, name: "Master", icon: Crown, color: "bg-amber-500" }
+];
+ 
+const LEADERBOARD_DATA = [
+  { id: 1, name: "Siti Aminah", group: "Ibn Sina Team", xp: 3200, level: 7, avatar: "https://i.pravatar.cc/150?img=5" },
+  { id: 2, name: "Budi Santoso", group: "Al-Biruni", xp: 2800, level: 6, avatar: "https://i.pravatar.cc/150?img=8" },
+  { id: 3, name: "Ahmad Rizqi", group: "Al-Khawarizmi Squad", xp: 2450, level: 5, avatar: "https://i.pravatar.cc/150?img=11" },
+  { id: 4, name: "Dina Fitri", group: "Ibn Haytham", xp: 2100, level: 4, avatar: "https://i.pravatar.cc/150?img=9" },
+  { id: 5, name: "Faisal Rahman", group: "Ibn Sina Team", xp: 1950, level: 4, avatar: "https://i.pravatar.cc/150?img=12" },
+];
+ 
+const VR_ROOMS = [
+  { id: 1, title: "Mathematics Hall", desc: "Explore the birth of Algebra.", img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=400" },
+  { id: 2, title: "Astronomy Hall", desc: "Star maps and astrolabes.", img: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&q=80&w=400" },
+  { id: 3, title: "Medical Hall", desc: "The Canon of Medicine.", img: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=400" },
+  { id: 4, title: "Engineering Hall", desc: "Automata and mechanics.", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400" },
+  { id: 5, title: "Islamic Civilization Hall", desc: "The golden age timeline.", img: "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=400" },
+  { id: 6, title: "Nusantara Scholars Hall", desc: "Legacy of Indonesian Ulama.", img: "https://images.unsplash.com/photo-1596404987216-53d9e262c5d1?auto=format&fit=crop&q=80&w=400" },
+];
+ 
+// --- SCHOLARS DATA (Era Perkembangan | Tokoh Dunia | Tokoh Nusantara) ---
+const SCHOLARS_CURRICULUM = [
+  {
+    era: "Klasik (Abad 8 - 15 M)",
+    world: [
+      { id: "c-w-1", name: "Ibnu Sina", desc: "Bapak Kedokteran Modern, penulis The Canon of Medicine.", time: "15:30", completed: true },
+      { id: "c-w-2", name: "Al-Ghazali", desc: "Hujjatul Islam, tokoh pemikir filsafat dan tasawuf.", time: "18:45", active: true },
+      { id: "c-w-3", name: "Ibnu Khaldun", desc: "Bapak Sosiologi, Sejarah, dan Ekonomi Islam.", time: "14:20", completed: false },
+    ],
+    nusantara: [
+      { id: "c-n-1", name: "Hamzah Fansuri", desc: "Ulama dan sastrawan sufi perintis tradisi tulis Melayu.", time: "12:15", completed: false },
+      { id: "c-n-2", name: "Nuruddin ar-Raniri", desc: "Ulama besar Kesultanan Aceh, penulis Bustan al-Salatin.", time: "16:00", completed: false },
+      { id: "c-n-3", name: "Syekh Abdurrauf as-Singkili", desc: "Mufti Aceh dan penerjemah Al-Qur'an pertama di Nusantara.", time: "13:10", completed: false },
+    ]
+  },
+  {
+    era: "Modern (Abad 19 - Pertengahan 20 M)",
+    world: [
+      { id: "m-w-1", name: "Muhammad Abduh", desc: "Tokoh pembaharu pemikiran Islam dari Mesir.", time: "11:20", completed: false },
+      { id: "m-w-2", name: "Muhammad Iqbal", desc: "Filsuf, penyair, dan pemikir politik Islam dari Pakistan.", time: "14:30", completed: false },
+      { id: "m-w-3", name: "Jamaluddin al-Afghani", desc: "Pencetus gagasan Pan-Islamisme.", time: "10:45", completed: false },
+    ],
+    nusantara: [
+      { id: "m-n-1", name: "Syekh Nawawi al-Bantani", desc: "Ulama asal Banten, Imam Masjidil Haram.", time: "17:15", completed: false },
+      { id: "m-n-2", name: "KH. Ahmad Dahlan", desc: "Pendiri Muhammadiyah, pahlawan nasional.", time: "15:40", completed: false },
+      { id: "m-n-3", name: "KH. Hasyim Asy'ari", desc: "Pendiri Nahdlatul Ulama (NU) dan pahlawan nasional.", time: "16:25", completed: false },
+    ]
+  },
+  {
+    era: "Kontemporer (Akhir Abad 20 - Sekarang)",
+    world: [
+      { id: "k-w-1", name: "Fazlur Rahman", desc: "Pemikir Islam asal Pakistan, tokoh neo-modernisme.", time: "13:50", completed: false },
+      { id: "k-w-2", name: "Seyyed Hossein Nasr", desc: "Filsuf dan profesor studi Islam dari Iran/AS.", time: "12:10", completed: false },
+      { id: "k-w-3", name: "Isma'il Raji al-Faruqi", desc: "Tokoh gagasan Islamisasi Ilmu Pengetahuan.", time: "14:05", completed: false },
+    ],
+    nusantara: [
+      { id: "k-n-1", name: "Harun Nasution", desc: "Tokoh pembaharu pemikiran Islam Indonesia moderen.", time: "11:30", completed: false },
+      { id: "k-n-2", name: "Nurcholish Madjid (Cak Nur)", desc: "Cendekiawan muslim pembaharu di Indonesia.", time: "15:20", completed: false },
+      { id: "k-n-3", name: "Kuntowijoyo", desc: "Sejarawan, budayawan, pencetus Ilmu Sosial Profetik.", time: "14:45", completed: false },
+    ]
+  }
+];
+ 
+ 
+// --- REUSABLE UI COMPONENTS ---
+const Card = ({ children, className = "", onClick }) => (
+  <div
+    onClick={onClick}
+    className={`bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300 ${onClick ? 'cursor-pointer hover:shadow-md hover:-translate-y-1' : ''} ${className}`}
+  >
+    {children}
+  </div>
+);
+ 
+const Button = ({ children, variant = 'primary', className = "", onClick, disabled }) => {
+  const baseStyle = "font-semibold rounded-xl transition-all duration-200 flex items-center justify-center active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed";
+  const variants = {
+    primary: "bg-[#C99700] text-white hover:bg-[#b08400] shadow-[0_4px_0_#967100] hover:shadow-[0_2px_0_#967100] hover:translate-y-[2px] px-6 py-3",
+    secondary: "bg-[#0E2A47] text-white hover:bg-[#163a5f] shadow-[0_4px_0_#091b2e] hover:shadow-[0_2px_0_#091b2e] hover:translate-y-[2px] px-6 py-3",
+    outline: "bg-white text-[#0E2A47] border-2 border-[#0E2A47] hover:bg-slate-50 px-6 py-3",
+    ghost: "bg-transparent text-slate-600 hover:bg-slate-100 px-4 py-2",
+    success: "bg-emerald-500 text-white hover:bg-emerald-600 shadow-[0_4px_0_#047857] hover:shadow-[0_2px_0_#047857] hover:translate-y-[2px] px-6 py-3",
+  };
+  return (
+    <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant]} ${className}`}>
+      {children}
+    </button>
+  );
+};
+ 
+const ProgressBar = ({ progress, color = "bg-[#C99700]", height = "h-3" }) => (
+  <div className={`w-full bg-slate-200 rounded-full ${height} overflow-hidden`}>
+    <div
+      className={`${height} ${color} rounded-full transition-all duration-1000 ease-out`}
+      style={{ width: `${progress}%` }}
+    />
+  </div>
+);
+ 
+const Badge = ({ children, icon: Icon, color = "bg-blue-100 text-blue-700", className="" }) => (
+  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color} ${className}`}>
+    {Icon && <Icon className="w-3 h-3 mr-1" />}
+    {children}
+  </span>
+);
+ 
+ 
+// --- LAYOUT COMPONENTS ---
+const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
+  <div
+    onClick={onClick}
+    className={`flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-colors ${
+      active ? 'bg-[#C99700] text-white' : 'text-slate-300 hover:bg-[#163a5f] hover:text-white'
+    }`}
+  >
+    <Icon className="w-5 h-5" />
+    <span className="font-medium hidden md:block">{label}</span>
+  </div>
+);
+ 
+const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
+  const menuItems = [
+    { id: 'dashboard', icon: Home, label: 'Dashboard' },
+    { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
+    { id: 'vr', icon: Video, label: 'VR Museum' },
+    { id: 'ai', icon: MessageSquare, label: 'AI Companion' },
+    { id: 'board', icon: Map, label: 'Board Game' },
+    { id: 'qr', icon: ScanLine, label: 'QR Scanner' },
+    { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
+    { id: 'profile', icon: User, label: 'Profile' },
+  ];
+ 
+  return (
+    <div className="flex h-screen bg-[#F8F9FA] font-sans">
+      <aside className="fixed bottom-0 w-full md:relative md:w-64 bg-[#0E2A47] text-white z-50 md:flex flex-col border-t md:border-r border-[#163a5f]">
+        <div className="hidden md:flex items-center space-x-3 p-6">
+          <div className="w-10 h-10 bg-[#C99700] rounded-xl flex items-center justify-center">
+            <Compass className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-2xl font-bold tracking-wider">AVERRA</span>
+        </div>
+ 
+        <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto flex-1 p-2 md:p-4 space-x-2 md:space-x-0 md:space-y-2 no-scrollbar">
+          {menuItems.map(item => (
+            <SidebarItem
+              key={item.id}
+              icon={item.icon}
+              label={item.label}
+              active={activeTab === item.id}
+              onClick={() => setActiveTab(item.id)}
+            />
+          ))}
+        </div>
+ 
+        <div className="hidden md:block p-4 mt-auto border-t border-[#163a5f]">
+          <div className="flex items-center space-x-3 mb-4">
+            <img src={user.avatar} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-[#C99700]" />
+            <div>
+              <p className="font-semibold text-sm">{user.name}</p>
+              <p className="text-xs text-slate-400">Lvl {user.level} Scholar</p>
+            </div>
+          </div>
+          <Button variant="ghost" onClick={onLogout} className="w-full text-slate-300 hover:text-white justify-start px-2">
+            <LogOut className="w-4 h-4 mr-2" /> Logout
+          </Button>
+        </div>
+      </aside>
+ 
+      <main className="flex-1 flex flex-col h-screen overflow-hidden pb-16 md:pb-0">
+        <header className="bg-white px-6 py-4 border-b border-slate-200 flex justify-between items-center sticky top-0 z-40">
+          <h1 className="text-xl font-bold text-[#0E2A47] capitalize">
+            {activeTab.replace('-', ' ')}
+          </h1>
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">
+              <Star className="w-4 h-4 text-amber-500 mr-2" />
+              <span className="font-bold text-amber-700">{user.xp} XP</span>
+            </div>
+            <div className="flex items-center bg-blue-50 px-3 py-1.5 rounded-full border border-blue-200">
+              <Zap className="w-4 h-4 text-blue-500 mr-2" />
+              <span className="font-bold text-blue-700">{user.streak} Days</span>
+            </div>
+          </div>
+        </header>
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#F8F9FA]">
+          <div className="max-w-6xl mx-auto">
+            {children}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+ 
+ 
+// --- VIEWS ---
+ 
+const AuthView = ({ onLogin }) => (
+  <div className="min-h-screen bg-[#0E2A47] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
+ 
+    <div className="max-w-md w-full glass-panel rounded-3xl p-8 relative z-10 bg-white/10 text-white shadow-2xl">
+      <div className="text-center mb-8">
+        <div className="w-16 h-16 bg-[#C99700] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <Compass className="w-10 h-10 text-white" />
+        </div>
+        <h1 className="text-3xl font-bold mb-2">AVERRA</h1>
+        <p className="text-blue-200">Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif</p>
+      </div>
+ 
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1 text-blue-100">Email Address</label>
+          <input type="email" placeholder="student@averra.edu" className="w-full bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-[#C99700]" defaultValue="ahmad@averra.edu" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-blue-100">Password</label>
+          <input type="password" placeholder="••••••••" className="w-full bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-[#C99700]" defaultValue="password123" />
+        </div>
+ 
+        <Button variant="primary" className="w-full mt-6 text-lg" onClick={onLogin}>
+          Start Learning
+        </Button>
+ 
+        <div className="text-center mt-4">
+          <a href="#" className="text-sm text-blue-200 hover:text-white transition-colors">Forgot Password?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+ 
+ 
+const DashboardView = ({ user, navigate }) => {
+  return (
+    <div className="space-y-8">
+      <section className="bg-gradient-to-r from-[#0E2A47] to-[#1a4a7d] rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+        <div className="relative z-10 md:w-2/3">
+          <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}! 👋</h2>
+          <p className="text-blue-100 mb-6 text-lg">You are on a {user.streak}-day learning streak. Keep it up!</p>
+          <div className="flex space-x-4">
+            <Button variant="primary" onClick={() => navigate('board')}>Continue Journey</Button>
+            <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20" onClick={() => navigate('learning')}>Resume Video</Button>
+          </div>
+        </div>
+        <div className="absolute right-[-10%] bottom-[-20%] opacity-20 pointer-events-none">
+           <Compass className="w-96 h-96" />
+        </div>
+      </section>
+ 
+      <section>
+        <h3 className="text-xl font-bold text-slate-800 mb-4">Your Journey Map</h3>
+        <div className="relative">
+          <div className="absolute top-1/2 left-0 w-full h-2 bg-slate-200 -translate-y-1/2 rounded-full hidden md:block"></div>
+          <div className="absolute top-1/2 left-0 h-2 bg-[#C99700] -translate-y-1/2 rounded-full hidden md:block transition-all duration-1000" style={{ width: `${(user.currentPhase - 1) * 33}%` }}></div>
+ 
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
+            {PHASES.map((phase, idx) => {
+              const isCompleted = user.currentPhase > phase.id;
+              const isCurrent = user.currentPhase === phase.id;
+              const isLocked = user.currentPhase < phase.id;
+ 
+              return (
+                <Card key={phase.id} className={`p-6 text-center ${isLocked ? 'opacity-60 bg-slate-50' : 'bg-white'} ${isCurrent ? 'ring-4 ring-[#C99700] ring-opacity-50 scale-105 transform' : ''}`}>
+                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${isLocked ? 'bg-slate-200 text-slate-400' : phase.color + ' text-white shadow-lg'}`}>
+                    {isLocked ? <Lock className="w-8 h-8" /> : <phase.icon className="w-8 h-8" />}
+                  </div>
+                  <h4 className="font-bold text-lg text-slate-800">{phase.name}</h4>
+                  <p className="text-sm text-slate-500 mb-4">Phase {phase.id}</p>
+ 
+                  {isCompleted && <Badge color="bg-green-100 text-green-700"><CheckCircle2 className="w-3 h-3 mr-1"/> Completed</Badge>}
+                  {isCurrent && <Badge color="bg-amber-100 text-amber-700">In Progress</Badge>}
+                  {isLocked && <Badge color="bg-slate-100 text-slate-500">Locked</Badge>}
+                </Card>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+ 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="p-6 md:col-span-1 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-slate-800 flex items-center"><Star className="w-5 h-5 text-amber-500 mr-2"/> Experience</h3>
+            <span className="text-sm font-bold text-amber-600">Lvl {user.level}</span>
+          </div>
+          <div className="text-3xl font-bold text-slate-800 mb-2">{user.xp} <span className="text-base font-normal text-slate-500">/ {user.nextLevelXp} XP</span></div>
+          <ProgressBar progress={(user.xp / user.nextLevelXp) * 100} />
+          <p className="text-xs text-slate-500 mt-2 text-right">{user.nextLevelXp - user.xp} XP to next level</p>
+        </Card>
+ 
+        <div className="md:col-span-2 grid grid-cols-2 gap-4">
+           <Card onClick={() => navigate('vr')} className="p-6 flex flex-col items-center justify-center text-center hover:bg-[#0E2A47] hover:text-white group transition-colors">
+              <Video className="w-10 h-10 text-purple-500 group-hover:text-purple-300 mb-3" />
+              <h4 className="font-bold">VR Museum</h4>
+              <p className="text-xs text-slate-500 group-hover:text-slate-300 mt-1">Explore 3D Exhibits</p>
+           </Card>
+           <Card onClick={() => navigate('ai')} className="p-6 flex flex-col items-center justify-center text-center hover:bg-[#0E2A47] hover:text-white group transition-colors">
+              <MessageSquare className="w-10 h-10 text-emerald-500 group-hover:text-emerald-300 mb-3" />
+              <h4 className="font-bold">AI Companion</h4>
+              <p className="text-xs text-slate-500 group-hover:text-slate-300 mt-1">Ask any question</p>
+           </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+ 
+const LearningStudioView = () => {
+  const [activeLesson, setActiveLesson] = useState(SCHOLARS_CURRICULUM[0].world[1]);
+ 
+  return (
+    <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-120px)]">
+      <div className="flex-1 flex flex-col">
+        <div className="bg-black rounded-2xl aspect-video flex items-center justify-center relative overflow-hidden shadow-lg group">
+          <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=1200" alt="Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+ 
+          <div className="absolute bottom-4 left-4 right-4 text-white z-10 flex justify-between items-end">
+             <div>
+                <Badge color="bg-[#C99700] text-white" className="mb-2 border border-white/20"><PlayCircle className="w-3 h-3 mr-1"/> Now Playing</Badge>
+                <h2 className="text-2xl font-bold">{activeLesson.name}</h2>
+             </div>
+          </div>
+ 
+          <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer group-hover:scale-110 transition-transform">
+            <PlayCircle className="w-12 h-12 text-white" />
+          </div>
+        </div>
+ 
+        <div className="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex-1 overflow-y-auto">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-800">{activeLesson.name}</h2>
+              <p className="text-slate-500 mt-1">{activeLesson.desc}</p>
+            </div>
+            <Button variant="success">Complete Lesson (+50 XP)</Button>
+          </div>
+ 
+          <div className="prose max-w-none text-slate-600">
+            <h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Learning Objectives</h3>
+            <ul className="list-disc pl-5 space-y-1 mb-6">
+              <li>Mengenal biografi dan perjalanan intelektual <strong>{activeLesson.name}</strong>.</li>
+              <li>Menganalisis karya-karya penting dan pengaruhnya terhadap peradaban.</li>
+              <li>Menghubungkan pemikiran klasik dengan relevansi di era modern.</li>
+            </ul>
+ 
+            <h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Transcript & Ringkasan</h3>
+            <p>Selamat datang di Modul Scholar. Pada sesi ini, kita akan menyelami kehidupan <strong>{activeLesson.name}</strong>, salah satu tokoh penting dalam sejarah peradaban Islam yang gagasan-gagasannya melintasi batas waktu dan ruang...</p>
+          </div>
+        </div>
+      </div>
+ 
+      <div className="w-full md:w-[350px] bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex flex-col h-full">
+        <h3 className="font-bold text-xl mb-4 text-[#0E2A47] flex items-center">
+          <BookOpen className="w-5 h-5 mr-2" /> Kurikulum Scholar
+        </h3>
+        <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar pb-10">
+ 
+          {SCHOLARS_CURRICULUM.map((eraBlock, eraIdx) => (
+            <div key={eraIdx} className="space-y-3">
+              <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 border-b border-slate-100">
+                <h4 className="font-bold text-[#C99700] text-sm tracking-wider uppercase">{eraBlock.era}</h4>
+              </div>
+ 
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-slate-400 flex items-center ml-1"><Globe className="w-3 h-3 mr-1"/> Tokoh Ilmuwan Muslim Dunia</p>
+                {eraBlock.world.map(scholar => (
+                  <div
+                    key={scholar.id}
+                    onClick={() => setActiveLesson(scholar)}
+                    className={`p-3 rounded-xl border flex items-center cursor-pointer transition-colors ${
+                      activeLesson.id === scholar.id ? 'bg-blue-50 border-blue-300 shadow-sm' : 'border-slate-100 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="mr-3">
+                      {scholar.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
+                       activeLesson.id === scholar.id ? <PlayCircle className="w-5 h-5 text-blue-600" /> :
+                       <Lock className="w-5 h-5 text-slate-300" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-semibold truncate ${activeLesson.id === scholar.id ? 'text-blue-900' : 'text-slate-700'}`}>{scholar.name}</p>
+                      <p className="text-xs text-slate-500">{scholar.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+ 
+              <div className="space-y-2 mt-4">
+                <p className="text-xs font-semibold text-slate-400 flex items-center ml-1"><MapPin className="w-3 h-3 mr-1"/> Tokoh Ilmuwan Muslim Nusantara</p>
+                {eraBlock.nusantara.map(scholar => (
+                  <div
+                    key={scholar.id}
+                    onClick={() => setActiveLesson(scholar)}
+                    className={`p-3 rounded-xl border flex items-center cursor-pointer transition-colors ${
+                      activeLesson.id === scholar.id ? 'bg-emerald-50 border-emerald-300 shadow-sm' : 'border-slate-100 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="mr-3">
+                      {scholar.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
+                       activeLesson.id === scholar.id ? <PlayCircle className="w-5 h-5 text-emerald-600" /> :
+                       <Lock className="w-5 h-5 text-slate-300" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-semibold truncate ${activeLesson.id === scholar.id ? 'text-emerald-900' : 'text-slate-700'}`}>{scholar.name}</p>
+                      <p className="text-xs text-slate-500">{scholar.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+ 
+            </div>
+          ))}
+ 
+          <div className="p-3 rounded-xl border border-amber-200 bg-amber-50 flex items-center cursor-pointer mt-4">
+            <div className="mr-3"><FileText className="w-5 h-5 text-amber-600" /></div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-amber-900">Ujian Modul Scholar</p>
+              <p className="text-xs text-amber-700">30 Pertanyaan</p>
+            </div>
+          </div>
+ 
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+ 
+const VRMuseumView = () => {
+  const [activeRoom, setActiveRoom] = useState(null);
+ 
+  if (activeRoom) {
+    return (
+      <div className="h-[calc(100vh-120px)] bg-black rounded-3xl overflow-hidden relative flex flex-col">
+        <div className="flex-1 bg-slate-900 relative">
+          <img src={activeRoom.img} alt="VR Room" className="w-full h-full object-cover opacity-50 cursor-grab active:cursor-grabbing" style={{ transform: 'scale(1.2)' }} />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+             <div className="text-center text-white">
+                <Compass className="w-16 h-16 mx-auto mb-4 opacity-50 animate-pulse" />
+                <p className="font-mono bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">Drag to look around (Simulation)</p>
+             </div>
+          </div>
+          <div className="absolute top-1/2 left-1/3 w-8 h-8 bg-[#C99700] rounded-full animate-ping cursor-pointer"></div>
+          <div className="absolute top-1/2 left-1/3 w-8 h-8 bg-[#C99700] rounded-full border-2 border-white flex items-center justify-center shadow-lg cursor-pointer hover:scale-110 transition-transform z-10">
+            <Search className="w-4 h-4 text-white" />
+          </div>
+        </div>
+ 
+        <div className="bg-[#0E2A47] text-white p-6 flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">{activeRoom.title}</h2>
+            <p className="text-blue-200">{activeRoom.desc}</p>
+          </div>
+          <Button variant="outline" className="border-white/20 text-white hover:bg-white/10" onClick={() => setActiveRoom(null)}>Exit VR</Button>
+        </div>
+      </div>
+    );
+  }
+ 
+  return (
+    <div>
+      <div className="mb-8 text-center max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#0E2A47] mb-4">Virtual Reality Museum</h2>
+        <p className="text-slate-600">Immerse yourself in the golden age of Islamic civilization and the rich history of Nusantara scholars. Explore interactive 3D exhibits.</p>
+      </div>
+ 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {VR_ROOMS.map(room => (
+          <Card key={room.id} onClick={() => setActiveRoom(room)} className="group">
+            <div className="h-48 overflow-hidden relative">
+              <img src={room.img} alt={room.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                <Badge color="bg-[#C99700] text-white" className="border border-amber-400/50"><Video className="w-3 h-3 mr-1"/> 360° View</Badge>
+              </div>
+            </div>
+            <div className="p-5">
+              <h3 className="font-bold text-lg text-slate-800 mb-2">{room.title}</h3>
+              <p className="text-sm text-slate-500 mb-4">{room.desc}</p>
+              <Button variant="outline" className="w-full text-[#C99700] border-[#C99700] hover:bg-amber-50">Enter Room</Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+ 
+ 
+const AICompanionView = () => {
+  const [messages, setMessages] = useState([
+    { sender: 'ai', text: "Assalamu'alaikum! I am your AVERRA Learning Companion. I can help you understand the history of scholars, explain technologies, or brainstorm innovations. How can I help you today?" }
+  ]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const endOfMessagesRef = useRef(null);
+ 
+  const scrollToBottom = () => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+ 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+ 
+  const handleSend = () => {
+    if (!input.trim()) return;
+ 
+    setMessages(prev => [...prev, { sender: 'user', text: input }]);
+    setInput("");
+    setIsTyping(true);
+ 
+    setTimeout(() => {
+      setIsTyping(false);
+      setMessages(prev => [...prev, { sender: 'ai', text: "Pertanyaan yang sangat bagus! Pemikiran-pemikiran dari tokoh seperti Al-Ghazali, Ibnu Sina, maupun tokoh Nusantara seperti KH. Ahmad Dahlan dan KH. Hasyim Asy'ari memiliki benang merah dalam mengintegrasikan nilai-nilai spiritual dengan kemajuan peradaban. Apakah Anda ingin membahas tokoh tertentu secara lebih mendalam?" }]);
+    }, 1500);
+  };
+ 
+  const suggestions = [
+    "Apa kontribusi Syekh Nawawi al-Bantani?",
+    "Jelaskan pemikiran Al-Ghazali (Hujjatul Islam).",
+    "Bagaimana gagasan Nurcholish Madjid (Cak Nur)?",
+    "Peran Ibnu Sina dalam Kedokteran Modern"
+  ];
+ 
+  return (
+    <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-[#0E2A47] text-white p-4 flex items-center justify-between shadow-md z-10">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-[#C99700] rounded-full flex items-center justify-center">
+            <Cpu className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="font-bold">Averra AI</h2>
+            <p className="text-xs text-blue-200 border border-blue-400/50 bg-blue-900/50 rounded-full px-2 inline-block">Online • Ready to help</p>
+          </div>
+        </div>
+        <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-white/10"><Settings className="w-5 h-5"/></Button>
+      </div>
+ 
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-50">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
+                msg.sender === 'user'
+                  ? 'bg-[#C99700] text-white rounded-br-none'
+                  : 'bg-white text-slate-800 border border-slate-100 rounded-bl-none'
+              }`}>
+                {msg.text}
+              </div>
+            </div>
+          ))}
+ 
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="bg-white border border-slate-100 text-slate-500 rounded-2xl rounded-bl-none p-4 flex space-x-2">
+                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              </div>
+            </div>
+          )}
+          <div ref={endOfMessagesRef} />
+        </div>
+      </div>
+ 
+      {messages.length < 3 && !isTyping && (
+        <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 overflow-x-auto whitespace-nowrap no-scrollbar">
+          {suggestions.map((sug, i) => (
+            <button key={i} onClick={() => setInput(sug)} className="inline-block bg-white border border-slate-200 text-sm text-slate-600 rounded-full px-4 py-2 mr-2 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-colors shadow-sm">
+              {sug}
+            </button>
+          ))}
+        </div>
+      )}
+ 
+      <div className="p-4 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto flex items-end space-x-2">
+          <button className="p-3 text-slate-400 hover:text-[#0E2A47] hover:bg-slate-100 rounded-xl transition-colors">
+            <Mic className="w-6 h-6" />
+          </button>
+          <div className="flex-1 bg-slate-100 rounded-2xl flex items-center pr-2 border border-transparent focus-within:border-[#C99700] focus-within:bg-white transition-all shadow-inner">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
+              placeholder="Tanyakan tentang tokoh ilmuwan muslim atau sejarah peradaban..."
+              className="w-full bg-transparent p-4 outline-none resize-none max-h-32"
+              rows="1"
+            />
+            <Button variant="primary" className="!p-3 !rounded-xl" onClick={handleSend} disabled={!input.trim()}>
+              <Send className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+ 
+const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
+  return (
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold text-[#0E2A47]">Board Game Companion</h2>
+        <p className="text-slate-600 mt-2">Track your physical board game progress and unlock digital challenges.</p>
+      </div>
+ 
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="text-xl font-bold">Current Status</h3>
+            <p className="text-slate-500">You are currently in Phase {user.currentPhase}</p>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-slate-500">Collected Cards</div>
+            <div className="text-2xl font-bold text-[#C99700]">12 <span className="text-sm text-slate-400">/ 40</span></div>
+          </div>
+        </div>
+ 
+        <div className="space-y-6">
+          {PHASES.map((phase) => {
+            const isCompleted = user.currentPhase > phase.id;
+            const isCurrent = user.currentPhase === phase.id;
+            const isLocked = user.currentPhase < phase.id;
+ 
+            return (
+              <div key={phase.id} className={`flex items-center p-4 rounded-2xl border-2 transition-all ${
+                isCurrent ? 'border-[#C99700] bg-amber-50' :
+                isCompleted ? 'border-emerald-200 bg-emerald-50' : 'border-slate-100 bg-slate-50 opacity-60'
+              }`}>
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center text-white mr-4 shadow-md ${phase.color}`}>
+                  <phase.icon className="w-7 h-7" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-lg text-slate-800">{phase.name} Phase</h4>
+                  <p className="text-sm text-slate-600">
+                    {isCompleted ? 'Challenge Completed!' :
+                     isCurrent ? 'Play the board game until you reach the milestone.' : 'Locked'}
+                  </p>
+                </div>
+                <div>
+                  {isCompleted ? (
+                    <Badge color="bg-emerald-100 text-emerald-700">Done <CheckCircle2 className="w-4 h-4 ml-1 inline"/></Badge>
+                  ) : isCurrent ? (
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        setActiveChallenge(phase.name.toLowerCase());
+                        setView('challenge');
+                      }}
+                    >
+                      Start Challenge
+                    </Button>
+                  ) : (
+                    <Lock className="w-6 h-6 text-slate-300" />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+ 
+const ChallengeRunner = ({ type, onComplete, onCancel }) => {
+  const [step, setStep] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showFeedback, setShowFeedback] = useState(null);
+ 
+  const scholarQuestions = [
+    { q: "Siapakah tokoh pemikir Islam yang dikenal dengan gelar Hujjatul Islam?", options: ["Ibnu Sina", "Al-Ghazali", "Ibnu Khaldun", "Muhammad Abduh"], answer: 1 },
+    { q: "Tokoh ulama asal Banten yang pernah menjadi Imam Masjidil Haram adalah...", options: ["Hamzah Fansuri", "Nuruddin ar-Raniri", "Syekh Nawawi al-Bantani", "KH. Hasyim Asy'ari"], answer: 2 },
+  ];
+ 
+  const [matches, setMatches] = useState([]);
+  const [selectedLeft, setSelectedLeft] = useState(null);
+  const techPairs = [
+    { left: "Al-Khawarizmi", right: "Computer Algorithms", id: 1 },
+    { left: "Ibn Al-Haytham", right: "Camera & Optics", id: 2 },
+    { left: "Al-Jazari", right: "Robotics & Automata", id: 3 },
+  ];
+ 
+  const handleQuizAnswer = (idx) => {
+    const isCorrect = idx === scholarQuestions[step].answer;
+    setShowFeedback(isCorrect ? 'correct' : 'wrong');
+    if (isCorrect) setScore(s => s + 50);
+ 
+    setTimeout(() => {
+      setShowFeedback(null);
+      if (step < scholarQuestions.length - 1) {
+        setStep(s => s + 1);
+      } else {
+        onComplete(score + (isCorrect ? 50 : 0));
+      }
+    }, 1500);
+  };
+ 
+  const handleMatch = (rightId) => {
+    if (!selectedLeft) return;
+    if (selectedLeft === rightId) {
+      setMatches(prev => [...prev, rightId]);
+      setScore(s => s + 30);
+      setSelectedLeft(null);
+      if (matches.length + 1 === techPairs.length) {
+        setTimeout(() => onComplete(score + 30), 1000);
+      }
+    } else {
+      setSelectedLeft(null);
+    }
+  };
+ 
+  return (
+    <div className="max-w-3xl mx-auto h-full flex flex-col pt-8">
+      <div className="flex items-center justify-between mb-8">
+        <Button variant="ghost" onClick={onCancel}><XCircle className="w-6 h-6 mr-2"/> Exit Challenge</Button>
+        <div className="flex space-x-2">
+           <Badge color="bg-amber-100 text-amber-700 text-lg py-1 px-4"><Star className="w-5 h-5 mr-1 text-amber-500"/> {score}</Badge>
+        </div>
+      </div>
+ 
+      <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 flex-1 relative overflow-hidden">
+ 
+        {type === 'scholar' && (
+          <div className="flex flex-col h-full">
+            <div className="mb-8">
+              <ProgressBar progress={(step / scholarQuestions.length) * 100} height="h-2" color="bg-blue-500" />
+              <p className="text-right text-sm text-slate-500 mt-2">Question {step + 1} of {scholarQuestions.length}</p>
+            </div>
+ 
+            <h2 className="text-2xl font-bold text-center mb-8">{scholarQuestions[step].q}</h2>
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
+              {scholarQuestions[step].options.map((opt, idx) => (
+                <Button
+                  key={idx}
+                  variant="outline"
+                  className={`h-20 text-lg border-2 ${showFeedback ? 'pointer-events-none' : ''}`}
+                  onClick={() => handleQuizAnswer(idx)}
+                >
+                  {opt}
+                </Button>
+              ))}
+            </div>
+ 
+            {showFeedback && (
+              <div className={`absolute bottom-0 left-0 right-0 p-6 flex items-center justify-between
+                ${showFeedback === 'correct' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}
+              `} style={{animation: 'slideUp 0.3s ease-out forwards'}}>
+                <div className="flex items-center">
+                  {showFeedback === 'correct' ? <CheckCircle2 className="w-10 h-10 mr-4"/> : <XCircle className="w-10 h-10 mr-4"/>}
+                  <h3 className="text-2xl font-bold">{showFeedback === 'correct' ? 'Excellent!' : 'Not quite right'}</h3>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+ 
+        {type === 'technology' && (
+          <div>
+            <h2 className="text-2xl font-bold text-center mb-2">Connect the Concepts</h2>
+            <p className="text-center text-slate-500 mb-8">Tap a Scholar, then tap their modern technological legacy.</p>
+ 
+            <div className="flex justify-between items-stretch gap-8">
+              <div className="flex-1 space-y-4">
+                {techPairs.map(pair => {
+                  const isMatched = matches.includes(pair.id);
+                  const isSelected = selectedLeft === pair.id;
+                  return (
+                    <div
+                      key={`left-${pair.id}`}
+                      onClick={() => !isMatched && setSelectedLeft(pair.id)}
+                      className={`p-4 rounded-xl border-2 text-center font-bold cursor-pointer transition-all h-20 flex items-center justify-center
+                        ${isMatched ? 'bg-emerald-100 border-emerald-500 text-emerald-700 opacity-50 cursor-default' :
+                          isSelected ? 'bg-blue-100 border-blue-500 text-blue-700 shadow-md scale-105' :
+                          'bg-white border-slate-200 hover:border-blue-300'
+                        }
+                      `}
+                    >
+                      {pair.left}
+                    </div>
+                  )
+                })}
+              </div>
+ 
+              <div className="w-px bg-slate-200 flex-col justify-around py-10 hidden md:flex">
+                 {[1,2,3].map(i => <div key={i} className="w-3 h-3 bg-slate-300 rounded-full -ml-1.5" />)}
+              </div>
+ 
+              <div className="flex-1 space-y-4">
+                {techPairs.slice().reverse().map(pair => {
+                  const isMatched = matches.includes(pair.id);
+                  return (
+                    <div
+                      key={`right-${pair.id}`}
+                      onClick={() => !isMatched && handleMatch(pair.id)}
+                      className={`p-4 rounded-xl border-2 border-dashed text-center font-bold cursor-pointer transition-all h-20 flex items-center justify-center
+                        ${isMatched ? 'bg-emerald-100 border-emerald-500 border-solid text-emerald-700 opacity-50 cursor-default' :
+                          selectedLeft ? 'bg-blue-50 border-blue-400 hover:bg-blue-100' :
+                          'bg-slate-50 border-slate-300'
+                        }
+                      `}
+                    >
+                      {pair.right}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+ 
+            {matches.length === techPairs.length && (
+              <div className="mt-8 text-center text-emerald-600 font-bold text-xl animate-pulse">
+                All connections found! Perfect score.
+              </div>
+            )}
+          </div>
+        )}
+ 
+      </div>
+    </div>
+  );
+};
+ 
+ 
+ 
+const LeaderboardView = () => (
+  <div className="max-w-4xl mx-auto">
+    <div className="text-center mb-10">
+      <h2 className="text-3xl font-bold text-[#0E2A47]">Global Leaderboard</h2>
+      <p className="text-slate-600 mt-2">See how you rank among other scholars.</p>
+    </div>
+ 
+    <div className="hidden md:flex justify-center items-end mb-12 space-x-4 h-64">
+      <div className="w-40 flex flex-col items-center group">
+        <div className="relative">
+          <img src={LEADERBOARD_DATA[1].avatar} className="w-20 h-20 rounded-full border-4 border-slate-300 mb-4 z-10 relative group-hover:scale-110 transition-transform" />
+          <div className="absolute -bottom-2 -right-2 bg-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white border-2 border-white z-20">2</div>
+        </div>
+        <div className="bg-slate-200 w-full h-32 rounded-t-lg flex flex-col items-center pt-4">
+          <span className="font-bold text-slate-700 truncate w-full text-center px-2">{LEADERBOARD_DATA[1].name}</span>
+          <span className="text-[#C99700] font-bold mt-1">{LEADERBOARD_DATA[1].xp} XP</span>
+        </div>
+      </div>
+ 
+      <div className="w-48 flex flex-col items-center group">
+        <div className="relative">
+           <Crown className="w-10 h-10 text-amber-500 absolute -top-10 left-1/2 -translate-x-1/2 animate-bounce" />
+          <img src={LEADERBOARD_DATA[0].avatar} className="w-28 h-28 rounded-full border-4 border-amber-400 mb-4 z-10 relative shadow-lg group-hover:scale-110 transition-transform" />
+          <div className="absolute -bottom-2 -right-0 bg-amber-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white border-2 border-white z-20 text-lg shadow">1</div>
+        </div>
+        <div className="bg-[#C99700] w-full h-40 rounded-t-lg flex flex-col items-center pt-4 text-white shadow-xl">
+          <span className="font-bold truncate w-full text-center px-2 text-lg">{LEADERBOARD_DATA[0].name}</span>
+          <span className="font-bold mt-1 bg-black/20 px-3 py-1 rounded-full text-sm">{LEADERBOARD_DATA[0].xp} XP</span>
+        </div>
+      </div>
+ 
+      <div className="w-40 flex flex-col items-center group">
+        <div className="relative">
+          <img src={LEADERBOARD_DATA[2].avatar} className="w-20 h-20 rounded-full border-4 border-amber-700 mb-4 z-10 relative group-hover:scale-110 transition-transform" />
+          <div className="absolute -bottom-2 -right-2 bg-amber-700 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white border-2 border-white z-20">3</div>
+        </div>
+        <div className="bg-amber-900/10 w-full h-24 rounded-t-lg flex flex-col items-center pt-4 border-t border-amber-900/20">
+          <span className="font-bold text-amber-900 truncate w-full text-center px-2">{LEADERBOARD_DATA[2].name}</span>
+          <span className="text-[#C99700] font-bold mt-1">{LEADERBOARD_DATA[2].xp} XP</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+      {LEADERBOARD_DATA.map((user, idx) => (
+        <div key={user.id} className={`flex items-center p-4 md:px-8 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors ${idx === 2 ? 'bg-amber-50/50' : ''}`}>
+          <div className="w-8 font-bold text-slate-400 text-lg">{idx + 1}</div>
+          <img src={user.avatar} className="w-12 h-12 rounded-full mr-4 border border-slate-200" />
+          <div className="flex-1">
+            <h4 className="font-bold text-slate-800 text-lg flex items-center">
+              {user.name}
+              {idx === 2 && <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">You</span>}
+            </h4>
+            <p className="text-sm text-slate-500">{user.group}</p>
+          </div>
+          <div className="text-right">
+            <div className="font-bold text-[#C99700] text-lg">{user.xp} XP</div>
+            <div className="text-sm text-slate-500">Level {user.level}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+ 
+const QRScannerView = () => (
+  <div className="h-full flex flex-col items-center justify-center max-w-lg mx-auto text-center">
+    <div className="w-full aspect-square bg-slate-900 rounded-3xl relative overflow-hidden shadow-2xl border-4 border-slate-800 mb-8">
+      <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" className="opacity-40 w-full h-full object-cover blur-sm" />
+ 
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-64 h-64 border-2 border-[#C99700] rounded-xl relative">
+           <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-[#C99700]"></div>
+           <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-[#C99700]"></div>
+           <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-[#C99700]"></div>
+           <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-[#C99700]"></div>
+ 
+           <div className="w-full h-1 bg-[#C99700] opacity-50 absolute top-0 shadow-[0_0_10px_#C99700]" style={{animation: 'scan 3s linear infinite'}}></div>
+        </div>
+      </div>
+    </div>
+ 
+    <h2 className="text-2xl font-bold text-[#0E2A47] mb-2">Scan Physical Card</h2>
+    <p className="text-slate-600 mb-8">Align the QR code on your board game card within the frame to unlock AR content and challenges.</p>
+ 
+    <Button variant="primary" className="w-full">
+      <Camera className="w-5 h-5 mr-2" /> Start Camera
+    </Button>
+  </div>
+);
+ 
+ 
+// --- MAIN APP COMPONENT ---
+function App() {
+  const [user, setUser] = useState(null);
+  const [activeView, setActiveView] = useState('dashboard');
+  const [activeChallenge, setActiveChallenge] = useState(null);
+ 
+  const [showLevelUp, setShowLevelUp] = useState(false);
+ 
+  const handleLogin = () => {
+    setUser(MOCK_USER);
+    setActiveView('dashboard');
+  };
+ 
+  const handleLogout = () => {
+    setUser(null);
+  };
+ 
+  const completeChallenge = (gainedXp) => {
+    setUser(prev => {
+      let newXp = prev.xp + gainedXp;
+      let newLevel = prev.level;
+      let showedModal = false;
+ 
+      if (newXp >= prev.nextLevelXp) {
+        newLevel++;
+        newXp = newXp - prev.nextLevelXp;
+        showedModal = true;
+      }
+ 
+      if(showedModal) setShowLevelUp(true);
+ 
+      return {
+        ...prev,
+        xp: newXp,
+        level: newLevel,
+        currentPhase: prev.currentPhase < 4 ? prev.currentPhase + 1 : prev.currentPhase
+      }
+    });
+ 
+    setActiveChallenge(null);
+    setActiveView('dashboard');
+ 
+    if(showLevelUp) {
+      setTimeout(() => setShowLevelUp(false), 3000);
+    }
+  };
+ 
+  if (!user) {
+    return <AuthView onLogin={handleLogin} />;
+  }
+ 
+  if (activeView === 'challenge' && activeChallenge) {
+    return (
+      <div className="h-screen bg-slate-50 font-sans">
+        <ChallengeRunner
+          type={activeChallenge}
+          onComplete={completeChallenge}
+          onCancel={() => { setActiveChallenge(null); setActiveView('board'); }}
+        />
+      </div>
+    );
+  }
+ 
+  const renderView = () => {
+    switch (activeView) {
+      case 'dashboard': return <DashboardView user={user} navigate={setActiveView} />;
+      case 'learning': return <LearningStudioView />;
+      case 'vr': return <VRMuseumView />;
+      case 'ai': return <AICompanionView />;
+      case 'board': return <BoardGameProgressView user={user} setView={setActiveView} setActiveChallenge={setActiveChallenge} />;
+      case 'qr': return <QRScannerView />;
+      case 'leaderboard': return <LeaderboardView />;
+      case 'profile': return <div className="text-center p-12"><h2 className="text-2xl font-bold">Profile Page</h2><p className="text-slate-500 mt-2">Personal info, certificates, and learning history will appear here.</p></div>;
+      default: return <DashboardView user={user} navigate={setActiveView} />;
+    }
+  };
+ 
+  return (
+    <>
+      <Layout activeTab={activeView} setActiveTab={setActiveView} user={user} onLogout={handleLogout}>
+        {renderView()}
+      </Layout>
+ 
+      {showLevelUp && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl" style={{animation: 'bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'}}>
+            <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trophy className="w-12 h-12 text-amber-500" />
+            </div>
+            <h2 className="text-3xl font-bold text-slate-800 mb-2">Level Up!</h2>
+            <p className="text-slate-600 mb-6">You have reached Level {user.level}. Your knowledge of Islamic civilization grows stronger.</p>
+            <Button variant="primary" className="w-full" onClick={() => setShowLevelUp(false)}>Awesome!</Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+ 
+const styleTag = document.createElement('style');
+styleTag.innerHTML = `
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+  @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+`;
+document.head.appendChild(styleTag);
+ 
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
