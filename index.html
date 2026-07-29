@@ -76,39 +76,39 @@ const SCHOLARS_CURRICULUM = [
   {
     era: "Klasik (Abad 8 - 15 M)",
     world: [
-      { id: "c-w-1", name: "Ibnu Sina", desc: "Bapak Kedokteran Modern, penulis The Canon of Medicine.", time: "15:30", completed: true },
-      { id: "c-w-2", name: "Al-Ghazali", desc: "Hujjatul Islam, tokoh pemikir filsafat dan tasawuf.", time: "18:45", active: true },
-      { id: "c-w-3", name: "Ibnu Khaldun", desc: "Bapak Sosiologi, Sejarah, dan Ekonomi Islam.", time: "14:20", completed: false },
+      { id: "c-w-1", name: "Ibnu Sina", desc: "Bapak Kedokteran Modern, penulis The Canon of Medicine.", time: "15:30", completed: true, img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Avicenna_Portrait.jpg" },
+      { id: "c-w-2", name: "Al-Ghazali", desc: "Hujjatul Islam, tokoh pemikir filsafat dan tasawuf.", time: "18:45", active: true, img: "https://upload.wikimedia.org/wikipedia/commons/6/65/Algazel.jpg" },
+      { id: "c-w-3", name: "Ibnu Khaldun", desc: "Bapak Sosiologi, Sejarah, dan Ekonomi Islam.", time: "14:20", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Ibn_Khaldun.jpg" },
     ],
     nusantara: [
-      { id: "c-n-1", name: "Hamzah Fansuri", desc: "Ulama dan sastrawan sufi perintis tradisi tulis Melayu.", time: "12:15", completed: false },
-      { id: "c-n-2", name: "Nuruddin ar-Raniri", desc: "Ulama besar Kesultanan Aceh, penulis Bustan al-Salatin.", time: "16:00", completed: false },
+      { id: "c-n-1", name: "Hamzah Fansuri", desc: "Ulama dan sastrawan sufi perintis tradisi tulis Melayu.", time: "12:15", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Lukisan_rekaan_wajah_Syekh_Hamzah_Fansuri_karya_M_Yasir.jpg" },
+      { id: "c-n-2", name: "Nuruddin ar-Raniri", desc: "Ulama besar Kesultanan Aceh, penulis Bustan al-Salatin.", time: "16:00", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Nuruddin_ar-Raniry.png" },
       { id: "c-n-3", name: "Syekh Abdurrauf as-Singkili", desc: "Mufti Aceh dan penerjemah Al-Qur'an pertama di Nusantara.", time: "13:10", completed: false },
     ]
   },
   {
     era: "Modern (Abad 19 - Pertengahan 20 M)",
     world: [
-      { id: "m-w-1", name: "Muhammad Abduh", desc: "Tokoh pembaharu pemikiran Islam dari Mesir.", time: "11:20", completed: false },
-      { id: "m-w-2", name: "Muhammad Iqbal", desc: "Filsuf, penyair, dan pemikir politik Islam dari Pakistan.", time: "14:30", completed: false },
-      { id: "m-w-3", name: "Jamaluddin al-Afghani", desc: "Pencetus gagasan Pan-Islamisme.", time: "10:45", completed: false },
+      { id: "m-w-1", name: "Muhammad Abduh", desc: "Tokoh pembaharu pemikiran Islam dari Mesir.", time: "11:20", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Muhammad_Abduh.jpg" },
+      { id: "m-w-2", name: "Muhammad Iqbal", desc: "Filsuf, penyair, dan pemikir politik Islam dari Pakistan.", time: "14:30", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/5/56/Allama_Iqbal.jpg" },
+      { id: "m-w-3", name: "Jamaluddin al-Afghani", desc: "Pencetus gagasan Pan-Islamisme.", time: "10:45", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/3/32/Jamal_al-Din_al-Afghani.jpg" },
     ],
     nusantara: [
-      { id: "m-n-1", name: "Syekh Nawawi al-Bantani", desc: "Ulama asal Banten, Imam Masjidil Haram.", time: "17:15", completed: false },
-      { id: "m-n-2", name: "KH. Ahmad Dahlan", desc: "Pendiri Muhammadiyah, pahlawan nasional.", time: "15:40", completed: false },
-      { id: "m-n-3", name: "KH. Hasyim Asy'ari", desc: "Pendiri Nahdlatul Ulama (NU) dan pahlawan nasional.", time: "16:25", completed: false },
+      { id: "m-n-1", name: "Syekh Nawawi al-Bantani", desc: "Ulama asal Banten, Imam Masjidil Haram.", time: "17:15", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Syekh_Nawawi_al-Bantani.jpg" },
+      { id: "m-n-2", name: "KH. Ahmad Dahlan", desc: "Pendiri Muhammadiyah, pahlawan nasional.", time: "15:40", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/2/21/Ahmad_Dahlan.jpg" },
+      { id: "m-n-3", name: "KH. Hasyim Asy'ari", desc: "Pendiri Nahdlatul Ulama (NU) dan pahlawan nasional.", time: "16:25", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/8/84/Hasyim_Asyari.jpg" },
     ]
   },
   {
     era: "Kontemporer (Akhir Abad 20 - Sekarang)",
     world: [
       { id: "k-w-1", name: "Fazlur Rahman", desc: "Pemikir Islam asal Pakistan, tokoh neo-modernisme.", time: "13:50", completed: false },
-      { id: "k-w-2", name: "Seyyed Hossein Nasr", desc: "Filsuf dan profesor studi Islam dari Iran/AS.", time: "12:10", completed: false },
-      { id: "k-w-3", name: "Isma'il Raji al-Faruqi", desc: "Tokoh gagasan Islamisasi Ilmu Pengetahuan.", time: "14:05", completed: false },
+      { id: "k-w-2", name: "Seyyed Hossein Nasr", desc: "Filsuf dan profesor studi Islam dari Iran/AS.", time: "12:10", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/0/03/Seyyed_Hossein_Nasr.jpg" },
+      { id: "k-w-3", name: "Isma'il Raji al-Faruqi", desc: "Tokoh gagasan Islamisasi Ilmu Pengetahuan.", time: "14:05", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ismail_al-Faruqi_in_Kenosha_News_May_28_1986_p._3.jpg" },
     ],
     nusantara: [
       { id: "k-n-1", name: "Harun Nasution", desc: "Tokoh pembaharu pemikiran Islam Indonesia moderen.", time: "11:30", completed: false },
-      { id: "k-n-2", name: "Nurcholish Madjid (Cak Nur)", desc: "Cendekiawan muslim pembaharu di Indonesia.", time: "15:20", completed: false },
+      { id: "k-n-2", name: "Nurcholish Madjid (Cak Nur)", desc: "Cendekiawan muslim pembaharu di Indonesia.", time: "15:20", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/3/39/Nurcholish_Madjid.jpg" },
       { id: "k-n-3", name: "Kuntowijoyo", desc: "Sejarawan, budayawan, pencetus Ilmu Sosial Profetik.", time: "14:45", completed: false },
     ]
   }
@@ -156,6 +156,34 @@ const Badge = ({ children, icon: Icon, color = "bg-blue-100 text-blue-700", clas
     {children}
   </span>
 );
+ 
+const getInitials = (name) => name
+  .replace(/^(KH\.|Syekh|Ibnu|Al-|As-|Ar-)\s*/i, '')
+  .split(' ')
+  .filter(Boolean)
+  .slice(0, 2)
+  .map(w => w[0])
+  .join('')
+  .toUpperCase();
+ 
+const ScholarAvatar = ({ scholar, size = "w-14 h-14", textSize = "text-sm" }) => {
+  const [errored, setErrored] = useState(false);
+  if (scholar.img && !errored) {
+    return (
+      <img
+        src={scholar.img}
+        alt={scholar.name}
+        onError={() => setErrored(true)}
+        className={`${size} rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0`}
+      />
+    );
+  }
+  return (
+    <div className={`${size} rounded-full bg-gradient-to-br from-[#0E2A47] to-[#1a4a7d] text-white flex items-center justify-center font-bold ${textSize} flex-shrink-0 border-2 border-white shadow-sm`}>
+      {getInitials(scholar.name)}
+    </div>
+  );
+};
  
  
 // --- LAYOUT COMPONENTS ---
@@ -384,9 +412,12 @@ const LearningStudioView = () => {
  
         <div className="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex-1 overflow-y-auto">
           <div className="flex justify-between items-start mb-4">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800">{activeLesson.name}</h2>
-              <p className="text-slate-500 mt-1">{activeLesson.desc}</p>
+            <div className="flex items-center gap-4">
+              <ScholarAvatar scholar={activeLesson} size="w-16 h-16" textSize="text-lg" />
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800">{activeLesson.name}</h2>
+                <p className="text-slate-500 mt-1">{activeLesson.desc}</p>
+              </div>
             </div>
             <Button variant="success">Complete Lesson (+50 XP)</Button>
           </div>
@@ -427,7 +458,8 @@ const LearningStudioView = () => {
                       activeLesson.id === scholar.id ? 'bg-blue-50 border-blue-300 shadow-sm' : 'border-slate-100 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="mr-3">
+                    <ScholarAvatar scholar={scholar} size="w-9 h-9" textSize="text-[10px]" />
+                    <div className="mx-3">
                       {scholar.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
                        activeLesson.id === scholar.id ? <PlayCircle className="w-5 h-5 text-blue-600" /> :
                        <Lock className="w-5 h-5 text-slate-300" />}
@@ -450,7 +482,8 @@ const LearningStudioView = () => {
                       activeLesson.id === scholar.id ? 'bg-emerald-50 border-emerald-300 shadow-sm' : 'border-slate-100 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="mr-3">
+                    <ScholarAvatar scholar={scholar} size="w-9 h-9" textSize="text-[10px]" />
+                    <div className="mx-3">
                       {scholar.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
                        activeLesson.id === scholar.id ? <PlayCircle className="w-5 h-5 text-emerald-600" /> :
                        <Lock className="w-5 h-5 text-slate-300" />}
@@ -1085,3 +1118,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
+ 
