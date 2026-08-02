@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -755,50 +756,171 @@ const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
 };
  
  
+// --- GAME CONTENT BANKS ---
+const CHALLENGE_QUESTION_BANKS = {
+  scholar: [
+    { q: "Siapakah tokoh pemikir Islam yang dikenal dengan gelar Hujjatul Islam?", options: ["Ibnu Sina", "Al-Ghazali", "Ibnu Khaldun", "Muhammad Abduh"], answer: 1 },
+    { q: "Tokoh ulama asal Banten yang pernah menjadi Imam Masjidil Haram adalah...", options: ["Hamzah Fansuri", "Nuruddin ar-Raniri", "Syekh Nawawi al-Bantani", "KH. Hasyim Asy'ari"], answer: 2 },
+    { q: "Ibnu Sina dikenal sebagai bapak dari bidang ilmu...", options: ["Sosiologi", "Kedokteran Modern", "Astronomi", "Ekonomi"], answer: 1 },
+    { q: "Ibnu Khaldun adalah peletak dasar ilmu...", options: ["Kedokteran", "Optik", "Sosiologi & Sejarah", "Aljabar"], answer: 2 },
+    { q: "Pendiri organisasi Nahdlatul Ulama (NU) adalah...", options: ["KH. Ahmad Dahlan", "KH. Hasyim Asy'ari", "Nurcholish Madjid", "Harun Nasution"], answer: 1 },
+    { q: "Pendiri organisasi Muhammadiyah adalah...", options: ["KH. Hasyim Asy'ari", "KH. Ahmad Dahlan", "Kuntowijoyo", "Fazlur Rahman"], answer: 1 },
+  ],
+  technology: [
+    { left: "Al-Khawarizmi", right: "Computer Algorithms", id: 1 },
+    { left: "Ibn Al-Haytham", right: "Camera & Optics", id: 2 },
+    { left: "Al-Jazari", right: "Robotics & Automata", id: 3 },
+    { left: "Al-Biruni", right: "Geodesy & Earth Measurement", id: 4 },
+  ],
+  innovation: [
+    { title: "Sejarah Peradaban Klasik", items: ["Ibnu Sina lahir & menulis Canon of Medicine", "Al-Ghazali menulis Ihya Ulumuddin", "Ibnu Khaldun menulis Muqaddimah"] },
+    { title: "Gerakan Pembaruan Nusantara", items: ["Syekh Nawawi al-Bantani menjadi Imam Masjidil Haram", "KH. Ahmad Dahlan mendirikan Muhammadiyah", "KH. Hasyim Asy'ari mendirikan Nahdlatul Ulama"] },
+    { title: "Pemikiran Islam Kontemporer", items: ["Muhammad Abduh menggagas pembaruan pemikiran Islam", "Fazlur Rahman mengembangkan neo-modernisme", "Nurcholish Madjid mempopulerkan sekularisasi terbatas"] },
+  ],
+  master: [
+    { id: 1, name: "Ibnu Sina" }, { id: 2, name: "Al-Ghazali" },
+    { id: 3, name: "Al-Khawarizmi" }, { id: 4, name: "Ibnu Khaldun" },
+    { id: 5, name: "KH. Ahmad Dahlan" }, { id: 6, name: "KH. Hasyim Asy'ari" },
+  ],
+};
+ 
+const ACHIEVEMENT_RULES = {
+  scholar: { badge: "Scholar Explorer", desc: "Menyelesaikan tantangan kuis tokoh ilmuwan." },
+  technology: { badge: "Tech Historian", desc: "Menghubungkan semua warisan teknologi dengan benar." },
+  innovation: { badge: "Timeline Master", desc: "Menyusun urutan sejarah dengan tepat." },
+  master: { badge: "Memory Champion", desc: "Menemukan semua pasangan kartu ingatan." },
+};
+ 
+const shuffleArray = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+ 
 const ChallengeRunner = ({ type, onComplete, onCancel }) => {
   const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState(null);
+  const [streak, setStreak] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [earnedBadge, setEarnedBadge] = useState(null);
  
-  const scholarQuestions = [
-    { q: "Siapakah tokoh pemikir Islam yang dikenal dengan gelar Hujjatul Islam?", options: ["Ibnu Sina", "Al-Ghazali", "Ibnu Khaldun", "Muhammad Abduh"], answer: 1 },
-    { q: "Tokoh ulama asal Banten yang pernah menjadi Imam Masjidil Haram adalah...", options: ["Hamzah Fansuri", "Nuruddin ar-Raniri", "Syekh Nawawi al-Bantani", "KH. Hasyim Asy'ari"], answer: 2 },
-  ];
+  const scholarQuestions = CHALLENGE_QUESTION_BANKS.scholar;
+  const techPairs = CHALLENGE_QUESTION_BANKS.technology;
+  const timelineRounds = CHALLENGE_QUESTION_BANKS.innovation;
+  const memoryScholars = CHALLENGE_QUESTION_BANKS.master;
  
   const [matches, setMatches] = useState([]);
   const [selectedLeft, setSelectedLeft] = useState(null);
-  const techPairs = [
-    { left: "Al-Khawarizmi", right: "Computer Algorithms", id: 1 },
-    { left: "Ibn Al-Haytham", right: "Camera & Optics", id: 2 },
-    { left: "Al-Jazari", right: "Robotics & Automata", id: 3 },
-  ];
+  const [shuffledRight] = useState(() => shuffleArray(techPairs));
+ 
+  const [orderedItems, setOrderedItems] = useState(() => shuffleArray(timelineRounds[0].items));
+  const [draggedIdx, setDraggedIdx] = useState(null);
+  const [timelineChecked, setTimelineChecked] = useState(false);
+  const [timelineCorrect, setTimelineCorrect] = useState(false);
+ 
+  const [cards, setCards] = useState(() => shuffleArray(
+    memoryScholars.flatMap(s => [{ ...s, key: s.id + '-a' }, { ...s, key: s.id + '-b' }])
+  ));
+  const [flipped, setFlipped] = useState([]);
+  const [solved, setSolved] = useState([]);
+  const [moves, setMoves] = useState(0);
+ 
+  const finishWithScore = (finalScore) => {
+    setEarnedBadge(ACHIEVEMENT_RULES[type]);
+    setFinished(true);
+    setTimeout(() => onComplete(finalScore, ACHIEVEMENT_RULES[type].badge), 1800);
+  };
  
   const handleQuizAnswer = (idx) => {
     const isCorrect = idx === scholarQuestions[step].answer;
     setShowFeedback(isCorrect ? 'correct' : 'wrong');
-    if (isCorrect) setScore(s => s + 50);
+    let gained = 0;
+    if (isCorrect) {
+      const newStreak = streak + 1;
+      const streakBonus = newStreak >= 3 ? 20 : 0;
+      gained = 40 + streakBonus;
+      setStreak(newStreak);
+      setScore(s => s + gained);
+    } else {
+      setStreak(0);
+    }
  
     setTimeout(() => {
       setShowFeedback(null);
       if (step < scholarQuestions.length - 1) {
         setStep(s => s + 1);
       } else {
-        onComplete(score + (isCorrect ? 50 : 0));
+        finishWithScore(score + gained);
       }
-    }, 1500);
+    }, 1200);
   };
  
   const handleMatch = (rightId) => {
     if (!selectedLeft) return;
     if (selectedLeft === rightId) {
-      setMatches(prev => [...prev, rightId]);
+      const newMatches = [...matches, rightId];
+      setMatches(newMatches);
       setScore(s => s + 30);
       setSelectedLeft(null);
-      if (matches.length + 1 === techPairs.length) {
-        setTimeout(() => onComplete(score + 30), 1000);
+      if (newMatches.length === techPairs.length) {
+        setTimeout(() => finishWithScore(score + 30), 800);
       }
     } else {
+      setScore(s => Math.max(0, s - 5));
       setSelectedLeft(null);
+    }
+  };
+ 
+  const handleDragStart = (idx) => setDraggedIdx(idx);
+  const handleDrop = (idx) => {
+    if (draggedIdx === null || draggedIdx === idx) return;
+    setOrderedItems(prev => {
+      const next = [...prev];
+      const [moved] = next.splice(draggedIdx, 1);
+      next.splice(idx, 0, moved);
+      return next;
+    });
+    setDraggedIdx(null);
+  };
+  const checkTimeline = () => {
+    const isCorrect = JSON.stringify(orderedItems) === JSON.stringify(timelineRounds[step].items);
+    setTimelineChecked(true);
+    setTimelineCorrect(isCorrect);
+    const gained = isCorrect ? 60 : 15;
+    setScore(s => s + gained);
+    setTimeout(() => {
+      setTimelineChecked(false);
+      if (step < timelineRounds.length - 1) {
+        setStep(s => s + 1);
+        setOrderedItems(shuffleArray(timelineRounds[step + 1].items));
+      } else {
+        finishWithScore(score + gained);
+      }
+    }, 1600);
+  };
+ 
+  const handleCardFlip = (key) => {
+    if (flipped.length === 2 || flipped.includes(key) || solved.includes(key)) return;
+    const newFlipped = [...flipped, key];
+    setFlipped(newFlipped);
+    if (newFlipped.length === 2) {
+      setMoves(m => m + 1);
+      const [a, b] = newFlipped.map(k => cards.find(c => c.key === k));
+      if (a.id === b.id) {
+        const newSolved = [...solved, a.key, b.key];
+        setSolved(newSolved);
+        setScore(s => s + 25);
+        setFlipped([]);
+        if (newSolved.length === cards.length) {
+          setTimeout(() => finishWithScore(score + 25), 800);
+        }
+      } else {
+        setTimeout(() => setFlipped([]), 800);
+      }
     }
   };
  
@@ -806,12 +928,28 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
     <div className="max-w-3xl mx-auto h-full flex flex-col pt-8">
       <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" onClick={onCancel}><XCircle className="w-6 h-6 mr-2"/> Exit Challenge</Button>
-        <div className="flex space-x-2">
+        <div className="flex items-center space-x-3">
+           {streak >= 2 && type === 'scholar' && (
+             <Badge color="bg-orange-100 text-orange-700"><Zap className="w-3 h-3 mr-1"/> {streak}x Streak</Badge>
+           )}
            <Badge color="bg-amber-100 text-amber-700 text-lg py-1 px-4"><Star className="w-5 h-5 mr-1 text-amber-500"/> {score}</Badge>
         </div>
       </div>
  
       <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 flex-1 relative overflow-hidden">
+ 
+        {finished && (
+          <div className="absolute inset-0 z-20 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">
+            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-4" style={{animation: 'bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'}}>
+              <Trophy className="w-10 h-10 text-amber-500" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800 mb-1">Tantangan Selesai!</h3>
+            <p className="text-slate-500 mb-3">Skor akhir: <span className="font-bold text-[#C99700]">{score}</span></p>
+            {earnedBadge && (
+              <Badge color="bg-emerald-100 text-emerald-700 text-sm py-1.5 px-3"><Shield className="w-4 h-4 mr-1"/> Lencana baru: {earnedBadge.badge}</Badge>
+            )}
+          </div>
+        )}
  
         {type === 'scholar' && (
           <div className="flex flex-col h-full">
@@ -841,7 +979,7 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
               `} style={{animation: 'slideUp 0.3s ease-out forwards'}}>
                 <div className="flex items-center">
                   {showFeedback === 'correct' ? <CheckCircle2 className="w-10 h-10 mr-4"/> : <XCircle className="w-10 h-10 mr-4"/>}
-                  <h3 className="text-2xl font-bold">{showFeedback === 'correct' ? 'Excellent!' : 'Not quite right'}</h3>
+                  <h3 className="text-2xl font-bold">{showFeedback === 'correct' ? (streak + 1 >= 3 ? 'Excellent! +Streak Bonus' : 'Excellent!') : 'Not quite right'}</h3>
                 </div>
               </div>
             )}
@@ -851,7 +989,7 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
         {type === 'technology' && (
           <div>
             <h2 className="text-2xl font-bold text-center mb-2">Connect the Concepts</h2>
-            <p className="text-center text-slate-500 mb-8">Tap a Scholar, then tap their modern technological legacy.</p>
+            <p className="text-center text-slate-500 mb-8">Tap a Scholar, then tap their modern technological legacy. Wrong pairs cost points!</p>
  
             <div className="flex justify-between items-stretch gap-8">
               <div className="flex-1 space-y-4">
@@ -876,11 +1014,11 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
               </div>
  
               <div className="w-px bg-slate-200 flex-col justify-around py-10 hidden md:flex">
-                 {[1,2,3].map(i => <div key={i} className="w-3 h-3 bg-slate-300 rounded-full -ml-1.5" />)}
+                 {techPairs.map(p => <div key={p.id} className="w-3 h-3 bg-slate-300 rounded-full -ml-1.5" />)}
               </div>
  
               <div className="flex-1 space-y-4">
-                {techPairs.slice().reverse().map(pair => {
+                {shuffledRight.map(pair => {
                   const isMatched = matches.includes(pair.id);
                   return (
                     <div
@@ -903,6 +1041,82 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
             {matches.length === techPairs.length && (
               <div className="mt-8 text-center text-emerald-600 font-bold text-xl animate-pulse">
                 All connections found! Perfect score.
+              </div>
+            )}
+          </div>
+        )}
+ 
+        {type === 'innovation' && (
+          <div>
+            <div className="mb-6">
+              <ProgressBar progress={(step / timelineRounds.length) * 100} height="h-2" color="bg-purple-500" />
+              <p className="text-right text-sm text-slate-500 mt-2">Timeline {step + 1} of {timelineRounds.length}</p>
+            </div>
+            <h2 className="text-2xl font-bold text-center mb-1">Susun Urutan Peristiwa</h2>
+            <p className="text-center text-slate-500 mb-8">{timelineRounds[step].title} — seret kartu untuk mengurutkan dari yang paling awal.</p>
+ 
+            <div className="space-y-3 max-w-xl mx-auto">
+              {orderedItems.map((item, idx) => (
+                <div
+                  key={item}
+                  draggable
+                  onDragStart={() => handleDragStart(idx)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => handleDrop(idx)}
+                  className={`p-4 rounded-xl border-2 flex items-center gap-4 bg-white cursor-move transition-all
+                    ${timelineChecked ? (timelineCorrect ? 'border-emerald-400 bg-emerald-50' : 'border-red-300 bg-red-50') : 'border-slate-200 hover:border-purple-300'}
+                  `}
+                >
+                  <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center flex-shrink-0">{idx + 1}</div>
+                  <p className="text-slate-700 font-medium">{item}</p>
+                </div>
+              ))}
+            </div>
+ 
+            <div className="text-center mt-8">
+              <Button variant="secondary" onClick={checkTimeline} disabled={timelineChecked}>Kunci Urutan</Button>
+            </div>
+ 
+            {timelineChecked && (
+              <div className={`absolute bottom-0 left-0 right-0 p-6 flex items-center justify-center
+                ${timelineCorrect ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}
+              `} style={{animation: 'slideUp 0.3s ease-out forwards'}}>
+                <div className="flex items-center">
+                  {timelineCorrect ? <CheckCircle2 className="w-8 h-8 mr-3"/> : <XCircle className="w-8 h-8 mr-3"/>}
+                  <h3 className="text-xl font-bold">{timelineCorrect ? 'Urutan tepat!' : 'Urutan kurang tepat, tetap lanjut.'}</h3>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+ 
+        {type === 'master' && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Memory Match: Tokoh Ilmuwan</h2>
+              <Badge color="bg-slate-100 text-slate-600">Moves: {moves}</Badge>
+            </div>
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3 max-w-xl mx-auto">
+              {cards.map(card => {
+                const isFlipped = flipped.includes(card.key) || solved.includes(card.key);
+                return (
+                  <div
+                    key={card.key}
+                    onClick={() => handleCardFlip(card.key)}
+                    className={`aspect-square rounded-xl flex items-center justify-center text-center p-2 cursor-pointer text-xs md:text-sm font-bold transition-all duration-300 select-none
+                      ${isFlipped
+                        ? (solved.includes(card.key) ? 'bg-emerald-100 text-emerald-700 border-2 border-emerald-400' : 'bg-blue-100 text-blue-700 border-2 border-blue-400')
+                        : 'bg-[#0E2A47] text-white hover:bg-[#163a5f]'}
+                    `}
+                  >
+                    {isFlipped ? card.name : <Compass className="w-6 h-6 opacity-60" />}
+                  </div>
+                );
+              })}
+            </div>
+            {solved.length === cards.length && (
+              <div className="mt-8 text-center text-emerald-600 font-bold text-xl animate-pulse">
+                Semua pasangan ditemukan dalam {moves} langkah!
               </div>
             )}
           </div>
@@ -1007,6 +1221,81 @@ const QRScannerView = () => (
 );
  
  
+const ALL_BADGES = [
+  { name: "Scholar Explorer", desc: "Menyelesaikan tantangan kuis tokoh ilmuwan.", icon: BookOpen },
+  { name: "Early Bird", desc: "Belajar pagi hari 5 kali berturut-turut.", icon: Star },
+  { name: "Perfect Quiz", desc: "Menjawab seluruh kuis tanpa kesalahan.", icon: CheckCircle2 },
+  { name: "Tech Historian", desc: "Menghubungkan semua warisan teknologi dengan benar.", icon: Cpu },
+  { name: "Timeline Master", desc: "Menyusun urutan sejarah dengan tepat.", icon: Zap },
+  { name: "Memory Champion", desc: "Menemukan semua pasangan kartu ingatan.", icon: Crown },
+];
+ 
+const ProfileView = ({ user }) => (
+  <div className="max-w-4xl mx-auto space-y-8">
+    <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center gap-6">
+      <img src={user.avatar} className="w-24 h-24 rounded-full border-4 border-[#C99700] shadow-md" />
+      <div className="text-center md:text-left flex-1">
+        <h2 className="text-2xl font-bold text-slate-800">{user.name}</h2>
+        <p className="text-slate-500">{user.institution} • {user.class}</p>
+        <p className="text-sm text-slate-400 mt-1">{user.group}</p>
+      </div>
+      <div className="grid grid-cols-3 gap-4 text-center">
+        <div>
+          <div className="text-2xl font-bold text-[#C99700]">{user.level}</div>
+          <div className="text-xs text-slate-500">Level</div>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-[#C99700]">{user.xp}</div>
+          <div className="text-xs text-slate-500">XP</div>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-[#C99700]">{user.streak}</div>
+          <div className="text-xs text-slate-500">Day Streak</div>
+        </div>
+      </div>
+    </div>
+ 
+    <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+      <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center"><Shield className="w-5 h-5 mr-2 text-[#C99700]"/> Koleksi Lencana</h3>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {ALL_BADGES.map(badge => {
+          const earned = user.badges.includes(badge.name);
+          return (
+            <div key={badge.name} className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all ${earned ? 'border-amber-300 bg-amber-50' : 'border-slate-100 bg-slate-50 opacity-50'}`}>
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${earned ? 'bg-[#C99700] text-white' : 'bg-slate-200 text-slate-400'}`}>
+                {earned ? <badge.icon className="w-7 h-7" /> : <Lock className="w-6 h-6" />}
+              </div>
+              <p className="font-bold text-sm text-slate-800">{badge.name}</p>
+              <p className="text-xs text-slate-500 mt-1">{badge.desc}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+ 
+    <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+      <h3 className="text-xl font-bold text-slate-800 mb-6">Progres Fase Belajar</h3>
+      <div className="space-y-4">
+        {PHASES.map(phase => {
+          const isCompleted = user.currentPhase > phase.id;
+          const isCurrent = user.currentPhase === phase.id;
+          return (
+            <div key={phase.id} className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${isCompleted || isCurrent ? phase.color : 'bg-slate-200'}`}>
+                <phase.icon className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-slate-700">{phase.name}</p>
+                <ProgressBar progress={isCompleted ? 100 : isCurrent ? 50 : 0} height="h-2" />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+);
+ 
 // --- MAIN APP COMPONENT ---
 function App() {
   const [user, setUser] = useState(null);
@@ -1014,6 +1303,7 @@ function App() {
   const [activeChallenge, setActiveChallenge] = useState(null);
  
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [newBadgeToast, setNewBadgeToast] = useState(null);
  
   const handleLogin = () => {
     setUser(MOCK_USER);
@@ -1024,7 +1314,7 @@ function App() {
     setUser(null);
   };
  
-  const completeChallenge = (gainedXp) => {
+  const completeChallenge = (gainedXp, badgeName) => {
     setUser(prev => {
       let newXp = prev.xp + gainedXp;
       let newLevel = prev.level;
@@ -1038,10 +1328,16 @@ function App() {
  
       if(showedModal) setShowLevelUp(true);
  
+      const alreadyHasBadge = badgeName && prev.badges.includes(badgeName);
+      if (badgeName && !alreadyHasBadge) {
+        setTimeout(() => setNewBadgeToast(badgeName), showedModal ? 3200 : 300);
+      }
+ 
       return {
         ...prev,
         xp: newXp,
         level: newLevel,
+        badges: (badgeName && !alreadyHasBadge) ? [...prev.badges, badgeName] : prev.badges,
         currentPhase: prev.currentPhase < 4 ? prev.currentPhase + 1 : prev.currentPhase
       }
     });
@@ -1053,6 +1349,13 @@ function App() {
       setTimeout(() => setShowLevelUp(false), 3000);
     }
   };
+ 
+  useEffect(() => {
+    if (newBadgeToast) {
+      const t = setTimeout(() => setNewBadgeToast(null), 3500);
+      return () => clearTimeout(t);
+    }
+  }, [newBadgeToast]);
  
   if (!user) {
     return <AuthView onLogin={handleLogin} />;
@@ -1079,7 +1382,7 @@ function App() {
       case 'board': return <BoardGameProgressView user={user} setView={setActiveView} setActiveChallenge={setActiveChallenge} />;
       case 'qr': return <QRScannerView />;
       case 'leaderboard': return <LeaderboardView />;
-      case 'profile': return <div className="text-center p-12"><h2 className="text-2xl font-bold">Profile Page</h2><p className="text-slate-500 mt-2">Personal info, certificates, and learning history will appear here.</p></div>;
+      case 'profile': return <ProfileView user={user} />;
       default: return <DashboardView user={user} navigate={setActiveView} />;
     }
   };
@@ -1102,6 +1405,18 @@ function App() {
           </div>
         </div>
       )}
+ 
+      {newBadgeToast && (
+        <div className="fixed top-6 right-6 z-[110] bg-white rounded-2xl shadow-2xl border border-amber-200 p-4 flex items-center gap-3 max-w-xs" style={{animation: 'slideInRight 0.4s ease-out forwards'}}>
+          <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <Shield className="w-6 h-6 text-amber-600" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide">Lencana Baru</p>
+            <p className="font-bold text-slate-800">{newBadgeToast}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -1111,6 +1426,7 @@ styleTag.innerHTML = `
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
   @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 `;
 document.head.appendChild(styleTag);
  
@@ -1118,4 +1434,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
- 
