@@ -197,9 +197,10 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
 );
  
 const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
-  const menuItems = [
+ const menuItems = [
     { id: 'dashboard', icon: Home, label: 'Dashboard' },
     { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
+    { id: 'materi', icon: BookOpen, label: 'Materi Scholar' },
     { id: 'vr', icon: Video, label: 'VR Museum' },
     { id: 'ai', icon: MessageSquare, label: 'AI Company' },
     { id: 'board', icon: Map, label: 'Board Game' },
@@ -505,7 +506,604 @@ const LearningStudioView = () => {
     </div>
   );
 };
- 
+
+const DRIVE_MATERIALS = [
+  {
+    id: "ibnu-sina",
+    name: "Ibnu Sina",
+    region: "Dunia",
+    era: "Klasik",
+    description: "Bapak Kedokteran Modern dan penulis Al-Qanun fi al-Tibb.",
+    summary:
+      "Ibnu Sina dikenal sebagai ilmuwan dan filsuf besar yang berpengaruh dalam perkembangan kedokteran. Ia menekankan pentingnya observasi, penalaran, dan pemeriksaan kondisi pasien secara sistematis.",
+    folderId: "100Yu8qY8Om8nTzqkEpoqZDjRti3N3gWF",
+    imageId: "1-StwsRLFOSWN86UgFTD1VQHVv4IIDbHS",
+    infographicId: "1yJOSYAUtShTzODrAkYHD9z5XMeC6CP5Q",
+    audioId: "1jE9LIIkqa70127e83Tm0UMiAk0pRWiFv",
+  },
+  {
+    id: "al-ghazali",
+    name: "Al-Ghazali",
+    region: "Dunia",
+    era: "Klasik",
+    description: "Hujjatul Islam, tokoh filsafat, pendidikan, dan tasawuf.",
+    summary:
+      "Al-Ghazali menekankan bahwa ilmu harus berjalan bersama akhlak dan pembinaan diri. Ilmu tidak hanya digunakan untuk meningkatkan kemampuan berpikir, tetapi juga membentuk pribadi yang jujur dan bertanggung jawab.",
+    folderId: "12k2hx_6cKwXUP3o0JPf5PDMkXjZ4Zmtr",
+    imageId: "13Dp5QshhyT6r7i8ewR4GLSVEredHlUCJ",
+    infographicId: "1kOFFEB6Uz8zMPdR19mJW-Z_-escitOfM",
+    audioId: "11mGVVFYgiTvdZr91gxdPhvpBhJkSqdpH",
+  },
+  {
+    id: "ibnu-khaldun",
+    name: "Ibnu Khaldun",
+    region: "Dunia",
+    era: "Klasik",
+    description: "Perintis kajian masyarakat, sejarah, dan ekonomi.",
+    summary:
+      "Ibnu Khaldun dikenal melalui karya Muqaddimah. Ia menjelaskan bahwa perkembangan dan kemunduran suatu peradaban dipengaruhi oleh kondisi sosial, ekonomi, politik, serta kekuatan solidaritas masyarakat.",
+    folderId: "13cBkgQgDqUALD2WQh8ANOVgTqHV1JZ2S",
+    imageId: "1GeKyItHiSn-16GeO7FY5LyDAYh9OaVEO",
+    infographicId: "13oZHu0ZeLAqz5a_SDBPsVPTmM4o6MNyz",
+    audioId: "1309VV5bIbaa3kX6IQzqYQY8h3L9_2oVw",
+  },
+  {
+    id: "muhammad-abduh",
+    name: "Muhammad Abduh",
+    region: "Dunia",
+    era: "Modern",
+    description: "Tokoh pembaruan pemikiran dan pendidikan Islam.",
+    summary:
+      "Muhammad Abduh mendorong pembaruan pendidikan dan penggunaan akal dalam memahami persoalan masyarakat. Menurutnya, kemajuan dapat dicapai melalui pendidikan, keterbukaan berpikir, dan keberanian melakukan perbaikan.",
+    folderId: "1S9bEySLr__U15NnR3GBcdpxSwMkGkynr",
+    imageId: "1KLdUMQGl6xh-8k3PrJwOmvN1wZ6SQUHv",
+    infographicId: "1xhm5QVdsRisoTmZ5wiTxJ0oQanNrGYEa",
+    audioId: "1bFUy9kmU6gcWWPaQe8fy0cLtZe66J67B",
+  },
+  {
+    id: "muhammad-iqbal",
+    name: "Muhammad Iqbal",
+    region: "Dunia",
+    era: "Modern",
+    description: "Filsuf dan penyair yang menekankan kreativitas manusia.",
+    summary:
+      "Muhammad Iqbal mengajak manusia untuk terus mengembangkan potensi, kreativitas, dan kekuatan dirinya. Pemikirannya menolak sikap pasif dan mendorong manusia untuk berani menciptakan perubahan.",
+    folderId: "1pzn_hL9dWoNlS2t_qnjxG1sDLigy6yBB",
+    imageId: "1YkcQtMbrtXsFgWMOnN-cmP9rR3X6Yodt",
+  },
+  {
+    id: "jamaluddin-al-afghani",
+    name: "Jamaluddin al-Afghani",
+    region: "Dunia",
+    era: "Modern",
+    description: "Tokoh persatuan umat dan perlawanan terhadap kolonialisme.",
+    summary:
+      "Jamaluddin al-Afghani mendorong persatuan, kebangkitan intelektual, dan kemandirian masyarakat. Pendidikan dan solidaritas dipandang sebagai kekuatan untuk menghadapi penjajahan serta ketertinggalan.",
+    folderId: "1AE8R-LtI1Zmqy9BasKVgBvuzKh-F5wj1",
+    imageId: "1wOUZLOmhivoqk_lqu1JflvjJLrYjfQLP",
+  },
+  {
+    id: "fazlur-rahman",
+    name: "Fazlur Rahman",
+    region: "Dunia",
+    era: "Kontemporer",
+    description: "Tokoh neo-modernisme dan pemikiran Islam kontekstual.",
+    summary:
+      "Fazlur Rahman menawarkan cara memahami ajaran dengan memperhatikan konteks sejarah dan prinsip moralnya. Nilai utama ajaran kemudian diterapkan secara bertanggung jawab dalam menghadapi persoalan masa kini.",
+    folderId: "1QNGpJ7YnDfcqdAit8cw-jSpUbucp8k3F",
+    imageId: "1C8Sljab4mSdKaLVu1SAKi1t9sA5ux5zW",
+  },
+  {
+    id: "seyyed-hossein-nasr",
+    name: "Seyyed Hossein Nasr",
+    region: "Dunia",
+    era: "Kontemporer",
+    description: "Filsuf yang membahas spiritualitas dan lingkungan.",
+    summary:
+      "Seyyed Hossein Nasr mengkritik ilmu pengetahuan yang terlepas dari nilai dan tanggung jawab. Ia menekankan bahwa alam harus dipandang sebagai amanah, bukan hanya sebagai sumber daya untuk dieksploitasi.",
+    folderId: "1e_EwF_BMBIhT1kLKNQvATBYRjOVREAKY",
+    imageId: "1Iez0azh7UFsBDegmtqhQQ1a0-6SyT2VS",
+    infographicId: "1opkfD71VlwZ5OGkFiuRaODKxVgffYVS_",
+    audioId: "17TFA9tV1_jcVLfoFeeVPeAwyobZhIVOI",
+  },
+  {
+    id: "ismail-raji-al-faruqi",
+    name: "Ismail Raji al-Faruqi",
+    region: "Dunia",
+    era: "Kontemporer",
+    description: "Tokoh integrasi ilmu pengetahuan dan nilai.",
+    summary:
+      "Ismail Raji al-Faruqi menekankan bahwa perkembangan ilmu dan teknologi harus diarahkan untuk menghasilkan kemaslahatan. Inovasi perlu dinilai dari manfaat, dampak sosial, etika, dan keberlanjutannya.",
+    folderId: "1QdtRq_t8yxomAc9JrXAz5MyJ04PfIzsa",
+    imageId: "1DrOr936w-qm-2qHa8nKE2UJd3YTvT91C",
+    infographicId: "1F2PKzqOr48ANTmfVZbtdIoA4DYyF3Anu",
+    audioId: "1NZ0NnVRTSp8gELhX-tubnYwrYBktetTe",
+  },
+  {
+    id: "hamzah-fansuri",
+    name: "Hamzah Fansuri",
+    region: "Nusantara",
+    era: "Klasik",
+    description: "Ulama dan sastrawan sufi dalam tradisi Melayu.",
+    summary:
+      "Hamzah Fansuri menyampaikan pemikiran spiritual melalui syair dan karya sastra Melayu. Karyanya menunjukkan bahwa bahasa dan seni dapat menjadi media pendidikan serta penyebaran pengetahuan.",
+    folderId: "14szcJ-IBsmZdwxoyC3ALcZzc0hWDhe97",
+    imageId: "1JUZosnPpkZ5IbswC1V0IXo9ebHyYOM9L",
+    infographicId: "1SoV2uunQh_GZzdxnnjwwOnn0qd38LDKa",
+    audioId: "13qbOrZSfcHoBQmgJx2-V0sIfe1EwA4tv",
+  },
+  {
+    id: "nuruddin-ar-raniri",
+    name: "Nuruddin ar-Raniri",
+    region: "Nusantara",
+    era: "Klasik",
+    description: "Ulama Kesultanan Aceh dan penulis Bustan al-Salatin.",
+    summary:
+      "Nuruddin ar-Raniri berperan dalam perkembangan tradisi keilmuan Aceh. Karyanya membahas agama, sejarah, pemerintahan, dan etika sehingga menjadi bagian penting dari literasi Islam Nusantara.",
+    folderId: "1Bd4Nef_S8Yff0e9IwtQiFzYERQLEjIaU",
+    imageId: "1qsE3vMxZWd08Dki6f8x6b8sZA5qiIiu3",
+  },
+  {
+    id: "abdurrauf-as-singkili",
+    name: "Syekh Abdurrauf as-Singkili",
+    region: "Nusantara",
+    era: "Klasik",
+    description: "Mufti Aceh dan tokoh penerjemahan Al-Qur'an.",
+    summary:
+      "Syekh Abdurrauf as-Singkili dikenal melalui pendidikan, dakwah, dan karya tafsir. Kontribusinya memperluas akses masyarakat Melayu terhadap ilmu keislaman.",
+    folderId: "1qpNM5rHeM8i77lVCYMHiH9e3qzfKGH2q",
+    imageId: "1h6j6p-FY4sjCi6Q8CNPUv2B6pjox_ljX",
+    infographicId: "1IjXVa12Mf3g407rNYlZZmr0wuFerjZSb",
+    audioId: "1_SSHQrdDwakwY4rH94xkm4MY3R3_nOJh",
+  },
+  {
+    id: "nawawi-al-bantani",
+    name: "Syekh Nawawi al-Bantani",
+    region: "Nusantara",
+    era: "Modern",
+    description: "Ulama asal Banten yang berpengaruh di dunia pesantren.",
+    summary:
+      "Syekh Nawawi al-Bantani menghasilkan banyak karya yang dipelajari di berbagai pesantren. Ketekunan menulis dan mengajar membuat pemikirannya berpengaruh di Nusantara dan dunia Islam.",
+    folderId: "1zk6cgfZzU0ISr7BRU0LT_3bCcCbUC7AM",
+    imageId: "1xbaj_nib1iTfng46ElHbxr40pT-G48gk",
+    infographicId: "1_8CyAX4-4VfzRxPC7x1qbx0grMdopqdC",
+    audioId: "1d1UPWoCAG-sHDO8_lihuqMb16-wmW7r1",
+  },
+  {
+    id: "ahmad-dahlan",
+    name: "KH Ahmad Dahlan",
+    region: "Nusantara",
+    era: "Modern",
+    description: "Pendiri Muhammadiyah dan pelopor pembaruan pendidikan.",
+    summary:
+      "KH Ahmad Dahlan menghubungkan pendidikan agama dengan pelayanan sosial. Menurutnya, ilmu harus diwujudkan melalui tindakan nyata yang membantu masyarakat dan lingkungan sekitar.",
+    folderId: "1Su_fy_32F9UhD3CA9MnRugjhwJQOtb9Q",
+    imageId: "1a04pL4EicE8QUgkZmhr54byHku1c5aSL",
+    infographicId: "10pha4JW0ytoB21piT5e9xfA1K3fSvyLJ",
+    audioId: "1PqjLGZHj-FtIUoj7iES5puN9etxjeVev",
+  },
+  {
+    id: "hasyim-asyari",
+    name: "KH Hasyim Asy'ari",
+    region: "Nusantara",
+    era: "Modern",
+    description: "Pendiri Nahdlatul Ulama dan tokoh pendidikan pesantren.",
+    summary:
+      "KH Hasyim Asy'ari menekankan adab, kejujuran, kesungguhan, dan tanggung jawab dalam menuntut ilmu. Nilai tersebut tetap relevan dalam penggunaan teknologi dan kecerdasan buatan.",
+    folderId: "1-NCmCa7rFjXTdipmWIwrYsg-KtPe52Eg",
+    imageId: "1s1UPjqOOIQb6WE6JSri8dOjbE9uzPyso",
+    infographicId: "1Djn7zAwestP9BBJt5xNF9CxfdtDbQBWp",
+    audioId: "1YFHgYyZ7gUjiXj9Xa9lZMtxP7sIuuW_A",
+  },
+  {
+    id: "harun-nasution",
+    name: "Harun Nasution",
+    region: "Nusantara",
+    era: "Kontemporer",
+    description: "Tokoh pemikiran rasional dan pendidikan tinggi Islam.",
+    summary:
+      "Harun Nasution mendorong tradisi akademik yang terbuka, rasional, dan dialogis. Ia mengajak mahasiswa membaca berbagai pandangan dan menyusun argumen berdasarkan alasan yang dapat dipertanggungjawabkan.",
+    folderId: "1LYPY1X2KwGVLjPLANQ4iFMori2PoZP9d",
+    imageId: "1SuY2-42DNNFFiiwakzGo_xRDVMvHNtpX",
+  },
+  {
+    id: "nurcholish-madjid",
+    name: "Nurcholish Madjid",
+    region: "Nusantara",
+    era: "Kontemporer",
+    description: "Cendekiawan pembaru dalam keislaman dan kebangsaan.",
+    summary:
+      "Nurcholish Madjid mengembangkan pemikiran Islam yang terbuka, inklusif, dan selaras dengan kehidupan kebangsaan. Ia menekankan pentingnya dialog serta penghargaan terhadap perbedaan.",
+    folderId: "10GJl2x-RqZ0ihixo47vWE8uVZgh8RfAk",
+    imageId: "1aybefzN1aLs5Gs7RuCQPqEtgFnoLNFys",
+    infographicId: "15UPnn8yLdzg9dJNJGXqq4Q_djrC-mBbp",
+    audioId: "1ylUDSZeGHe7bbk48N77E09B8-CQjpVyE",
+  },
+  {
+    id: "kuntowijoyo",
+    name: "Kuntowijoyo",
+    region: "Nusantara",
+    era: "Kontemporer",
+    description: "Sejarawan dan pencetus Ilmu Sosial Profetik.",
+    summary:
+      "Kuntowijoyo menjelaskan bahwa ilmu sosial bukan hanya digunakan untuk memahami masyarakat, tetapi juga diarahkan pada nilai kemanusiaan, pembebasan, dan perubahan sosial.",
+    folderId: "1OvGM5DkRRdsoEb9ZBB9V1iJphmwrjZEg",
+    imageId: "1Qj7wEi8kBe4vOb4SClxloTeeK21_MUll",
+  },
+];
+
+const driveThumbnail = (fileId) =>
+  `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+
+const drivePreview = (fileId) =>
+  `https://drive.google.com/file/d/${fileId}/preview`;
+
+const driveFolderLink = (folderId) =>
+  `https://drive.google.com/drive/folders/${folderId}`;
+
+const MateriScholarView = () => {
+  const [searchMateri, setSearchMateri] = useState("");
+  const [filterRegion, setFilterRegion] = useState("Semua");
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+
+  const filteredMaterials = DRIVE_MATERIALS.filter((item) => {
+    const matchesRegion =
+      filterRegion === "Semua" || item.region === filterRegion;
+
+    const searchText = `
+      ${item.name}
+      ${item.region}
+      ${item.era}
+      ${item.description}
+      ${item.summary}
+    `.toLowerCase();
+
+    return (
+      matchesRegion &&
+      searchText.includes(searchMateri.toLowerCase())
+    );
+  });
+
+  return (
+    <div className="space-y-6">
+      <section className="bg-gradient-to-r from-[#0E2A47] to-[#1a4a7d] rounded-3xl p-8 text-white shadow-lg">
+        <Badge color="bg-[#C99700] text-white mb-4">
+          <BookOpen className="w-3 h-3 mr-1" />
+          Modul Scholar
+        </Badge>
+
+        <h2 className="text-3xl font-bold mb-3">
+          Materi Cendekiawan Muslim
+        </h2>
+
+        <p className="text-blue-100 max-w-3xl leading-relaxed">
+          Pelajari biografi, gagasan, infografik, dan narasi audio
+          cendekiawan Muslim dunia dan Nusantara.
+        </p>
+
+        <div className="grid grid-cols-3 gap-3 mt-6 max-w-lg">
+          <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
+            <p className="text-2xl font-bold text-amber-300">
+              {DRIVE_MATERIALS.length}
+            </p>
+            <p className="text-xs text-blue-100">Total materi</p>
+          </div>
+
+          <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
+            <p className="text-2xl font-bold text-amber-300">
+              {
+                DRIVE_MATERIALS.filter(
+                  (item) => item.region === "Dunia"
+                ).length
+              }
+            </p>
+            <p className="text-xs text-blue-100">Tokoh dunia</p>
+          </div>
+
+          <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
+            <p className="text-2xl font-bold text-amber-300">
+              {
+                DRIVE_MATERIALS.filter(
+                  (item) => item.region === "Nusantara"
+                ).length
+              }
+            </p>
+            <p className="text-xs text-blue-100">Tokoh Nusantara</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+        <div className="flex flex-col md:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+
+            <input
+              type="text"
+              value={searchMateri}
+              onChange={(event) =>
+                setSearchMateri(event.target.value)
+              }
+              placeholder="Cari tokoh, periode, atau topik..."
+              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-[#C99700]"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            {["Semua", "Dunia", "Nusantara"].map((region) => (
+              <button
+                key={region}
+                onClick={() => setFilterRegion(region)}
+                className={`px-4 py-3 rounded-xl font-semibold transition-colors ${
+                  filterRegion === region
+                    ? "bg-[#0E2A47] text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {region}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-bold text-[#0E2A47]">
+            Daftar Materi
+          </h3>
+          <p className="text-sm text-slate-500">
+            Klik salah satu kartu untuk membuka materi.
+          </p>
+        </div>
+
+        <Badge color="bg-amber-100 text-amber-700">
+          {filteredMaterials.length} Materi
+        </Badge>
+      </div>
+
+      {filteredMaterials.length === 0 ? (
+        <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
+          <Search className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+          <h3 className="font-bold text-slate-700">
+            Materi tidak ditemukan
+          </h3>
+          <p className="text-slate-500 text-sm mt-1">
+            Coba gunakan kata kunci lainnya.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredMaterials.map((item) => (
+            <Card
+              key={item.id}
+              className="group flex flex-col"
+            >
+              <div className="h-52 relative overflow-hidden bg-slate-100">
+                <img
+                  src={driveThumbnail(item.imageId)}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(event) => {
+                    event.currentTarget.style.display = "none";
+                    event.currentTarget.nextElementSibling.style.display =
+                      "flex";
+                  }}
+                />
+
+                <div className="hidden absolute inset-0 bg-gradient-to-br from-[#0E2A47] to-[#1a4a7d] text-white items-center justify-center text-4xl font-bold">
+                  {item.name
+                    .split(" ")
+                    .slice(0, 2)
+                    .map((word) => word[0])
+                    .join("")}
+                </div>
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                <Badge
+                  color="bg-[#0E2A47] text-white"
+                  className="absolute top-4 left-4"
+                >
+                  {item.region === "Dunia" ? (
+                    <Globe className="w-3 h-3 mr-1" />
+                  ) : (
+                    <MapPin className="w-3 h-3 mr-1" />
+                  )}
+                  {item.region}
+                </Badge>
+
+                {item.audioId && (
+                  <Badge
+                    color="bg-amber-400 text-amber-950"
+                    className="absolute top-4 right-4"
+                  >
+                    <Volume2 className="w-3 h-3 mr-1" />
+                    Audio
+                  </Badge>
+                )}
+
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <p className="text-xs text-amber-300 font-semibold mb-1">
+                    Periode {item.era}
+                  </p>
+                  <h3 className="text-xl font-bold">
+                    {item.name}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="p-5 flex flex-col flex-1">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  {item.description}
+                </p>
+
+                <div className="flex gap-2 mt-5 pt-4 border-t border-slate-100">
+                  <Button
+                    variant="primary"
+                    className="flex-1"
+                    onClick={() =>
+                      setSelectedMaterial(item)
+                    }
+                  >
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Buka Materi
+                  </Button>
+
+                  <a
+                    href={driveFolderLink(item.folderId)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-3 rounded-xl bg-slate-100 text-[#0E2A47] font-semibold hover:bg-slate-200"
+                  >
+                    Drive
+                  </a>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {selectedMaterial && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setSelectedMaterial(null);
+            }
+          }}
+        >
+          <div className="bg-white rounded-3xl w-full max-w-5xl max-h-[92vh] overflow-y-auto shadow-2xl">
+            <div className="relative h-64 md:h-80 bg-[#0E2A47] overflow-hidden rounded-t-3xl">
+              <img
+                src={driveThumbnail(selectedMaterial.imageId)}
+                alt={selectedMaterial.name}
+                className="absolute inset-0 w-full h-full object-cover opacity-50"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
+
+              <button
+                onClick={() => setSelectedMaterial(null)}
+                className="absolute top-5 right-5 bg-black/30 text-white rounded-full p-2 hover:bg-black/50 z-20"
+              >
+                <XCircle className="w-7 h-7" />
+              </button>
+
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
+                <Badge color="bg-[#C99700] text-white mb-3">
+                  {selectedMaterial.region} • Periode{" "}
+                  {selectedMaterial.era}
+                </Badge>
+
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                  {selectedMaterial.name}
+                </h2>
+
+                <p className="text-blue-100 max-w-2xl">
+                  {selectedMaterial.description}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 md:p-8">
+              <div className="lg:col-span-3 space-y-5">
+                <section className="border border-slate-200 rounded-2xl p-5">
+                  <h3 className="font-bold text-xl text-[#0E2A47] mb-3 flex items-center">
+                    <FileText className="w-5 h-5 mr-2 text-[#C99700]" />
+                    Ringkasan Materi
+                  </h3>
+
+                  <p className="text-slate-600 leading-8">
+                    {selectedMaterial.summary}
+                  </p>
+                </section>
+
+                <section className="border border-slate-200 rounded-2xl p-5">
+                  <h3 className="font-bold text-xl text-[#0E2A47] mb-4">
+                    Tujuan Pembelajaran
+                  </h3>
+
+                  <div className="space-y-3">
+                    {[
+                      `Mengenal biografi dan perjalanan intelektual ${selectedMaterial.name}.`,
+                      `Memahami gagasan dan kontribusi utama ${selectedMaterial.name}.`,
+                      "Menghubungkan pemikirannya dengan kehidupan dan persoalan masa kini.",
+                    ].map((objective, index) => (
+                      <div
+                        key={objective}
+                        className="flex items-start gap-3"
+                      >
+                        <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                          {index + 1}
+                        </div>
+
+                        <p className="text-slate-600 pt-1">
+                          {objective}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+
+              <div className="lg:col-span-2 space-y-5">
+                <section className="border border-slate-200 rounded-2xl p-5">
+                  <h3 className="font-bold text-lg text-[#0E2A47] mb-3">
+                    Media Visual
+                  </h3>
+
+                  <div className="bg-slate-100 rounded-xl overflow-hidden">
+                    <img
+                      src={driveThumbnail(
+                        selectedMaterial.infographicId ||
+                          selectedMaterial.imageId
+                      )}
+                      alt={`Media ${selectedMaterial.name}`}
+                      className="w-full max-h-[430px] object-contain"
+                    />
+                  </div>
+                </section>
+
+                {selectedMaterial.audioId && (
+                  <section className="border border-slate-200 rounded-2xl p-5">
+                    <h3 className="font-bold text-lg text-[#0E2A47] mb-3 flex items-center">
+                      <Volume2 className="w-5 h-5 mr-2 text-[#C99700]" />
+                      Narasi Audio
+                    </h3>
+
+                    <iframe
+                      src={drivePreview(
+                        selectedMaterial.audioId
+                      )}
+                      title={`Audio ${selectedMaterial.name}`}
+                      className="w-full h-24 border-0 rounded-xl bg-slate-100"
+                      allow="autoplay"
+                    />
+                  </section>
+                )}
+
+                <a
+                  href={driveFolderLink(
+                    selectedMaterial.folderId
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#0E2A47] text-white rounded-xl py-3 px-4 font-semibold flex items-center justify-center hover:bg-[#163a5f]"
+                >
+                  Buka Folder Google Drive
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+  
 const VRMuseumView = () => {
   const [activeRoom, setActiveRoom] = useState(null);
  
@@ -1489,20 +2087,45 @@ function App() {
     );
   }
  
-  const renderView = () => {
-    switch (activeView) {
-      case 'dashboard': return <DashboardView user={user} navigate={setActiveView} />;
-      case 'learning': return <LearningStudioView />;
-      case 'vr': return <VRMuseumView />;
-      case 'ai': return <AICompanionView />;
-      case 'board': return <BoardGameProgressView user={user} setView={setActiveView} setActiveChallenge={setActiveChallenge} />;
-      case 'qr': return <QRScannerView />;
-      case 'leaderboard': return <LeaderboardView />;
-      case 'profile': return <ProfileView user={user} />;
-      default: return <DashboardView user={user} navigate={setActiveView} />;
-    }
-  };
- 
+  coconst renderView = () => {
+  switch (activeView) {
+    case 'dashboard':
+      return <DashboardView user={user} navigate={setActiveView} />;
+
+    case 'learning':
+      return <LearningStudioView />;
+
+    case 'materi':
+      return <MateriScholarView />;
+
+    case 'vr':
+      return <VRMuseumView />;
+
+    case 'ai':
+      return <AICompanionView />;
+
+    case 'board':
+      return (
+        <BoardGameProgressView
+          user={user}
+          setView={setActiveView}
+          setActiveChallenge={setActiveChallenge}
+        />
+      );
+
+    case 'qr':
+      return <QRScannerView />;
+
+    case 'leaderboard':
+      return <LeaderboardView />;
+
+    case 'profile':
+      return <ProfileView user={user} />;
+
+    default:
+      return <DashboardView user={user} navigate={setActiveView} />;
+  }
+}; 
   return (
     <>
       <Layout activeTab={activeView} setActiveTab={setActiveView} user={user} onLogout={handleLogout}>
