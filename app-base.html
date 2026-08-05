@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AVERRA - Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif</title>
+<link rel="icon" href="data:,">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap');
+  body { font-family: 'Inter', sans-serif; margin:0; }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+  .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+ 
+<script type="text/babel" data-type="module" data-presets="react">
+import React, { useState, useEffect, useRef } from "https://esm.sh/react@18.2.0";
+import ReactDOM from "https://esm.sh/react-dom@18.2.0/client";
+import {
+  BookOpen, Compass, Cpu, GraduationCap, Home, Search,
+  Settings, User, Map, MessageSquare, PlayCircle, Star,
+  Trophy, Video, Zap, ChevronRight, Lock, Unlock, Shield,
+  LogOut, Camera, Send, Mic, CheckCircle2, XCircle, BarChart,
+  Crown, ScanLine, Clock, FileText, ArrowRight, Globe, MapPin, Square, Volume2
+} from "https://esm.sh/lucide-react@0.383.0?deps=react@18.2.0&bundle";
+ 
+// --- MOCK DATA ---
+const MOCK_USER = {
+  id: 1,
+  name: "Muhamad Aprizal",
+  email: "Aprizal@gmail.com",
+  institution: "UIN Syarif Hidayatullah",
+  class: "4E",
+  group: "Al-Khawarizmi Squad",
+  level: 5,
+  xp: 2450,
+  nextLevelXp: 3000,
+  currentPhase: 1,
+  streak: 12,
+  badges: ["Scholar Explorer", "Early Bird", "Perfect Quiz"],
+  avatar: "https://i.pravatar.cc/150?img=11"
+};
+ 
+const PHASES = [
+  { id: 1, name: "Scholar", icon: BookOpen, color: "bg-blue-500" },
+  { id: 2, name: "Technology", icon: Cpu, color: "bg-emerald-500" },
+  { id: 3, name: "Innovation", icon: Zap, color: "bg-purple-500" },
+  { id: 4, name: "Master", icon: Crown, color: "bg-amber-500" }
+];
+ 
+const LEADERBOARD_DATA = [
+  { id: 1, name: "Siti Aminah", group: "Ibn Sina Team", xp: 3200, level: 7, avatar: "https://i.pravatar.cc/150?img=5" },
+  { id: 2, name: "Budi Santoso", group: "Al-Biruni", xp: 2800, level: 6, avatar: "https://i.pravatar.cc/150?img=8" },
+  { id: 3, name: "Muhammad Aprizal", group: "Al-Khawarizmi Squad", xp: 2450, level: 5, avatar: "https://i.pravatar.cc/150?img=11" },
+  { id: 4, name: "Dina Fitri", group: "Ibn Haytham", xp: 2100, level: 4, avatar: "https://i.pravatar.cc/150?img=9" },
+  { id: 5, name: "Faisal Rahman", group: "Ibn Sina Team", xp: 1950, level: 4, avatar: "https://i.pravatar.cc/150?img=12" },
+];
+ 
+const VR_ROOMS = [
+  { id: 1, title: "Mathematics Hall", desc: "Explore the birth of Algebra.", img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=400" },
+  { id: 2, title: "Astronomy Hall", desc: "Star maps and astrolabes.", img: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&q=80&w=400" },
+  { id: 3, title: "Medical Hall", desc: "The Canon of Medicine.", img: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=400" },
+  { id: 4, title: "Engineering Hall", desc: "Automata and mechanics.", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400" },
+  { id: 5, title: "Islamic Civilization Hall", desc: "The golden age timeline.", img: "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=400" },
+  { id: 6, title: "Nusantara Scholars Hall", desc: "Legacy of Indonesian Ulama.", img: "https://images.unsplash.com/photo-1596404987216-53d9e262c5d1?auto=format&fit=crop&q=80&w=400" },
+];
+ 
+const SCHOLARS_CURRICULUM = [
+  {
+    era: "Klasik (Abad 8 - 15 M)",
+    world: [
+      { id: "c-w-1", name: "Ibnu Sina", desc: "Bapak Kedokteran Modern, penulis The Canon of Medicine.", time: "15:30", completed: true, img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Avicenna_Portrait.jpg" },
+      { id: "c-w-2", name: "Al-Ghazali", desc: "Hujjatul Islam, tokoh pemikir filsafat dan tasawuf.", time: "18:45", active: true, img: "https://upload.wikimedia.org/wikipedia/commons/6/65/Algazel.jpg" },
+      { id: "c-w-3", name: "Ibnu Khaldun", desc: "Bapak Sosiologi, Sejarah, dan Ekonomi Islam.", time: "14:20", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Ibn_Khaldun.jpg" },
+    ],
+    nusantara: [
+      { id: "c-n-1", name: "Hamzah Fansuri", desc: "Ulama dan sastrawan sufi perintis tradisi tulis Melayu.", time: "12:15", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Lukisan_rekaan_wajah_Syekh_Hamzah_Fansuri_karya_M_Yasir.jpg" },
+      { id: "c-n-2", name: "Nuruddin ar-Raniri", desc: "Ulama besar Kesultanan Aceh, penulis Bustan al-Salatin.", time: "16:00", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Nuruddin_ar-Raniry.png" },
+      { id: "c-n-3", name: "Syekh Abdurrauf as-Singkili", desc: "Mufti Aceh dan penerjemah Al-Qur'an pertama di Nusantara.", time: "13:10", completed: false },
+    ]
+  },
+  {
+    era: "Modern (Abad 19 - Pertengahan 20 M)",
+    world: [
+      { id: "m-w-1", name: "Muhammad Abduh", desc: "Tokoh pembaharu pemikiran Islam dari Mesir.", time: "11:20", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Muhammad_Abduh.jpg" },
+      { id: "m-w-2", name: "Muhammad Iqbal", desc: "Filsuf, penyair, dan pemikir politik Islam dari Pakistan.", time: "14:30", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/5/56/Allama_Iqbal.jpg" },
+      { id: "m-w-3", name: "Jamaluddin al-Afghani", desc: "Pencetus gagasan Pan-Islamisme.", time: "10:45", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/3/32/Jamal_al-Din_al-Afghani.jpg" },
+    ],
+    nusantara: [
+      { id: "m-n-1", name: "Syekh Nawawi al-Bantani", desc: "Ulama asal Banten, Imam Masjidil Haram.", time: "17:15", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Syekh_Nawawi_al-Bantani.jpg" },
+      { id: "m-n-2", name: "KH. Ahmad Dahlan", desc: "Pendiri Muhammadiyah, pahlawan nasional.", time: "15:40", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/2/21/Ahmad_Dahlan.jpg" },
+      { id: "m-n-3", name: "KH. Hasyim Asy'ari", desc: "Pendiri Nahdlatul Ulama (NU) dan pahlawan nasional.", time: "16:25", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/8/84/Hasyim_Asyari.jpg" },
+    ]
+  },
+  {
+    era: "Kontemporer (Akhir Abad 20 - Sekarang)",
+    world: [
+      { id: "k-w-1", name: "Fazlur Rahman", desc: "Pemikir Islam asal Pakistan, tokoh neo-modernisme.", time: "13:50", completed: false },
+      { id: "k-w-2", name: "Seyyed Hossein Nasr", desc: "Filsuf dan profesor studi Islam dari Iran/AS.", time: "12:10", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/0/03/Seyyed_Hossein_Nasr.jpg" },
+      { id: "k-w-3", name: "Isma'il Raji al-Faruqi", desc: "Tokoh gagasan Islamisasi Ilmu Pengetahuan.", time: "14:05", completed: false, img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ismail_al-Faruqi_in_Kenosha_News_May_28_1986_p._3.jpg" },
+    ],
+    nusantara: [
+      { id: "k-n-1", name: "Harun Nasution", desc: "Tokoh pembaharu pemikiran Islam Indonesia moderen.", time: "11:30", completed: false },
+      { id: "k-n-2", name: "Nurcholish Madjid (Cak Nur)", desc: "Cendekiawan muslim pembaharu di Indonesia.", time: "15:20", completed: false, img: "https://upload.wikimedia.org/wikipedia/commons/3/39/Nurcholish_Madjid.jpg" },
+      { id: "k-n-3", name: "Kuntowijoyo", desc: "Sejarawan, budayawan, pencetus Ilmu Sosial Profetik.", time: "14:45", completed: false },
+    ]
+  }
+];
+ 
+// --- REUSABLE UI COMPONENTS ---
+const Card = ({ children, className = "", onClick }) => (
+  <div
+    onClick={onClick}
+    className={`bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300 ${onClick ? 'cursor-pointer hover:shadow-md hover:-translate-y-1' : ''} ${className}`}
+  >
+    {children}
+  </div>
+);
+ 
+const Button = ({ children, variant = 'primary', className = "", onClick, disabled }) => {
+  const baseStyle = "font-semibold rounded-xl transition-all duration-200 flex items-center justify-center active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed";
+  const variants = {
+    primary: "bg-[#C99700] text-white hover:bg-[#b08400] shadow-[0_4px_0_#967100] hover:shadow-[0_2px_0_#967100] hover:translate-y-[2px] px-6 py-3",
+    secondary: "bg-[#0E2A47] text-white hover:bg-[#163a5f] shadow-[0_4px_0_#091b2e] hover:shadow-[0_2px_0_#091b2e] hover:translate-y-[2px] px-6 py-3",
+    outline: "bg-white text-[#0E2A47] border-2 border-[#0E2A47] hover:bg-slate-50 px-6 py-3",
+    ghost: "bg-transparent text-slate-600 hover:bg-slate-100 px-4 py-2",
+    success: "bg-emerald-500 text-white hover:bg-emerald-600 shadow-[0_4px_0_#047857] hover:shadow-[0_2px_0_#047857] hover:translate-y-[2px] px-6 py-3",
+  };
+  return (
+    <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant]} ${className}`}>
+      {children}
+    </button>
+  );
+};
+ 
+const ProgressBar = ({ progress, color = "bg-[#C99700]", height = "h-3" }) => (
+  <div className={`w-full bg-slate-200 rounded-full ${height} overflow-hidden`}>
+    <div
+      className={`${height} ${color} rounded-full transition-all duration-1000 ease-out`}
+      style={{ width: `${progress}%` }}
+    />
+  </div>
+);
+ 
+const Badge = ({ children, icon: Icon, color = "bg-blue-100 text-blue-700", className="" }) => (
+  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color} ${className}`}>
+    {Icon && <Icon className="w-3 h-3 mr-1" />}
+    {children}
+  </span>
+);
+ 
+const getInitials = (name) => name
+  .replace(/^(KH\.|Syekh|Ibnu|Al-|As-|Ar-)\s*/i, '')
+  .split(' ')
+  .filter(Boolean)
+  .slice(0, 2)
+  .map(w => w[0])
+  .join('')
+  .toUpperCase();
+ 
+const ScholarAvatar = ({ scholar, size = "w-14 h-14", textSize = "text-sm" }) => {
+  const [errored, setErrored] = useState(false);
+  if (scholar.img && !errored) {
+    return (
+      <img
+        src={scholar.img}
+        alt={scholar.name}
+        onError={() => setErrored(true)}
+        className={`${size} rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0`}
+      />
+    );
+  }
+  return (
+    <div className={`${size} rounded-full bg-gradient-to-br from-[#0E2A47] to-[#1a4a7d] text-white flex items-center justify-center font-bold ${textSize} flex-shrink-0 border-2 border-white shadow-sm`}>
+      {getInitials(scholar.name)}
+    </div>
+  );
+};
+ 
+// --- LAYOUT COMPONENTS ---
+const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
+  <div
+    onClick={onClick}
+    className={`flex items-center space-x-3 px-4 py-3 rounded-xl cursor-pointer transition-colors ${
+      active ? 'bg-[#C99700] text-white' : 'text-slate-300 hover:bg-[#163a5f] hover:text-white'
+    }`}
+  >
+    <Icon className="w-5 h-5" />
+    <span className="font-medium hidden md:block">{label}</span>
+  </div>
+);
+ 
+const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
+ const menuItems = [
+    { id: 'dashboard', icon: Home, label: 'Dashboard' },
+    { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
+    { id: 'materi', icon: BookOpen, label: 'Materi Scholar' },
+    { id: 'vr', icon: Video, label: 'VR Museum' },
+    { id: 'ai', icon: MessageSquare, label: 'AI Company' },
+    { id: 'board', icon: Map, label: 'Board Game' },
+    { id: 'qr', icon: ScanLine, label: 'QR Scanner' },
+    { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
+    { id: 'profile', icon: User, label: 'Profile' },
+  ];
+ 
+  return (
+    <div className="flex h-screen bg-[#F8F9FA] font-sans">
+      <aside className="fixed bottom-0 w-full md:relative md:w-64 bg-[#0E2A47] text-white z-50 md:flex flex-col border-t md:border-r border-[#163a5f]">
+        <div className="hidden md:flex items-center space-x-3 p-6">
+          <div className="w-10 h-10 bg-[#C99700] rounded-xl flex items-center justify-center">
+            <Compass className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-2xl font-bold tracking-wider">AVERRA</span>
+        </div>
+ 
+        <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto flex-1 p-2 md:p-4 space-x-2 md:space-x-0 md:space-y-2 no-scrollbar">
+          {menuItems.map(item => (
+            <SidebarItem
+              key={item.id}
+              icon={item.icon}
+              label={item.label}
+              active={activeTab === item.id}
+              onClick={() => setActiveTab(item.id)}
+            />
+          ))}
+        </div>
+ 
+        <div className="hidden md:block p-4 mt-auto border-t border-[#163a5f]">
+          <div className="flex items-center space-x-3 mb-4">
+            <img src={user.avatar} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-[#C99700]" />
+            <div>
+              <p className="font-semibold text-sm">{user.name}</p>
+              <p className="text-xs text-slate-400">Lvl {user.level} Scholar</p>
+            </div>
+          </div>
+          <Button variant="ghost" onClick={onLogout} className="w-full text-slate-300 hover:text-white justify-start px-2">
+            <LogOut className="w-4 h-4 mr-2" /> Logout
+          </Button>
+        </div>
+      </aside>
+ 
+      <main className="flex-1 flex flex-col h-screen overflow-hidden pb-16 md:pb-0">
+        <header className="bg-white px-6 py-4 border-b border-slate-200 flex justify-between items-center sticky top-0 z-40">
+          <h1 className="text-xl font-bold text-[#0E2A47] capitalize">
+            {activeTab.replace('-', ' ')}
+          </h1>
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">
+              <Star className="w-4 h-4 text-amber-500 mr-2" />
+              <span className="font-bold text-amber-700">{user.xp} XP</span>
+            </div>
+            <div className="flex items-center bg-blue-50 px-3 py-1.5 rounded-full border border-blue-200">
+              <Zap className="w-4 h-4 text-blue-500 mr-2" />
+              <span className="font-bold text-blue-700">{user.streak} Days</span>
+            </div>
+          </div>
+        </header>
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#F8F9FA]">
+          <div className="max-w-6xl mx-auto">
+            {children}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+ 
+// --- VIEWS ---
+const AuthView = ({ onLogin }) => (
+  <div className="min-h-screen bg-[#0E2A47] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
+ 
+    <div className="max-w-md w-full glass-panel rounded-3xl p-8 relative z-10 bg-white/10 text-white shadow-2xl">
+      <div className="text-center mb-8">
+        <div className="w-16 h-16 bg-[#C99700] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <Compass className="w-10 h-10 text-white" />
+        </div>
+        <h1 className="text-3xl font-bold mb-2">AVERRA</h1>
+        <p className="text-blue-200">Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif</p>
+      </div>
+ 
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1 text-blue-100">Email Address</label>
+          <input type="email" placeholder="student@averra.edu" className="w-full bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-[#C99700]" defaultValue="ahmad@averra.edu" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-blue-100">Password</label>
+          <input type="password" placeholder="••••••••" className="w-full bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-[#C99700]" defaultValue="password123" />
+        </div>
+ 
+        <Button variant="primary" className="w-full mt-6 text-lg" onClick={onLogin}>
+          Start Learning
+        </Button>
+ 
+        <div className="text-center mt-4">
+          <a href="#" className="text-sm text-blue-200 hover:text-white transition-colors">Forgot Password?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+ 
+const DashboardView = ({ user, navigate }) => {
+  return (
+    <div className="space-y-8">
+      <section className="bg-gradient-to-r from-[#0E2A47] to-[#1a4a7d] rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+        <div className="relative z-10 md:w-2/3">
+          <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}! 👋</h2>
+          <p className="text-blue-100 mb-6 text-lg">You are on a {user.streak}-day learning streak. Keep it up!</p>
+          <div className="flex space-x-4">
+            <Button variant="primary" onClick={() => navigate('board')}>Continue Journey</Button>
+            <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20" onClick={() => navigate('learning')}>Resume Video</Button>
+          </div>
+        </div>
+        <div className="absolute right-[-10%] bottom-[-20%] opacity-20 pointer-events-none">
+           <Compass className="w-96 h-96" />
+        </div>
+      </section>
+ 
+      <section>
+        <h3 className="text-xl font-bold text-slate-800 mb-4">Your Journey Map</h3>
+        <div className="relative">
+          <div className="absolute top-1/2 left-0 w-full h-2 bg-slate-200 -translate-y-1/2 rounded-full hidden md:block"></div>
+          <div className="absolute top-1/2 left-0 h-2 bg-[#C99700] -translate-y-1/2 rounded-full hidden md:block transition-all duration-1000" style={{ width: `${(user.currentPhase - 1) * 33}%` }}></div>
+ 
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
+            {PHASES.map((phase, idx) => {
+              const isCompleted = user.currentPhase > phase.id;
+              const isCurrent = user.currentPhase === phase.id;
+              const isLocked = user.currentPhase < phase.id;
+ 
+              return (
+                <Card key={phase.id} className={`p-6 text-center ${isLocked ? 'opacity-60 bg-slate-50' : 'bg-white'} ${isCurrent ? 'ring-4 ring-[#C99700] ring-opacity-50 scale-105 transform' : ''}`}>
+                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${isLocked ? 'bg-slate-200 text-slate-400' : phase.color + ' text-white shadow-lg'}`}>
+                    {isLocked ? <Lock className="w-8 h-8" /> : <phase.icon className="w-8 h-8" />}
+                  </div>
+                  <h4 className="font-bold text-lg text-slate-800">{phase.name}</h4>
+                  <p className="text-sm text-slate-500 mb-4">Phase {phase.id}</p>
+ 
+                  {isCompleted && <Badge color="bg-green-100 text-green-700"><CheckCircle2 className="w-3 h-3 mr-1"/> Completed</Badge>}
+                  {isCurrent && <Badge color="bg-amber-100 text-amber-700">In Progress</Badge>}
+                  {isLocked && <Badge color="bg-slate-100 text-slate-500">Locked</Badge>}
+                </Card>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+ 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="p-6 md:col-span-1 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-slate-800 flex items-center"><Star className="w-5 h-5 text-amber-500 mr-2"/> Experience</h3>
+            <span className="text-sm font-bold text-amber-600">Lvl {user.level}</span>
+          </div>
+          <div className="text-3xl font-bold text-slate-800 mb-2">{user.xp} <span className="text-base font-normal text-slate-500">/ {user.nextLevelXp} XP</span></div>
+          <ProgressBar progress={(user.xp / user.nextLevelXp) * 100} />
+          <p className="text-xs text-slate-500 mt-2 text-right">{user.nextLevelXp - user.xp} XP to next level</p>
+        </Card>
+ 
+        <div className="md:col-span-2 grid grid-cols-2 gap-4">
+           <Card onClick={() => navigate('vr')} className="p-6 flex flex-col items-center justify-center text-center hover:bg-[#0E2A47] hover:text-white group transition-colors">
+              <Video className="w-10 h-10 text-purple-500 group-hover:text-purple-300 mb-3" />
+              <h4 className="font-bold">VR Museum</h4>
+              <p className="text-xs text-slate-500 group-hover:text-slate-300 mt-1">Explore 3D Exhibits</p>
+           </Card>
+           <Card onClick={() => navigate('ai')} className="p-6 flex flex-col items-center justify-center text-center hover:bg-[#0E2A47] hover:text-white group transition-colors">
+              <MessageSquare className="w-10 h-10 text-emerald-500 group-hover:text-emerald-300 mb-3" />
+              <h4 className="font-bold">AI Company</h4>
+              <p className="text-xs text-slate-500 group-hover:text-slate-300 mt-1">Voice Feedback & Evaluation</p>
+           </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+const LearningStudioView = () => {
+  const [activeLesson, setActiveLesson] = useState(SCHOLARS_CURRICULUM[0].world[1]);
+ 
+  return (
+    <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-120px)]">
+      <div className="flex-1 flex flex-col">
+        <div className="bg-black rounded-2xl aspect-video flex items-center justify-center relative overflow-hidden shadow-lg group">
+          <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=1200" alt="Thumbnail" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+ 
+          <div className="absolute bottom-4 left-4 right-4 text-white z-10 flex justify-between items-end">
+             <div>
+                <Badge color="bg-[#C99700] text-white" className="mb-2 border border-white/20"><PlayCircle className="w-3 h-3 mr-1"/> Now Playing</Badge>
+                <h2 className="text-2xl font-bold">{activeLesson.name}</h2>
+             </div>
+          </div>
+ 
+          <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer group-hover:scale-110 transition-transform">
+            <PlayCircle className="w-12 h-12 text-white" />
+          </div>
+        </div>
+ 
+        <div className="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex-1 overflow-y-auto">
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex items-center gap-4">
+              <ScholarAvatar scholar={activeLesson} size="w-16 h-16" textSize="text-lg" />
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800">{activeLesson.name}</h2>
+                <p className="text-slate-500 mt-1">{activeLesson.desc}</p>
+              </div>
+            </div>
+            <Button variant="success">Complete Lesson (+50 XP)</Button>
+          </div>
+ 
+          <div className="prose max-w-none text-slate-600">
+            <h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Learning Objectives</h3>
+            <ul className="list-disc pl-5 space-y-1 mb-6">
+              <li>Mengenal biografi dan perjalanan intelektual <strong>{activeLesson.name}</strong>.</li>
+              <li>Menganalisis karya-karya penting dan pengaruhnya terhadap peradaban.</li>
+              <li>Menghubungkan pemikiran klasik dengan relevansi di era modern.</li>
+            </ul>
+ 
+            <h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Transcript & Ringkasan</h3>
+            <p>Selamat datang di Modul Scholar. Pada sesi ini, kita akan menyelami kehidupan <strong>{activeLesson.name}</strong>, salah satu tokoh penting dalam sejarah peradaban Islam yang gagasan-gagasannya melintasi batas waktu dan ruang...</p>
+          </div>
+        </div>
+      </div>
+ 
+      <div className="w-full md:w-[350px] bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex flex-col h-full">
+        <h3 className="font-bold text-xl mb-4 text-[#0E2A47] flex items-center">
+          <BookOpen className="w-5 h-5 mr-2" /> Kurikulum Scholar
+        </h3>
+        <div className="space-y-6 overflow-y-auto flex-1 pr-2 custom-scrollbar pb-10">
+ 
+          {SCHOLARS_CURRICULUM.map((eraBlock, eraIdx) => (
+            <div key={eraIdx} className="space-y-3">
+              <div className="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 border-b border-slate-100">
+                <h4 className="font-bold text-[#C99700] text-sm tracking-wider uppercase">{eraBlock.era}</h4>
+              </div>
+ 
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-slate-400 flex items-center ml-1"><Globe className="w-3 h-3 mr-1"/> Tokoh Ilmuwan Muslim Dunia</p>
+                {eraBlock.world.map(scholar => (
+                  <div
+                    key={scholar.id}
+                    onClick={() => setActiveLesson(scholar)}
+                    className={`p-3 rounded-xl border flex items-center cursor-pointer transition-colors ${
+                      activeLesson.id === scholar.id ? 'bg-blue-50 border-blue-300 shadow-sm' : 'border-slate-100 hover:bg-slate-50'
+                    }`}
+                  >
+                    <ScholarAvatar scholar={scholar} size="w-9 h-9" textSize="text-[10px]" />
+                    <div className="mx-3">
+                      {scholar.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
+                       activeLesson.id === scholar.id ? <PlayCircle className="w-5 h-5 text-blue-600" /> :
+                       <Lock className="w-5 h-5 text-slate-300" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-semibold truncate ${activeLesson.id === scholar.id ? 'text-blue-900' : 'text-slate-700'}`}>{scholar.name}</p>
+                      <p className="text-xs text-slate-500">{scholar.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+ 
+              <div className="space-y-2 mt-4">
+                <p className="text-xs font-semibold text-slate-400 flex items-center ml-1"><MapPin className="w-3 h-3 mr-1"/> Tokoh Ilmuwan Muslim Nusantara</p>
+                {eraBlock.nusantara.map(scholar => (
+                  <div
+                    key={scholar.id}
+                    onClick={() => setActiveLesson(scholar)}
+                    className={`p-3 rounded-xl border flex items-center cursor-pointer transition-colors ${
+                      activeLesson.id === scholar.id ? 'bg-emerald-50 border-emerald-300 shadow-sm' : 'border-slate-100 hover:bg-slate-50'
+                    }`}
+                  >
+                    <ScholarAvatar scholar={scholar} size="w-9 h-9" textSize="text-[10px]" />
+                    <div className="mx-3">
+                      {scholar.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> :
+                       activeLesson.id === scholar.id ? <PlayCircle className="w-5 h-5 text-emerald-600" /> :
+                       <Lock className="w-5 h-5 text-slate-300" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-semibold truncate ${activeLesson.id === scholar.id ? 'text-emerald-900' : 'text-slate-700'}`}>{scholar.name}</p>
+                      <p className="text-xs text-slate-500">{scholar.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+ 
+            </div>
+          ))}
+ 
+          <div className="p-3 rounded-xl border border-amber-200 bg-amber-50 flex items-center cursor-pointer mt-4">
+            <div className="mr-3"><FileText className="w-5 h-5 text-amber-600" /></div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-amber-900">Ujian Modul Scholar</p>
+              <p className="text-xs text-amber-700">30 Pertanyaan</p>
+            </div>
+          </div>
+ 
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DRIVE_MATERIALS = [
+  {
+    id: "ibnu-sina",
+    name: "Ibnu Sina",
+    region: "Dunia",
+    era: "Klasik",
+    description: "Bapak Kedokteran Modern dan penulis Al-Qanun fi al-Tibb.",
+    summary:
+      "Ibnu Sina dikenal sebagai ilmuwan dan filsuf besar yang berpengaruh dalam perkembangan kedokteran. Ia menekankan pentingnya observasi, penalaran, dan pemeriksaan kondisi pasien secara sistematis.",
+    folderId: "100Yu8qY8Om8nTzqkEpoqZDjRti3N3gWF",
+    imageId: "1-StwsRLFOSWN86UgFTD1VQHVv4IIDbHS",
+    infographicId: "1yJOSYAUtShTzODrAkYHD9z5XMeC6CP5Q",
+    audioId: "1jE9LIIkqa70127e83Tm0UMiAk0pRWiFv",
+  },
+  {
+    id: "al-ghazali",
+    name: "Al-Ghazali",
+    region: "Dunia",
+    era: "Klasik",
+    description: "Hujjatul Islam, tokoh filsafat, pendidikan, dan tasawuf.",
+    summary:
+      "Al-Ghazali menekankan bahwa ilmu harus berjalan bersama akhlak dan pembinaan diri. Ilmu tidak hanya digunakan untuk meningkatkan kemampuan berpikir, tetapi juga membentuk pribadi yang jujur dan bertanggung jawab.",
+    folderId: "12k2hx_6cKwXUP3o0JPf5PDMkXjZ4Zmtr",
+    imageId: "13Dp5QshhyT6r7i8ewR4GLSVEredHlUCJ",
+    infographicId: "1kOFFEB6Uz8zMPdR19mJW-Z_-escitOfM",
+    audioId: "11mGVVFYgiTvdZr91gxdPhvpBhJkSqdpH",
+  },
+  {
+    id: "ibnu-khaldun",
+    name: "Ibnu Khaldun",
+    region: "Dunia",
+    era: "Klasik",
+    description: "Perintis kajian masyarakat, sejarah, dan ekonomi.",
+    summary:
+      "Ibnu Khaldun dikenal melalui karya Muqaddimah. Ia menjelaskan bahwa perkembangan dan kemunduran suatu peradaban dipengaruhi oleh kondisi sosial, ekonomi, politik, serta kekuatan solidaritas masyarakat.",
+    folderId: "13cBkgQgDqUALD2WQh8ANOVgTqHV1JZ2S",
+    imageId: "1GeKyItHiSn-16GeO7FY5LyDAYh9OaVEO",
+    infographicId: "13oZHu0ZeLAqz5a_SDBPsVPTmM4o6MNyz",
+    audioId: "1309VV5bIbaa3kX6IQzqYQY8h3L9_2oVw",
+  },
+  {
+    id: "muhammad-abduh",
+    name: "Muhammad Abduh",
+    region: "Dunia",
+    era: "Modern",
+    description: "Tokoh pembaruan pemikiran dan pendidikan Islam.",
+    summary:
+      "Muhammad Abduh mendorong pembaruan pendidikan dan penggunaan akal dalam memahami persoalan masyarakat. Menurutnya, kemajuan dapat dicapai melalui pendidikan, keterbukaan berpikir, dan keberanian melakukan perbaikan.",
+    folderId: "1S9bEySLr__U15NnR3GBcdpxSwMkGkynr",
+    imageId: "1KLdUMQGl6xh-8k3PrJwOmvN1wZ6SQUHv",
+    infographicId: "1xhm5QVdsRisoTmZ5wiTxJ0oQanNrGYEa",
+    audioId: "1bFUy9kmU6gcWWPaQe8fy0cLtZe66J67B",
+  },
+  {
+    id: "muhammad-iqbal",
+    name: "Muhammad Iqbal",
+    region: "Dunia",
+    era: "Modern",
+    description: "Filsuf dan penyair yang menekankan kreativitas manusia.",
+    summary:
+      "Muhammad Iqbal mengajak manusia untuk terus mengembangkan potensi, kreativitas, dan kekuatan dirinya. Pemikirannya menolak sikap pasif dan mendorong manusia untuk berani menciptakan perubahan.",
+    folderId: "1pzn_hL9dWoNlS2t_qnjxG1sDLigy6yBB",
+    imageId: "1YkcQtMbrtXsFgWMOnN-cmP9rR3X6Yodt",
+  },
+  {
+    id: "jamaluddin-al-afghani",
+    name: "Jamaluddin al-Afghani",
+    region: "Dunia",
+    era: "Modern",
+    description: "Tokoh persatuan umat dan perlawanan terhadap kolonialisme.",
+    summary:
+      "Jamaluddin al-Afghani mendorong persatuan, kebangkitan intelektual, dan kemandirian masyarakat. Pendidikan dan solidaritas dipandang sebagai kekuatan untuk menghadapi penjajahan serta ketertinggalan.",
+    folderId: "1AE8R-LtI1Zmqy9BasKVgBvuzKh-F5wj1",
+    imageId: "1wOUZLOmhivoqk_lqu1JflvjJLrYjfQLP",
+  },
+  {
+    id: "fazlur-rahman",
+    name: "Fazlur Rahman",
+    region: "Dunia",
+    era: "Kontemporer",
+    description: "Tokoh neo-modernisme dan pemikiran Islam kontekstual.",
+    summary:
+      "Fazlur Rahman menawarkan cara memahami ajaran dengan memperhatikan konteks sejarah dan prinsip moralnya. Nilai utama ajaran kemudian diterapkan secara bertanggung jawab dalam menghadapi persoalan masa kini.",
+    folderId: "1QNGpJ7YnDfcqdAit8cw-jSpUbucp8k3F",
+    imageId: "1C8Sljab4mSdKaLVu1SAKi1t9sA5ux5zW",
+  },
+  {
+    id: "seyyed-hossein-nasr",
+    name: "Seyyed Hossein Nasr",
+    region: "Dunia",
+    era: "Kontemporer",
+    description: "Filsuf yang membahas spiritualitas dan lingkungan.",
+    summary:
+      "Seyyed Hossein Nasr mengkritik ilmu pengetahuan yang terlepas dari nilai dan tanggung jawab. Ia menekankan bahwa alam harus dipandang sebagai amanah, bukan hanya sebagai sumber daya untuk dieksploitasi.",
+    folderId: "1e_EwF_BMBIhT1kLKNQvATBYRjOVREAKY",
+    imageId: "1Iez0azh7UFsBDegmtqhQQ1a0-6SyT2VS",
+    infographicId: "1opkfD71VlwZ5OGkFiuRaODKxVgffYVS_",
+    audioId: "17TFA9tV1_jcVLfoFeeVPeAwyobZhIVOI",
+  },
+  {
+    id: "ismail-raji-al-faruqi",
+    name: "Ismail Raji al-Faruqi",
+    region: "Dunia",
+    era: "Kontemporer",
+    description: "Tokoh integrasi ilmu pengetahuan dan nilai.",
+    summary:
+      "Ismail Raji al-Faruqi menekankan bahwa perkembangan ilmu dan teknologi harus diarahkan untuk menghasilkan kemaslahatan. Inovasi perlu dinilai dari manfaat, dampak sosial, etika, dan keberlanjutannya.",
+    folderId: "1QdtRq_t8yxomAc9JrXAz5MyJ04PfIzsa",
+    imageId: "1DrOr936w-qm-2qHa8nKE2UJd3YTvT91C",
+    infographicId: "1F2PKzqOr48ANTmfVZbtdIoA4DYyF3Anu",
+    audioId: "1NZ0NnVRTSp8gELhX-tubnYwrYBktetTe",
+  },
+  {
+    id: "hamzah-fansuri",
+    name: "Hamzah Fansuri",
+    region: "Nusantara",
+    era: "Klasik",
+    description: "Ulama dan sastrawan sufi dalam tradisi Melayu.",
+    summary:
+      "Hamzah Fansuri menyampaikan pemikiran spiritual melalui syair dan karya sastra Melayu. Karyanya menunjukkan bahwa bahasa dan seni dapat menjadi media pendidikan serta penyebaran pengetahuan.",
+    folderId: "14szcJ-IBsmZdwxoyC3ALcZzc0hWDhe97",
+    imageId: "1JUZosnPpkZ5IbswC1V0IXo9ebHyYOM9L",
+    infographicId: "1SoV2uunQh_GZzdxnnjwwOnn0qd38LDKa",
+    audioId: "13qbOrZSfcHoBQmgJx2-V0sIfe1EwA4tv",
+  },
+  {
+    id: "nuruddin-ar-raniri",
+    name: "Nuruddin ar-Raniri",
+    region: "Nusantara",
+    era: "Klasik",
+    description: "Ulama Kesultanan Aceh dan penulis Bustan al-Salatin.",
+    summary:
+      "Nuruddin ar-Raniri berperan dalam perkembangan tradisi keilmuan Aceh. Karyanya membahas agama, sejarah, pemerintahan, dan etika sehingga menjadi bagian penting dari literasi Islam Nusantara.",
+    folderId: "1Bd4Nef_S8Yff0e9IwtQiFzYERQLEjIaU",
+    imageId: "1qsE3vMxZWd08Dki6f8x6b8sZA5qiIiu3",
+  },
+  {
+    id: "abdurrauf-as-singkili",
+    name: "Syekh Abdurrauf as-Singkili",
+    region: "Nusantara",
+    era: "Klasik",
+    description: "Mufti Aceh dan tokoh penerjemahan Al-Qur'an.",
+    summary:
+      "Syekh Abdurrauf as-Singkili dikenal melalui pendidikan, dakwah, dan karya tafsir. Kontribusinya memperluas akses masyarakat Melayu terhadap ilmu keislaman.",
+    folderId: "1qpNM5rHeM8i77lVCYMHiH9e3qzfKGH2q",
+    imageId: "1h6j6p-FY4sjCi6Q8CNPUv2B6pjox_ljX",
+    infographicId: "1IjXVa12Mf3g407rNYlZZmr0wuFerjZSb",
+    audioId: "1_SSHQrdDwakwY4rH94xkm4MY3R3_nOJh",
+  },
+  {
+    id: "nawawi-al-bantani",
+    name: "Syekh Nawawi al-Bantani",
+    region: "Nusantara",
+    era: "Modern",
+    description: "Ulama asal Banten yang berpengaruh di dunia pesantren.",
+    summary:
+      "Syekh Nawawi al-Bantani menghasilkan banyak karya yang dipelajari di berbagai pesantren. Ketekunan menulis dan mengajar membuat pemikirannya berpengaruh di Nusantara dan dunia Islam.",
+    folderId: "1zk6cgfZzU0ISr7BRU0LT_3bCcCbUC7AM",
+    imageId: "1xbaj_nib1iTfng46ElHbxr40pT-G48gk",
+    infographicId: "1_8CyAX4-4VfzRxPC7x1qbx0grMdopqdC",
+    audioId: "1d1UPWoCAG-sHDO8_lihuqMb16-wmW7r1",
+  },
+  {
+    id: "ahmad-dahlan",
+    name: "KH Ahmad Dahlan",
+    region: "Nusantara",
+    era: "Modern",
+    description: "Pendiri Muhammadiyah dan pelopor pembaruan pendidikan.",
+    summary:
+      "KH Ahmad Dahlan menghubungkan pendidikan agama dengan pelayanan sosial. Menurutnya, ilmu harus diwujudkan melalui tindakan nyata yang membantu masyarakat dan lingkungan sekitar.",
+    folderId: "1Su_fy_32F9UhD3CA9MnRugjhwJQOtb9Q",
+    imageId: "1a04pL4EicE8QUgkZmhr54byHku1c5aSL",
+    infographicId: "10pha4JW0ytoB21piT5e9xfA1K3fSvyLJ",
+    audioId: "1PqjLGZHj-FtIUoj7iES5puN9etxjeVev",
+  },
+  {
+    id: "hasyim-asyari",
+    name: "KH Hasyim Asy'ari",
+    region: "Nusantara",
+    era: "Modern",
+    description: "Pendiri Nahdlatul Ulama dan tokoh pendidikan pesantren.",
+    summary:
+      "KH Hasyim Asy'ari menekankan adab, kejujuran, kesungguhan, dan tanggung jawab dalam menuntut ilmu. Nilai tersebut tetap relevan dalam penggunaan teknologi dan kecerdasan buatan.",
+    folderId: "1-NCmCa7rFjXTdipmWIwrYsg-KtPe52Eg",
+    imageId: "1s1UPjqOOIQb6WE6JSri8dOjbE9uzPyso",
+    infographicId: "1Djn7zAwestP9BBJt5xNF9CxfdtDbQBWp",
+    audioId: "1YFHgYyZ7gUjiXj9Xa9lZMtxP7sIuuW_A",
+  },
+  {
+    id: "harun-nasution",
+    name: "Harun Nasution",
+    region: "Nusantara",
+    era: "Kontemporer",
+    description: "Tokoh pemikiran rasional dan pendidikan tinggi Islam.",
+    summary:
+      "Harun Nasution mendorong tradisi akademik yang terbuka, rasional, dan dialogis. Ia mengajak mahasiswa membaca berbagai pandangan dan menyusun argumen berdasarkan alasan yang dapat dipertanggungjawabkan.",
+    folderId: "1LYPY1X2KwGVLjPLANQ4iFMori2PoZP9d",
+    imageId: "1SuY2-42DNNFFiiwakzGo_xRDVMvHNtpX",
+  },
+  {
+    id: "nurcholish-madjid",
+    name: "Nurcholish Madjid",
+    region: "Nusantara",
+    era: "Kontemporer",
+    description: "Cendekiawan pembaru dalam keislaman dan kebangsaan.",
+    summary:
+      "Nurcholish Madjid mengembangkan pemikiran Islam yang terbuka, inklusif, dan selaras dengan kehidupan kebangsaan. Ia menekankan pentingnya dialog serta penghargaan terhadap perbedaan.",
+    folderId: "10GJl2x-RqZ0ihixo47vWE8uVZgh8RfAk",
+    imageId: "1aybefzN1aLs5Gs7RuCQPqEtgFnoLNFys",
+    infographicId: "15UPnn8yLdzg9dJNJGXqq4Q_djrC-mBbp",
+    audioId: "1ylUDSZeGHe7bbk48N77E09B8-CQjpVyE",
+  },
+  {
+    id: "kuntowijoyo",
+    name: "Kuntowijoyo",
+    region: "Nusantara",
+    era: "Kontemporer",
+    description: "Sejarawan dan pencetus Ilmu Sosial Profetik.",
+    summary:
+      "Kuntowijoyo menjelaskan bahwa ilmu sosial bukan hanya digunakan untuk memahami masyarakat, tetapi juga diarahkan pada nilai kemanusiaan, pembebasan, dan perubahan sosial.",
+    folderId: "1OvGM5DkRRdsoEb9ZBB9V1iJphmwrjZEg",
+    imageId: "1Qj7wEi8kBe4vOb4SClxloTeeK21_MUll",
+  },
+];
+
+const driveThumbnail = (fileId) =>
+  `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+
+const drivePreview = (fileId) =>
+  `https://drive.google.com/file/d/${fileId}/preview`;
+
+const driveFolderLink = (folderId) =>
+  `https://drive.google.com/drive/folders/${folderId}`;
+
+const MateriScholarView = () => {
+  const [searchMateri, setSearchMateri] = useState("");
+  const [filterRegion, setFilterRegion] = useState("Semua");
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+
+  const filteredMaterials = DRIVE_MATERIALS.filter((item) => {
+    const matchesRegion =
+      filterRegion === "Semua" || item.region === filterRegion;
+
+    const searchText = `
+      ${item.name}
+      ${item.region}
+      ${item.era}
+      ${item.description}
+      ${item.summary}
+    `.toLowerCase();
+
+    return (
+      matchesRegion &&
+      searchText.includes(searchMateri.toLowerCase())
+    );
+  });
+
+  return (
+    <div className="space-y-6">
+      <section className="bg-gradient-to-r from-[#0E2A47] to-[#1a4a7d] rounded-3xl p-8 text-white shadow-lg">
+        <Badge color="bg-[#C99700] text-white mb-4">
+          <BookOpen className="w-3 h-3 mr-1" />
+          Modul Scholar
+        </Badge>
+
+        <h2 className="text-3xl font-bold mb-3">
+          Materi Cendekiawan Muslim
+        </h2>
+
+        <p className="text-blue-100 max-w-3xl leading-relaxed">
+          Pelajari biografi, gagasan, infografik, dan narasi audio
+          cendekiawan Muslim dunia dan Nusantara.
+        </p>
+
+        <div className="grid grid-cols-3 gap-3 mt-6 max-w-lg">
+          <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
+            <p className="text-2xl font-bold text-amber-300">
+              {DRIVE_MATERIALS.length}
+            </p>
+            <p className="text-xs text-blue-100">Total materi</p>
+          </div>
+
+          <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
+            <p className="text-2xl font-bold text-amber-300">
+              {
+                DRIVE_MATERIALS.filter(
+                  (item) => item.region === "Dunia"
+                ).length
+              }
+            </p>
+            <p className="text-xs text-blue-100">Tokoh dunia</p>
+          </div>
+
+          <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
+            <p className="text-2xl font-bold text-amber-300">
+              {
+                DRIVE_MATERIALS.filter(
+                  (item) => item.region === "Nusantara"
+                ).length
+              }
+            </p>
+            <p className="text-xs text-blue-100">Tokoh Nusantara</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+        <div className="flex flex-col md:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+
+            <input
+              type="text"
+              value={searchMateri}
+              onChange={(event) =>
+                setSearchMateri(event.target.value)
+              }
+              placeholder="Cari tokoh, periode, atau topik..."
+              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-[#C99700]"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            {["Semua", "Dunia", "Nusantara"].map((region) => (
+              <button
+                key={region}
+                onClick={() => setFilterRegion(region)}
+                className={`px-4 py-3 rounded-xl font-semibold transition-colors ${
+                  filterRegion === region
+                    ? "bg-[#0E2A47] text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {region}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-bold text-[#0E2A47]">
+            Daftar Materi
+          </h3>
+          <p className="text-sm text-slate-500">
+            Klik salah satu kartu untuk membuka materi.
+          </p>
+        </div>
+
+        <Badge color="bg-amber-100 text-amber-700">
+          {filteredMaterials.length} Materi
+        </Badge>
+      </div>
+
+      {filteredMaterials.length === 0 ? (
+        <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
+          <Search className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+          <h3 className="font-bold text-slate-700">
+            Materi tidak ditemukan
+          </h3>
+          <p className="text-slate-500 text-sm mt-1">
+            Coba gunakan kata kunci lainnya.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredMaterials.map((item) => (
+            <Card
+              key={item.id}
+              className="group flex flex-col"
+            >
+              <div className="h-52 relative overflow-hidden bg-slate-100">
+                <img
+                  src={driveThumbnail(item.imageId)}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(event) => {
+                    event.currentTarget.style.display = "none";
+                    event.currentTarget.nextElementSibling.style.display =
+                      "flex";
+                  }}
+                />
+
+                <div className="hidden absolute inset-0 bg-gradient-to-br from-[#0E2A47] to-[#1a4a7d] text-white items-center justify-center text-4xl font-bold">
+                  {item.name
+                    .split(" ")
+                    .slice(0, 2)
+                    .map((word) => word[0])
+                    .join("")}
+                </div>
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                <Badge
+                  color="bg-[#0E2A47] text-white"
+                  className="absolute top-4 left-4"
+                >
+                  {item.region === "Dunia" ? (
+                    <Globe className="w-3 h-3 mr-1" />
+                  ) : (
+                    <MapPin className="w-3 h-3 mr-1" />
+                  )}
+                  {item.region}
+                </Badge>
+
+                {item.audioId && (
+                  <Badge
+                    color="bg-amber-400 text-amber-950"
+                    className="absolute top-4 right-4"
+                  >
+                    <Volume2 className="w-3 h-3 mr-1" />
+                    Audio
+                  </Badge>
+                )}
+
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <p className="text-xs text-amber-300 font-semibold mb-1">
+                    Periode {item.era}
+                  </p>
+                  <h3 className="text-xl font-bold">
+                    {item.name}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="p-5 flex flex-col flex-1">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  {item.description}
+                </p>
+
+                <div className="flex gap-2 mt-5 pt-4 border-t border-slate-100">
+                  <Button
+                    variant="primary"
+                    className="flex-1"
+                    onClick={() =>
+                      setSelectedMaterial(item)
+                    }
+                  >
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Buka Materi
+                  </Button>
+
+                  <a
+                    href={driveFolderLink(item.folderId)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-3 rounded-xl bg-slate-100 text-[#0E2A47] font-semibold hover:bg-slate-200"
+                  >
+                    Drive
+                  </a>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {selectedMaterial && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setSelectedMaterial(null);
+            }
+          }}
+        >
+          <div className="bg-white rounded-3xl w-full max-w-5xl max-h-[92vh] overflow-y-auto shadow-2xl">
+            <div className="relative h-64 md:h-80 bg-[#0E2A47] overflow-hidden rounded-t-3xl">
+              <img
+                src={driveThumbnail(selectedMaterial.imageId)}
+                alt={selectedMaterial.name}
+                className="absolute inset-0 w-full h-full object-cover opacity-50"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
+
+              <button
+                onClick={() => setSelectedMaterial(null)}
+                className="absolute top-5 right-5 bg-black/30 text-white rounded-full p-2 hover:bg-black/50 z-20"
+              >
+                <XCircle className="w-7 h-7" />
+              </button>
+
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
+                <Badge color="bg-[#C99700] text-white mb-3">
+                  {selectedMaterial.region} • Periode{" "}
+                  {selectedMaterial.era}
+                </Badge>
+
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                  {selectedMaterial.name}
+                </h2>
+
+                <p className="text-blue-100 max-w-2xl">
+                  {selectedMaterial.description}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 md:p-8">
+              <div className="lg:col-span-3 space-y-5">
+                <section className="border border-slate-200 rounded-2xl p-5">
+                  <h3 className="font-bold text-xl text-[#0E2A47] mb-3 flex items-center">
+                    <FileText className="w-5 h-5 mr-2 text-[#C99700]" />
+                    Ringkasan Materi
+                  </h3>
+
+                  <p className="text-slate-600 leading-8">
+                    {selectedMaterial.summary}
+                  </p>
+                </section>
+
+                <section className="border border-slate-200 rounded-2xl p-5">
+                  <h3 className="font-bold text-xl text-[#0E2A47] mb-4">
+                    Tujuan Pembelajaran
+                  </h3>
+
+                  <div className="space-y-3">
+                    {[
+                      `Mengenal biografi dan perjalanan intelektual ${selectedMaterial.name}.`,
+                      `Memahami gagasan dan kontribusi utama ${selectedMaterial.name}.`,
+                      "Menghubungkan pemikirannya dengan kehidupan dan persoalan masa kini.",
+                    ].map((objective, index) => (
+                      <div
+                        key={objective}
+                        className="flex items-start gap-3"
+                      >
+                        <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                          {index + 1}
+                        </div>
+
+                        <p className="text-slate-600 pt-1">
+                          {objective}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+
+              <div className="lg:col-span-2 space-y-5">
+                <section className="border border-slate-200 rounded-2xl p-5">
+                  <h3 className="font-bold text-lg text-[#0E2A47] mb-3">
+                    Media Visual
+                  </h3>
+
+                  <div className="bg-slate-100 rounded-xl overflow-hidden">
+                    <img
+                      src={driveThumbnail(
+                        selectedMaterial.infographicId ||
+                          selectedMaterial.imageId
+                      )}
+                      alt={`Media ${selectedMaterial.name}`}
+                      className="w-full max-h-[430px] object-contain"
+                    />
+                  </div>
+                </section>
+
+                {selectedMaterial.audioId && (
+                  <section className="border border-slate-200 rounded-2xl p-5">
+                    <h3 className="font-bold text-lg text-[#0E2A47] mb-3 flex items-center">
+                      <Volume2 className="w-5 h-5 mr-2 text-[#C99700]" />
+                      Narasi Audio
+                    </h3>
+
+                    <iframe
+                      src={drivePreview(
+                        selectedMaterial.audioId
+                      )}
+                      title={`Audio ${selectedMaterial.name}`}
+                      className="w-full h-24 border-0 rounded-xl bg-slate-100"
+                      allow="autoplay"
+                    />
+                  </section>
+                )}
+
+                <a
+                  href={driveFolderLink(
+                    selectedMaterial.folderId
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#0E2A47] text-white rounded-xl py-3 px-4 font-semibold flex items-center justify-center hover:bg-[#163a5f]"
+                >
+                  Buka Folder Google Drive
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+  
+const VRMuseumView = () => {
+  const [activeRoom, setActiveRoom] = useState(null);
+ 
+  if (activeRoom) {
+    return (
+      <div className="h-[calc(100vh-120px)] bg-black rounded-3xl overflow-hidden relative flex flex-col">
+        <div className="flex-1 bg-slate-900 relative">
+          <img src={activeRoom.img} alt="VR Room" className="w-full h-full object-cover opacity-50 cursor-grab active:cursor-grabbing" style={{ transform: 'scale(1.2)' }} />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+             <div className="text-center text-white">
+                <Compass className="w-16 h-16 mx-auto mb-4 opacity-50 animate-pulse" />
+                <p className="font-mono bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">Drag to look around (Simulation)</p>
+             </div>
+          </div>
+          <div className="absolute top-1/2 left-1/3 w-8 h-8 bg-[#C99700] rounded-full animate-ping cursor-pointer"></div>
+          <div className="absolute top-1/2 left-1/3 w-8 h-8 bg-[#C99700] rounded-full border-2 border-white flex items-center justify-center shadow-lg cursor-pointer hover:scale-110 transition-transform z-10">
+            <Search className="w-4 h-4 text-white" />
+          </div>
+        </div>
+ 
+        <div className="bg-[#0E2A47] text-white p-6 flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">{activeRoom.title}</h2>
+            <p className="text-blue-200">{activeRoom.desc}</p>
+          </div>
+          <Button variant="outline" className="border-white/20 text-white hover:bg-white/10" onClick={() => setActiveRoom(null)}>Exit VR</Button>
+        </div>
+      </div>
+    );
+  }
+ 
+  return (
+    <div>
+      <div className="mb-8 text-center max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#0E2A47] mb-4">Virtual Reality Museum</h2>
+        <p className="text-slate-600">Immerse yourself in the golden age of Islamic civilization and the rich history of Nusantara scholars. Explore interactive 3D exhibits.</p>
+      </div>
+ 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {VR_ROOMS.map(room => (
+          <Card key={room.id} onClick={() => setActiveRoom(room)} className="group">
+            <div className="h-48 overflow-hidden relative">
+              <img src={room.img} alt={room.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                <Badge color="bg-[#C99700] text-white" className="border border-amber-400/50"><Video className="w-3 h-3 mr-1"/> 360° View</Badge>
+              </div>
+            </div>
+            <div className="p-5">
+              <h3 className="font-bold text-lg text-slate-800 mb-2">{room.title}</h3>
+              <p className="text-sm text-slate-500 mb-4">{room.desc}</p>
+              <Button variant="outline" className="w-full text-[#C99700] border-[#C99700] hover:bg-amber-50">Enter Room</Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+ 
+// --- AI COMPANY VIEW (DENGAN PENILAIAN OPINI BERBASIS VN) ---
+const AICompanionView = () => {
+  const QUESTIONS_TABLE = [
+    {
+      id: 1,
+      topic: "Ibnu Sina — Pengamatan dan Diagnosis",
+      level: "C3 — Menerapkan",
+      question: "Seorang mahasiswa melihat konten kesehatan yang viral di media sosial. Karena merasa memiliki beberapa gejala yang disebutkan, ia langsung menyimpulkan bahwa dirinya mengalami penyakit tertentu dan mengikuti saran pengobatan dari konten tersebut. Berdasarkan pendekatan Ibnu Sina dalam mengamati kondisi pasien dan mengenali gejala secara sistematis, tindakan apa yang seharusnya dilakukan mahasiswa tersebut?",
+      idealAnswer: "Mahasiswa tidak seharusnya langsung melakukan diagnosis mandiri atau mengikuti pengobatan dari konten media sosial. Ia perlu memeriksa kredibilitas sumber, mengamati kondisi secara menyeluruh, tidak menggunakan obat secara sembarangan, dan berkonsultasi dengan tenaga kesehatan yang kompeten. Pendekatan ini mencerminkan penerapan observasi, kehati-hatian, dan penalaran sistematis dalam mengambil keputusan kesehatan.",
+      keywords: ["kredibilitas", "sumber", "konsultasi", "tenaga kesehatan", "observasi", "sistematis", "mandiri"]
+    },
+    {
+      id: 2,
+      topic: "KH Hasyim Asy'ari – Etika Penggunaan AI Generatif dalam Pendidikan",
+      level: "C4 – Menganalisis",
+      question: "KH Hasyim Asy'ari menekankan pentingnya adab, kejujuran, tanggung jawab, dan kesungguhan dalam menuntut ilmu. Saat ini, AI generatif banyak dimanfaatkan mahasiswa untuk mencari referensi, memahami materi, dan membantu menyusun tugas. Menurut Anda, apa manfaat, risiko, dan bagaimana penggunaan AI generatif yang etis serta bertanggung jawab agar tetap sejalan dengan nilai-nilai tersebut?",
+      idealAnswer: "Manfaat: membantu memahami materi, memperoleh ide, dan menyusun kerangka tugas secara lebih efisien. Risiko: ketergantungan, informasi yang tidak akurat, plagiarisme, serta menurunnya kemampuan berpikir kritis. Penggunaan yang etis: AI digunakan sebagai alat bantu, bukan pengganti proses belajar; hasilnya diverifikasi, diolah dengan pemahaman sendiri, serta tetap menjaga kejujuran dan integritas akademik.",
+      keywords: ["manfaat", "risiko", "etis", "tanggung jawab", "verifikasi", "integritas", "alat bantu"]
+    },
+    {
+      id: 3,
+      topic: "Ismail Raji al-Faruqi — Integrasi Ilmu Pengetahuan dan Nilai",
+      level: "C5 (Mengevaluasi)",
+      question: "Menurut penelitian Amir, Miru, dan Sabara (2025) dalam kajian Urban Household Behavior in Indonesia: Drivers of Zero Waste Participation, pengelolaan sampah rumah tangga masih menjadi tantangan karena keberhasilan pola hidup berkelanjutan dipengaruhi oleh pengetahuan lingkungan, kesadaran, dan keterlibatan masyarakat. Berdasarkan gagasan Ismail Raji al-Faruqi tentang integrasi ilmu dan nilai, bagaimana Anda menilai inovasi pengelolaan sampah agar tidak hanya efektif mengurangi limbah, tetapi juga mencerminkan tanggung jawab manusia terhadap lingkungan? Jelaskan alasan Anda.",
+      idealAnswer: "Inovasi pengelolaan sampah dapat dinilai sebagai inovasi yang bertanggung jawab apabila tidak hanya memberikan manfaat praktis dalam mengurangi limbah, tetapi juga mempertimbangkan nilai etika, keberlanjutan, dan dampaknya bagi masyarakat. Berdasarkan pemikiran Ismail Raji al-Faruqi, ilmu dan inovasi harus diarahkan untuk memberikan kemaslahatan, sehingga solusi yang baik perlu memperhatikan keseimbangan antara manfaat manusia, tanggung jawab sosial, dan kepedulian terhadap lingkungan.",
+      keywords: ["tanggung jawab", "etika", "keberlanjutan", "kemaslahatan", "lingkungan", "integrasi"]
+    }
+  ];
+
+  const [selectedQuestionId, setSelectedQuestionId] = useState(1);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [audioBlobUrl, setAudioBlobUrl] = useState(null);
+  const [simulatedTranscript, setSimulatedTranscript] = useState("");
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluationResult, setEvaluationResult] = useState(null);
+  const timerRef = useRef(null);
+
+  const currentQ = QUESTIONS_TABLE.find(q => q.id === selectedQuestionId);
+
+  // Simulasi Rekaman VN
+  const startRecording = () => {
+    setIsRecording(true);
+    setRecordingTime(0);
+    setAudioBlobUrl(null);
+    setEvaluationResult(null);
+    setSimulatedTranscript("");
+    
+    timerRef.current = setInterval(() => {
+      setRecordingTime(prev => prev + 1);
+    }, 1000);
+  };
+
+  const stopRecording = () => {
+    clearInterval(timerRef.current);
+    setIsRecording(false);
+    // Buat URL dummy audio blob
+    setAudioBlobUrl("blob:https://averra.edu/voice-note-mock");
+    
+    // Set teks transkrip tiruan berdasarkan soal aktif agar penilaian relevan
+    if (selectedQuestionId === 1) {
+      setSimulatedTranscript("Menurut saya, mahasiswa itu tidak boleh langsung percaya sama konten viral di medsos untuk diagnosis diri. Harus konsultasi ke dokter atau tenaga medis yang ahli, serta mengecek sumber informasinya dengan teliti secara sistematis.");
+    } else if (selectedQuestionId === 2) {
+      setSimulatedTranscript("Manfaat AI itu membantu cari referensi dan ide tugas. Risikonya bisa bikin malas dan plagiat. Penggunaan yang etis yaitu AI cuma sebagai alat bantu saja, hasilnya tetap harus diverifikasi sendiri agar sesuai nilai kejujuran akademik.");
+    } else {
+      setSimulatedTranscript("Inovasi sampah harus memperhatikan etika dan tanggung jawab sosial. Sesuai gagasan al-Faruqi, ilmu dan teknologi harus membawa kemaslahatan dan keseimbangan lingkungan hidup manusia.");
+    }
+  };
+
+  // Proses Penilaian AI terhadap Opini Peserta dari VN
+  const evaluateVoiceNote = () => {
+    setIsEvaluating(true);
+    setTimeout(() => {
+      setIsEvaluating(false);
+      
+      // Hitung kecocokan keyword sederhana untuk menentukan Benar/Salah/Kurang Tepat
+      const transcriptLower = simulatedTranscript.toLowerCase();
+      let matchedCount = currentQ.keywords.filter(kw => transcriptLower.includes(kw.toLowerCase())).length;
+      let scorePercentage = Math.round((matchedCount / currentQ.keywords.length) * 100);
+      
+      let status = "Benar & Sesuai";
+      let badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+      if (scorePercentage < 40) {
+        status = "Kurang Tepat / Belum Sesuai";
+        badgeColor = "bg-red-100 text-red-800 border-red-300";
+      } else if (scorePercentage < 70) {
+        status = "Cukup Baik (Perlu Penyempurnaan)";
+        badgeColor = "bg-amber-100 text-amber-800 border-amber-300";
+      }
+
+      setEvaluationResult({
+        status,
+        badgeColor,
+        score: Math.max(scorePercentage, 65), // minimal apresiasi 65% jika beralasan
+        feedback: `Analisis VN AI Companion: Opini Anda menunjukkan pemahaman pada level ${currentQ.level}. ${scorePercentage >= 40 ? 'Argumen Anda sudah mencakup poin-poin kunci dan sejalan dengan keteladanan tokoh.' : 'Argumen perlu diperkuat dengan merujuk langsung pada prinsip atau nilai keteladanan tokoh terkait.'}`
+      });
+    }, 1800);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-[#0E2A47] text-white p-6 rounded-3xl shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+          <div className="flex items-center space-x-2 mb-2">
+            <span className="bg-[#C99700] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">AI Company Module</span>
+          </div>
+          <h2 className="text-2xl font-bold">Evaluasi Opini Berbasis Voice Note (VN)</h2>
+          <p className="text-blue-200 text-sm mt-1">Rekam suara atau opini Anda untuk dinilai oleh AI Company berdasarkan tabel soal kurikulum AVERRA.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Kolom Pilihan Soal dari Tabel */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+          <h3 className="font-bold text-lg text-[#0E2A47] flex items-center">
+            <FileText className="w-5 h-5 mr-2 text-[#C99700]" /> Pilih Soal / Kasus Tabel
+          </h3>
+          <div className="space-y-3">
+            {QUESTIONS_TABLE.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  setSelectedQuestionId(item.id);
+                  setAudioBlobUrl(null);
+                  setEvaluationResult(null);
+                  setSimulatedTranscript("");
+                }}
+                className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                  selectedQuestionId === item.id
+                    ? 'border-[#C99700] bg-amber-50/60 shadow-sm'
+                    : 'border-slate-100 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-bold text-slate-500">Soal #{item.id}</span>
+                  <Badge color="bg-blue-100 text-blue-800">{item.level}</Badge>
+                </div>
+                <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{item.topic}</h4>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Kolom Detail Pertanyaan & Rekaman VN */}
+        <div className="md:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center border-b pb-3">
+              <div>
+                <span className="text-xs font-bold text-amber-600 uppercase tracking-wide">{currentQ.topic}</span>
+                <h3 className="text-xl font-bold text-slate-800">{currentQ.level}</h3>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <p className="text-sm font-semibold text-slate-700 mb-2">Pertanyaan / Kasus:</p>
+              <p className="text-slate-600 leading-relaxed text-sm">{currentQ.question}</p>
+            </div>
+
+            {/* Area Rekaman VN */}
+            <div className="bg-amber-50/40 p-6 rounded-2xl border border-amber-200 text-center space-y-4">
+              <div className="flex items-center justify-center space-x-2">
+                <Mic className={`w-6 h-6 ${isRecording ? 'text-red-500 animate-pulse' : 'text-slate-500'}`} />
+                <span className="font-bold text-slate-700">
+                  {isRecording ? `Merekam Suara... (${recordingTime}s)` : audioBlobUrl ? 'VN Selesai Direkam' : 'Tekan Tombol untuk Mulai Rekam Opini'}
+                </span>
+              </div>
+
+              <div className="flex justify-center gap-4">
+                {!isRecording ? (
+                  <Button variant="primary" onClick={startRecording}>
+                    <Mic className="w-4 h-4 mr-2" /> {audioBlobUrl ? 'Rekam Ulang VN' : 'Mulai Rekam VN'}
+                  </Button>
+                ) : (
+                  <Button variant="success" onClick={stopRecording} className="bg-red-500 hover:bg-red-600">
+                    <Square className="w-4 h-4 mr-2" /> Selesai / Stop Rekam
+                  </Button>
+                )}
+              </div>
+
+              {audioBlobUrl && !isRecording && (
+                <div className="mt-4 pt-4 border-t border-amber-200 text-left space-y-3">
+                  <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-amber-100">
+                    <div className="flex items-center space-x-3">
+                      <Volume2 className="w-5 h-5 text-amber-600" />
+                      <span className="text-xs font-medium text-slate-600">audio_opini_peserta.wav</span>
+                    </div>
+                    <span className="text-xs text-slate-400">{recordingTime} detik</span>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 mb-1">Transkrip Otomatis AI:</p>
+                    <p className="text-xs italic bg-white p-3 rounded-xl border border-slate-200 text-slate-700">"{simulatedTranscript}"</p>
+                  </div>
+
+                  <div className="text-center pt-2">
+                    <Button variant="secondary" onClick={evaluateVoiceNote} disabled={isEvaluating}>
+                      {isEvaluating ? 'AI Sedang Menilai Opini...' : 'Kirim & Nilai Opini VN'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Hasil Evaluasi AI */}
+            {evaluationResult && (
+              <div className="bg-white p-5 rounded-2xl border-2 border-emerald-400 shadow-md space-y-3 animate-fade-in">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                    <span className="font-bold text-lg text-slate-800">Hasil Penilaian AI Company</span>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}>
+                    {evaluationResult.status}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl text-sm">
+                  <div>
+                    <span className="text-slate-500 block text-xs">Skor Kecocokan Opini:</span>
+                    <span className="font-bold text-emerald-700 text-base">{evaluationResult.score} / 100</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-xs">Kategori Jawaban:</span>
+                    <span className="font-bold text-slate-800">Benar & Relevan</span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold text-slate-500 mb-1">Feedback AI & Kunci Jawaban Ideal:</p>
+                  <p className="text-xs text-slate-600 mb-2">{evaluationResult.feedback}</p>
+                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900">
+                    <strong>Jawaban Ideal / Pembahasan Tabel:</strong> {currentQ.idealAnswer}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
+  return (
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold text-[#0E2A47]">Board Game Companion</h2>
+        <p className="text-slate-600 mt-2">Track your physical board game progress and unlock digital challenges.</p>
+      </div>
+ 
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="text-xl font-bold">Current Status</h3>
+            <p className="text-slate-500">You are currently in Phase {user.currentPhase}</p>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-slate-500">Collected Cards</div>
+            <div className="text-2xl font-bold text-[#C99700]">12 <span className="text-sm text-slate-400">/ 40</span></div>
+          </div>
+        </div>
+ 
+        <div className="space-y-6">
+          {PHASES.map((phase) => {
+            const isCompleted = user.currentPhase > phase.id;
+            const isCurrent = user.currentPhase === phase.id;
+            const isLocked = user.currentPhase < phase.id;
+ 
+            return (
+              <div key={phase.id} className={`flex items-center p-4 rounded-2xl border-2 transition-all ${
+                isCurrent ? 'border-[#C99700] bg-amber-50' :
+                isCompleted ? 'border-emerald-200 bg-emerald-50' : 'border-slate-100 bg-slate-50 opacity-60'
+              }`}>
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center text-white mr-4 shadow-md ${phase.color}`}>
+                  <phase.icon className="w-7 h-7" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-lg text-slate-800">{phase.name} Phase</h4>
+                  <p className="text-sm text-slate-600">
+                    {isCompleted ? 'Challenge Completed!' :
+                     isCurrent ? 'Play the board game until you reach the milestone.' : 'Locked'}
+                  </p>
+                </div>
+                <div>
+                  {isCompleted ? (
+                    <Badge color="bg-emerald-100 text-emerald-700">Done <CheckCircle2 className="w-4 h-4 ml-1 inline"/></Badge>
+                  ) : isCurrent ? (
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        setActiveChallenge(phase.name.toLowerCase());
+                        setView('challenge');
+                      }}
+                    >
+                      Start Challenge
+                    </Button>
+                  ) : (
+                    <Lock className="w-6 h-6 text-slate-300" />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+// --- GAME CONTENT BANKS ---
+const CHALLENGE_QUESTION_BANKS = {
+  scholar: [
+    { q: "Siapakah tokoh pemikir Islam yang dikenal dengan gelar Hujjatul Islam?", options: ["Ibnu Sina", "Al-Ghazali", "Ibnu Khaldun", "Muhammad Abduh"], answer: 1 },
+    { q: "Tokoh ulama asal Banten yang pernah menjadi Imam Masjidil Haram adalah...", options: ["Hamzah Fansuri", "Nuruddin ar-Raniri", "Syekh Nawawi al-Bantani", "KH. Hasyim Asy'ari"], answer: 2 },
+    { q: "Ibnu Sina dikenal sebagai bapak dari bidang ilmu...", options: ["Sosiologi", "Kedokteran Modern", "Astronomi", "Ekonomi"], answer: 1 },
+    { q: "Ibnu Khaldun adalah peletak dasar ilmu...", options: ["Kedokteran", "Optik", "Sosiologi & Sejarah", "Aljabar"], answer: 2 },
+    { q: "Pendiri organisasi Nahdlatul Ulama (NU) adalah...", options: ["KH. Ahmad Dahlan", "KH. Hasyim Asy'ari", "Nurcholish Madjid", "Harun Nasution"], answer: 1 },
+    { q: "Pendiri organisasi Muhammadiyah adalah...", options: ["KH. Hasyim Asy'ari", "KH. Ahmad Dahlan", "Kuntowijoyo", "Fazlur Rahman"], answer: 1 },
+  ],
+  technology: [
+    { left: "Al-Khawarizmi", right: "Computer Algorithms", id: 1 },
+    { left: "Ibn Al-Haytham", right: "Camera & Optics", id: 2 },
+    { left: "Al-Jazari", right: "Robotics & Automata", id: 3 },
+    { left: "Al-Biruni", right: "Geodesy & Earth Measurement", id: 4 },
+  ],
+  innovation: [
+    { title: "Sejarah Peradaban Klasik", items: ["Ibnu Sina lahir & menulis Canon of Medicine", "Al-Ghazali menulis Ihya Ulumuddin", "Ibnu Khaldun menulis Muqaddimah"] },
+    { title: "Gerakan Pembaruan Nusantara", items: ["Syekh Nawawi al-Bantani menjadi Imam Masjidil Haram", "KH. Ahmad Dahlan mendirikan Muhammadiyah", "KH. Hasyim Asy'ari mendirikan Nahdlatul Ulama"] },
+    { title: "Pemikiran Islam Kontemporer", items: ["Muhammad Abduh menggagas pembaruan pemikiran Islam", "Fazlur Rahman mengembangkan neo-modernisme", "Nurcholish Madjid mempopulerkan sekularisasi terbatas"] },
+  ],
+  master: [
+    { id: 1, name: "Ibnu Sina" }, { id: 2, name: "Al-Ghazali" },
+    { id: 3, name: "Al-Khawarizmi" }, { id: 4, name: "Ibnu Khaldun" },
+    { id: 5, name: "KH. Ahmad Dahlan" }, { id: 6, name: "KH. Hasyim Asy'ari" },
+  ],
+};
+ 
+const ACHIEVEMENT_RULES = {
+  scholar: { badge: "Scholar Explorer", desc: "Menyelesaikan tantangan kuis tokoh ilmuwan." },
+  technology: { badge: "Tech Historian", desc: "Menghubungkan semua warisan teknologi dengan benar." },
+  innovation: { badge: "Timeline Master", desc: "Menyusun urutan sejarah dengan tepat." },
+  master: { badge: "Memory Champion", desc: "Menemukan semua pasangan kartu ingatan." },
+};
+ 
+const shuffleArray = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+ 
+const ChallengeRunner = ({ type, onComplete, onCancel }) => {
+  const [step, setStep] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showFeedback, setShowFeedback] = useState(null);
+  const [streak, setStreak] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [earnedBadge, setEarnedBadge] = useState(null);
+ 
+  const scholarQuestions = CHALLENGE_QUESTION_BANKS.scholar;
+  const techPairs = CHALLENGE_QUESTION_BANKS.technology;
+  const timelineRounds = CHALLENGE_QUESTION_BANKS.innovation;
+  const memoryScholars = CHALLENGE_QUESTION_BANKS.master;
+ 
+  const [matches, setMatches] = useState([]);
+  const [selectedLeft, setSelectedLeft] = useState(null);
+  const [shuffledRight] = useState(() => shuffleArray(techPairs));
+ 
+  const [orderedItems, setOrderedItems] = useState(() => shuffleArray(timelineRounds[0].items));
+  const [draggedIdx, setDraggedIdx] = useState(null);
+  const [timelineChecked, setTimelineChecked] = useState(false);
+  const [timelineCorrect, setTimelineCorrect] = useState(false);
+ 
+  const [cards, setCards] = useState(() => shuffleArray(
+    memoryScholars.flatMap(s => [{ ...s, key: s.id + '-a' }, { ...s, key: s.id + '-b' }])
+  ));
+  const [flipped, setFlipped] = useState([]);
+  const [solved, setSolved] = useState([]);
+  const [moves, setMoves] = useState(0);
+ 
+  const finishWithScore = (finalScore) => {
+    setEarnedBadge(ACHIEVEMENT_RULES[type]);
+    setFinished(true);
+    setTimeout(() => onComplete(finalScore, ACHIEVEMENT_RULES[type].badge), 1800);
+  };
+ 
+  const handleQuizAnswer = (idx) => {
+    const isCorrect = idx === scholarQuestions[step].answer;
+    setShowFeedback(isCorrect ? 'correct' : 'wrong');
+    let gained = 0;
+    if (isCorrect) {
+      const newStreak = streak + 1;
+      const streakBonus = newStreak >= 3 ? 20 : 0;
+      gained = 40 + streakBonus;
+      setStreak(newStreak);
+      setScore(s => s + gained);
+    } else {
+      setStreak(0);
+    }
+ 
+    setTimeout(() => {
+      setShowFeedback(null);
+      if (step < scholarQuestions.length - 1) {
+        setStep(s => s + 1);
+      } else {
+        finishWithScore(score + gained);
+      }
+    }, 1200);
+  };
+ 
+  const handleMatch = (rightId) => {
+    if (!selectedLeft) return;
+    if (selectedLeft === rightId) {
+      const newMatches = [...matches, rightId];
+      setMatches(newMatches);
+      setScore(s => s + 30);
+      setSelectedLeft(null);
+      if (newMatches.length === techPairs.length) {
+        setTimeout(() => finishWithScore(score + 30), 800);
+      }
+    } else {
+      setScore(s => Math.max(0, s - 5));
+      setSelectedLeft(null);
+    }
+  };
+ 
+  const handleDragStart = (idx) => setDraggedIdx(idx);
+  const handleDrop = (idx) => {
+    if (draggedIdx === null || draggedIdx === idx) return;
+    setOrderedItems(prev => {
+      const next = [...prev];
+      const [moved] = next.splice(draggedIdx, 1);
+      next.splice(idx, 0, moved);
+      return next;
+    });
+    setDraggedIdx(null);
+  };
+  const checkTimeline = () => {
+    const isCorrect = JSON.stringify(orderedItems) === JSON.stringify(timelineRounds[step].items);
+    setTimelineChecked(true);
+    setTimelineCorrect(isCorrect);
+    const gained = isCorrect ? 60 : 15;
+    setScore(s => s + gained);
+    setTimeout(() => {
+      setTimelineChecked(false);
+      if (step < timelineRounds.length - 1) {
+        setStep(s => s + 1);
+        setOrderedItems(shuffleArray(timelineRounds[step + 1].items));
+      } else {
+        finishWithScore(score + gained);
+      }
+    }, 1600);
+  };
+ 
+  const handleCardFlip = (key) => {
+    if (flipped.length === 2 || flipped.includes(key) || solved.includes(key)) return;
+    const newFlipped = [...flipped, key];
+    setFlipped(newFlipped);
+    if (newFlipped.length === 2) {
+      setMoves(m => m + 1);
+      const [a, b] = newFlipped.map(k => cards.find(c => c.key === k));
+      if (a.id === b.id) {
+        const newSolved = [...solved, a.key, b.key];
+        setSolved(newSolved);
+        setScore(s => s + 25);
+        setFlipped([]);
+        if (newSolved.length === cards.length) {
+          setTimeout(() => finishWithScore(score + 25), 800);
+        }
+      } else {
+        setTimeout(() => setFlipped([]), 800);
+      }
+    }
+  };
+ 
+  return (
+    <div className="max-w-3xl mx-auto h-full flex flex-col pt-8">
+      <div className="flex items-center justify-between mb-8">
+        <Button variant="ghost" onClick={onCancel}><XCircle className="w-6 h-6 mr-2"/> Exit Challenge</Button>
+        <div className="flex items-center space-x-3">
+           {streak >= 2 && type === 'scholar' && (
+             <Badge color="bg-orange-100 text-orange-700"><Zap className="w-3 h-3 mr-1"/> {streak}x Streak</Badge>
+           )}
+           <Badge color="bg-amber-100 text-amber-700 text-lg py-1 px-4"><Star className="w-5 h-5 mr-1 text-amber-500"/> {score}</Badge>
+        </div>
+      </div>
+ 
+      <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-200 flex-1 relative overflow-hidden">
+ 
+        {finished && (
+          <div className="absolute inset-0 z-20 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">
+            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-4" style={{animation: 'bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'}}>
+              <Trophy className="w-10 h-10 text-amber-500" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800 mb-1">Tantangan Selesai!</h3>
+            <p className="text-slate-500 mb-3">Skor akhir: <span className="font-bold text-[#C99700]">{score}</span></p>
+            {earnedBadge && (
+              <Badge color="bg-emerald-100 text-emerald-700 text-sm py-1.5 px-3"><Shield className="w-4 h-4 mr-1"/> Lencana baru: {earnedBadge.badge}</Badge>
+            )}
+          </div>
+        )}
+ 
+        {type === 'scholar' && (
+          <div className="flex flex-col h-full">
+            <div className="mb-8">
+              <ProgressBar progress={(step / scholarQuestions.length) * 100} height="h-2" color="bg-blue-500" />
+              <p className="text-right text-sm text-slate-500 mt-2">Question {step + 1} of {scholarQuestions.length}</p>
+            </div>
+ 
+            <h2 className="text-2xl font-bold text-center mb-8">{scholarQuestions[step].q}</h2>
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
+              {scholarQuestions[step].options.map((opt, idx) => (
+                <Button
+                  key={idx}
+                  variant="outline"
+                  className={`h-20 text-lg border-2 ${showFeedback ? 'pointer-events-none' : ''}`}
+                  onClick={() => handleQuizAnswer(idx)}
+                >
+                  {opt}
+                </Button>
+              ))}
+            </div>
+ 
+            {showFeedback && (
+              <div className={`absolute bottom-0 left-0 right-0 p-6 flex items-center justify-between
+                ${showFeedback === 'correct' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}
+              `} style={{animation: 'slideUp 0.3s ease-out forwards'}}>
+                <div className="flex items-center">
+                  {showFeedback === 'correct' ? <CheckCircle2 className="w-10 h-10 mr-4"/> : <XCircle className="w-10 h-10 mr-4"/>}
+                  <h3 className="text-2xl font-bold">{showFeedback === 'correct' ? (streak + 1 >= 3 ? 'Excellent! +Streak Bonus' : 'Excellent!') : 'Not quite right'}</h3>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+ 
+        {type === 'technology' && (
+          <div>
+            <h2 className="text-2xl font-bold text-center mb-2">Connect the Concepts</h2>
+            <p className="text-center text-slate-500 mb-8">Tap a Scholar, then tap their modern technological legacy. Wrong pairs cost points!</p>
+ 
+            <div className="flex justify-between items-stretch gap-8">
+              <div className="flex-1 space-y-4">
+                {techPairs.map(pair => {
+                  const isMatched = matches.includes(pair.id);
+                  const isSelected = selectedLeft === pair.id;
+                  return (
+                    <div
+                      key={`left-${pair.id}`}
+                      onClick={() => !isMatched && setSelectedLeft(pair.id)}
+                      className={`p-4 rounded-xl border-2 text-center font-bold cursor-pointer transition-all h-20 flex items-center justify-center
+                        ${isMatched ? 'bg-emerald-100 border-emerald-500 text-emerald-700 opacity-50 cursor-default' :
+                          isSelected ? 'bg-blue-100 border-blue-500 text-blue-700 shadow-md scale-105' :
+                          'bg-white border-slate-200 hover:border-blue-300'
+                        }
+                      `}
+                    >
+                      {pair.left}
+                    </div>
+                  )
+                })}
+              </div>
+ 
+              <div className="w-px bg-slate-200 flex-col justify-around py-10 hidden md:flex">
+                 {techPairs.map(p => <div key={p.id} className="w-3 h-3 bg-slate-300 rounded-full -ml-1.5" />)}
+              </div>
+ 
+              <div className="flex-1 space-y-4">
+                {shuffledRight.map(pair => {
+                  const isMatched = matches.includes(pair.id);
+                  return (
+                    <div
+                      key={`right-${pair.id}`}
+                      onClick={() => !isMatched && handleMatch(pair.id)}
+                      className={`p-4 rounded-xl border-2 border-dashed text-center font-bold cursor-pointer transition-all h-20 flex items-center justify-center
+                        ${isMatched ? 'bg-emerald-100 border-emerald-500 border-solid text-emerald-700 opacity-50 cursor-default' :
+                          selectedLeft ? 'bg-blue-50 border-blue-400 hover:bg-blue-100' :
+                          'bg-slate-50 border-slate-300'
+                        }
+                      `}
+                    >
+                      {pair.right}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+ 
+            {matches.length === techPairs.length && (
+              <div className="mt-8 text-center text-emerald-600 font-bold text-xl animate-pulse">
+                All connections found! Perfect score.
+              </div>
+            )}
+          </div>
+        )}
+ 
+        {type === 'innovation' && (
+          <div>
+            <div className="mb-6">
+              <ProgressBar progress={(step / timelineRounds.length) * 100} height="h-2" color="bg-purple-500" />
+              <p className="text-right text-sm text-slate-500 mt-2">Timeline {step + 1} of {timelineRounds.length}</p>
+            </div>
+            <h2 className="text-2xl font-bold text-center mb-1">Susun Urutan Peristiwa</h2>
+            <p className="text-center text-slate-500 mb-8">{timelineRounds[step].title} — seret kartu untuk mengurutkan dari yang paling awal.</p>
+ 
+            <div className="space-y-3 max-w-xl mx-auto">
+              {orderedItems.map((item, idx) => (
+                <div
+                  key={item}
+                  draggable
+                  onDragStart={() => handleDragStart(idx)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => handleDrop(idx)}
+                  className={`p-4 rounded-xl border-2 flex items-center gap-4 bg-white cursor-move transition-all
+                    ${timelineChecked ? (timelineCorrect ? 'border-emerald-400 bg-emerald-50' : 'border-red-300 bg-red-50') : 'border-slate-200 hover:border-purple-300'}
+                  `}
+                >
+                  <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold flex items-center justify-center flex-shrink-0">{idx + 1}</div>
+                  <p className="text-slate-700 font-medium">{item}</p>
+                </div>
+              ))}
+            </div>
+ 
+            <div className="text-center mt-8">
+              <Button variant="secondary" onClick={checkTimeline} disabled={timelineChecked}>Kunci Urutan</Button>
+            </div>
+ 
+            {timelineChecked && (
+              <div className={`absolute bottom-0 left-0 right-0 p-6 flex items-center justify-center
+                ${timelineCorrect ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}
+              `} style={{animation: 'slideUp 0.3s ease-out forwards'}}>
+                <div className="flex items-center">
+                  {timelineCorrect ? <CheckCircle2 className="w-8 h-8 mr-3"/> : <XCircle className="w-8 h-8 mr-3"/>}
+                  <h3 className="text-xl font-bold">{timelineCorrect ? 'Urutan tepat!' : 'Urutan kurang tepat, tetap lanjut.'}</h3>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+ 
+        {type === 'master' && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Memory Match: Tokoh Ilmuwan</h2>
+              <Badge color="bg-slate-100 text-slate-600">Moves: {moves}</Badge>
+            </div>
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3 max-w-xl mx-auto">
+              {cards.map(card => {
+                const isFlipped = flipped.includes(card.key) || solved.includes(card.key);
+                return (
+                  <div
+                    key={card.key}
+                    onClick={() => handleCardFlip(card.key)}
+                    className={`aspect-square rounded-xl flex items-center justify-center text-center p-2 cursor-pointer text-xs md:text-sm font-bold transition-all duration-300 select-none
+                      ${isFlipped
+                        ? (solved.includes(card.key) ? 'bg-emerald-100 text-emerald-700 border-2 border-emerald-400' : 'bg-blue-100 text-blue-700 border-2 border-blue-400')
+                        : 'bg-[#0E2A47] text-white hover:bg-[#163a5f]'}
+                    `}
+                  >
+                    {isFlipped ? card.name : <Compass className="w-6 h-6 opacity-60" />}
+                  </div>
+                );
+              })}
+            </div>
+            {solved.length === cards.length && (
+              <div className="mt-8 text-center text-emerald-600 font-bold text-xl animate-pulse">
+                Semua pasangan ditemukan dalam {moves} langkah!
+              </div>
+            )}
+          </div>
+        )}
+ 
+      </div>
+    </div>
+  );
+};
+ 
+const LeaderboardView = () => (
+  <div className="max-w-4xl mx-auto">
+    <div className="text-center mb-10">
+      <h2 className="text-3xl font-bold text-[#0E2A47]">Global Leaderboard</h2>
+      <p className="text-slate-600 mt-2">See how you rank among other scholars.</p>
+    </div>
+ 
+    <div className="hidden md:flex justify-center items-end mb-12 space-x-4 h-64">
+      <div className="w-40 flex flex-col items-center group">
+        <div className="relative">
+          <img src={LEADERBOARD_DATA[1].avatar} className="w-20 h-20 rounded-full border-4 border-slate-300 mb-4 z-10 relative group-hover:scale-110 transition-transform" />
+          <div className="absolute -bottom-2 -right-2 bg-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white border-2 border-white z-20">2</div>
+        </div>
+        <div className="bg-slate-200 w-full h-32 rounded-t-lg flex flex-col items-center pt-4">
+          <span className="font-bold text-slate-700 truncate w-full text-center px-2">{LEADERBOARD_DATA[1].name}</span>
+          <span className="text-[#C99700] font-bold mt-1">{LEADERBOARD_DATA[1].xp} XP</span>
+        </div>
+      </div>
+ 
+      <div className="w-48 flex flex-col items-center group">
+        <div className="relative">
+           <Crown className="w-10 h-10 text-amber-500 absolute -top-10 left-1/2 -translate-x-1/2 animate-bounce" />
+          <img src={LEADERBOARD_DATA[0].avatar} className="w-28 h-28 rounded-full border-4 border-amber-400 mb-4 z-10 relative shadow-lg group-hover:scale-110 transition-transform" />
+          <div className="absolute -bottom-2 -right-0 bg-amber-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white border-2 border-white z-20 text-lg shadow">1</div>
+        </div>
+        <div className="bg-[#C99700] w-full h-40 rounded-t-lg flex flex-col items-center pt-4 text-white shadow-xl">
+          <span className="font-bold truncate w-full text-center px-2 text-lg">{LEADERBOARD_DATA[0].name}</span>
+          <span className="font-bold mt-1 bg-black/20 px-3 py-1 rounded-full text-sm">{LEADERBOARD_DATA[0].xp} XP</span>
+        </div>
+      </div>
+ 
+      <div className="w-40 flex flex-col items-center group">
+        <div className="relative">
+          <img src={LEADERBOARD_DATA[2].avatar} className="w-20 h-20 rounded-full border-4 border-amber-700 mb-4 z-10 relative group-hover:scale-110 transition-transform" />
+          <div className="absolute -bottom-2 -right-2 bg-amber-700 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white border-2 border-white z-20">3</div>
+        </div>
+        <div className="bg-amber-900/10 w-full h-24 rounded-t-lg flex flex-col items-center pt-4 border-t border-amber-900/20">
+          <span className="font-bold text-amber-900 truncate w-full text-center px-2">{LEADERBOARD_DATA[2].name}</span>
+          <span className="text-[#C99700] font-bold mt-1">{LEADERBOARD_DATA[2].xp} XP</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+      {LEADERBOARD_DATA.map((user, idx) => (
+        <div key={user.id} className={`flex items-center p-4 md:px-8 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors ${idx === 2 ? 'bg-amber-50/50' : ''}`}>
+          <div className="w-8 font-bold text-slate-400 text-lg">{idx + 1}</div>
+          <img src={user.avatar} className="w-12 h-12 rounded-full mr-4 border border-slate-200" />
+          <div className="flex-1">
+            <h4 className="font-bold text-slate-800 text-lg flex items-center">
+              {user.name}
+              {idx === 2 && <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">You</span>}
+            </h4>
+            <p className="text-sm text-slate-500">{user.group}</p>
+          </div>
+          <div className="text-right">
+            <div className="font-bold text-[#C99700] text-lg">{user.xp} XP</div>
+            <div className="text-sm text-slate-500">Level {user.level}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+ 
+const QRScannerView = () => (
+  <div className="h-full flex flex-col items-center justify-center max-w-lg mx-auto text-center">
+    <div className="w-full aspect-square bg-slate-900 rounded-3xl relative overflow-hidden shadow-2xl border-4 border-slate-800 mb-8">
+      <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" className="opacity-40 w-full h-full object-cover blur-sm" />
+ 
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-64 h-64 border-2 border-[#C99700] rounded-xl relative">
+           <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-[#C99700]"></div>
+           <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-[#C99700]"></div>
+           <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-[#C99700]"></div>
+           <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-[#C99700]"></div>
+ 
+           <div className="w-full h-1 bg-[#C99700] opacity-50 absolute top-0 shadow-[0_0_10px_#C99700]" style={{animation: 'scan 3s linear infinite'}}></div>
+        </div>
+      </div>
+    </div>
+ 
+    <h2 className="text-2xl font-bold text-[#0E2A47] mb-2">Scan Physical Card</h2>
+    <p className="text-slate-600 mb-8">Align the QR code on your board game card within the frame to unlock AR content and challenges.</p>
+ 
+    <Button variant="primary" className="w-full">
+      <Camera className="w-5 h-5 mr-2" /> Start Camera
+    </Button>
+  </div>
+);
+ 
+const ALL_BADGES = [
+  { name: "Scholar Explorer", desc: "Menyelesaikan tantangan kuis tokoh ilmuwan.", icon: BookOpen },
+  { name: "Early Bird", desc: "Belajar pagi hari 5 kali berturut-turut.", icon: Star },
+  { name: "Perfect Quiz", desc: "Menjawab seluruh kuis tanpa kesalahan.", icon: CheckCircle2 },
+  { name: "Tech Historian", desc: "Menghubungkan semua warisan teknologi dengan benar.", icon: Cpu },
+  { name: "Timeline Master", desc: "Menyusun urutan sejarah dengan tepat.", icon: Zap },
+  { name: "Memory Champion", desc: "Menemukan semua pasangan kartu ingatan.", icon: Crown },
+];
+ 
+const ProfileView = ({ user }) => (
+  <div className="max-w-4xl mx-auto space-y-8">
+    <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center gap-6">
+      <img src={user.avatar} className="w-24 h-24 rounded-full border-4 border-[#C99700] shadow-md" />
+      <div className="text-center md:text-left flex-1">
+        <h2 className="text-2xl font-bold text-slate-800">{user.name}</h2>
+        <p className="text-slate-500">{user.institution} • {user.class}</p>
+        <p className="text-sm text-slate-400 mt-1">{user.group}</p>
+      </div>
+      <div className="grid grid-cols-3 gap-4 text-center">
+        <div>
+          <div className="text-2xl font-bold text-[#C99700]">{user.level}</div>
+          <div className="text-xs text-slate-500">Level</div>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-[#C99700]">{user.xp}</div>
+          <div className="text-xs text-slate-500">XP</div>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-[#C99700]">{user.streak}</div>
+          <div className="text-xs text-slate-500">Day Streak</div>
+        </div>
+      </div>
+    </div>
+ 
+    <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+      <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center"><Shield className="w-5 h-5 mr-2 text-[#C99700]"/> Koleksi Lencana</h3>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {ALL_BADGES.map(badge => {
+          const earned = user.badges.includes(badge.name);
+          return (
+            <div key={badge.name} className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all ${earned ? 'border-amber-300 bg-amber-50' : 'border-slate-100 bg-slate-50 opacity-50'}`}>
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${earned ? 'bg-[#C99700] text-white' : 'bg-slate-200 text-slate-400'}`}>
+                {earned ? <badge.icon className="w-7 h-7" /> : <Lock className="w-6 h-6" />}
+              </div>
+              <p className="font-bold text-sm text-slate-800">{badge.name}</p>
+              <p className="text-xs text-slate-500 mt-1">{badge.desc}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+ 
+    <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+      <h3 className="text-xl font-bold text-slate-800 mb-6">Progres Fase Belajar</h3>
+      <div className="space-y-4">
+        {PHASES.map(phase => {
+          const isCompleted = user.currentPhase > phase.id;
+          const isCurrent = user.currentPhase === phase.id;
+          return (
+            <div key={phase.id} className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${isCompleted || isCurrent ? phase.color : 'bg-slate-200'}`}>
+                <phase.icon className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-slate-700">{phase.name}</p>
+                <ProgressBar progress={isCompleted ? 100 : isCurrent ? 50 : 0} height="h-2" />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+);
+ 
+// --- MAIN APP COMPONENT ---
+function App() {
+  const [user, setUser] = useState(null);
+  const [activeView, setActiveView] = useState('dashboard');
+  const [activeChallenge, setActiveChallenge] = useState(null);
+ 
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [newBadgeToast, setNewBadgeToast] = useState(null);
+ 
+  const handleLogin = () => {
+    setUser(MOCK_USER);
+    setActiveView('dashboard');
+  };
+ 
+  const handleLogout = () => {
+    setUser(null);
+  };
+ 
+  const completeChallenge = (gainedXp, badgeName) => {
+    setUser(prev => {
+      let newXp = prev.xp + gainedXp;
+      let newLevel = prev.level;
+      let showedModal = false;
+ 
+      if (newXp >= prev.nextLevelXp) {
+        newLevel++;
+        newXp = newXp - prev.nextLevelXp;
+        showedModal = true;
+      }
+ 
+      if(showedModal) setShowLevelUp(true);
+ 
+      const alreadyHasBadge = badgeName && prev.badges.includes(badgeName);
+      if (badgeName && !alreadyHasBadge) {
+        setTimeout(() => setNewBadgeToast(badgeName), showedModal ? 3200 : 300);
+      }
+ 
+      return {
+        ...prev,
+        xp: newXp,
+        level: newLevel,
+        badges: (badgeName && !alreadyHasBadge) ? [...prev.badges, badgeName] : prev.badges,
+        currentPhase: prev.currentPhase < 4 ? prev.currentPhase + 1 : prev.currentPhase
+      }
+    });
+ 
+    setActiveChallenge(null);
+    setActiveView('dashboard');
+ 
+    if(showLevelUp) {
+      setTimeout(() => setShowLevelUp(false), 3000);
+    }
+  };
+ 
+  useEffect(() => {
+    if (newBadgeToast) {
+      const t = setTimeout(() => setNewBadgeToast(null), 3500);
+      return () => clearTimeout(t);
+    }
+  }, [newBadgeToast]);
+ 
+  if (!user) {
+    return <AuthView onLogin={handleLogin} />;
+  }
+ 
+  if (activeView === 'challenge' && activeChallenge) {
+    return (
+      <div className="h-screen bg-slate-50 font-sans">
+        <ChallengeRunner
+          type={activeChallenge}
+          onComplete={completeChallenge}
+          onCancel={() => { setActiveChallenge(null); setActiveView('board'); }}
+        />
+      </div>
+    );
+  }
+ 
+  const renderView = () => {
+  switch (activeView) {
+    case 'dashboard':
+      return <DashboardView user={user} navigate={setActiveView} />;
+
+    case 'learning':
+      return <LearningStudioView />;
+
+    case 'materi':
+      return <MateriScholarView />;
+
+    case 'vr':
+      return <VRMuseumView />;
+
+    case 'ai':
+      return <AICompanionView />;
+
+    case 'board':
+      return (
+        <BoardGameProgressView
+          user={user}
+          setView={setActiveView}
+          setActiveChallenge={setActiveChallenge}
+        />
+      );
+
+    case 'qr':
+      return <QRScannerView />;
+
+    case 'leaderboard':
+      return <LeaderboardView />;
+
+    case 'profile':
+      return <ProfileView user={user} />;
+
+    default:
+      return <DashboardView user={user} navigate={setActiveView} />;
+  }
+}; 
+  return (
+    <>
+      <Layout activeTab={activeView} setActiveTab={setActiveView} user={user} onLogout={handleLogout}>
+        {renderView()}
+      </Layout>
+ 
+      {showLevelUp && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl" style={{animation: 'bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'}}>
+            <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trophy className="w-12 h-12 text-amber-500" />
+            </div>
+            <h2 className="text-3xl font-bold text-slate-800 mb-2">Level Up!</h2>
+            <p className="text-slate-600 mb-6">You have reached Level {user.level}. Your knowledge of Islamic civilization grows stronger.</p>
+            <Button variant="primary" className="w-full" onClick={() => setShowLevelUp(false)}>Awesome!</Button>
+          </div>
+        </div>
+      )}
+ 
+      {newBadgeToast && (
+        <div className="fixed top-6 right-6 z-[110] bg-white rounded-2xl shadow-2xl border border-amber-200 p-4 flex items-center gap-3 max-w-xs" style={{animation: 'slideInRight 0.4s ease-out forwards'}}>
+          <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <Shield className="w-6 h-6 text-amber-600" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide">Lencana Baru</p>
+            <p className="font-bold text-slate-800">{newBadgeToast}</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+ 
+const styleTag = document.createElement('style');
+styleTag.innerHTML = `
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+  @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+`;
+document.head.appendChild(styleTag);
+ 
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
