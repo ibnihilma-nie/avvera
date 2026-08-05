@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AVERRA</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0E2A47; color: white; font-family: Arial, sans-serif; }
+    .loader { text-align: center; }
+    .icon { width: 60px; height: 60px; margin: 0 auto 16px; display: grid; place-items: center; border-radius: 18px; background: #C99700; font-size: 30px; }
+    p { color: #c9d8e7; }
+  </style>
+  <script src="/enhancements.js?v=2"></script>
+</head>
+<body>
+  <div class="loader"><div class="icon">🧭</div><strong>AVERRA</strong><p>Menyiapkan profil dan leaderboard...</p></div>
+  <script>
+    fetch("/index.html?v=source-2", { cache: "no-store" })
+      .then(response => {
+        if (!response.ok) throw new Error("index.html tidak dapat dimuat.");
+        return response.text();
+      })
+      .then(source => {
+        document.open();
+        document.write(source);
+        document.close();
+      })
+      .catch(error => {
+        document.body.innerHTML = "<div style='max-width:680px;padding:24px;background:white;color:#18212f;border-radius:18px'><h2>AVERRA gagal dimuat</h2><p style='color:#475467'>" + error.message + "</p></div>";
+      });
+  </script>
+</body>
+</html>
