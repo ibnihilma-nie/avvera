@@ -20,7 +20,7 @@
   <div id="boot" class="loader">
     <div class="compass">🧭</div>
     <h1>AVERRA</h1>
-    <p>Menyiapkan Learning Studio...</p>
+    <p>Menyiapkan aplikasi...</p>
   </div>
 
   <script>
@@ -46,7 +46,7 @@
         "k-n-3": { youtubeId: "MGIBSmNc2H4", title: "Penulisan Biografi Kuntowijoyo: Sastrawan dan Ilmuwan Profetik", channel: "Agung Prihantoro", duration: "15:47" }
       };
 
-      const response = await fetch("./app-base.html?v=learning-videos-1", { cache: "no-store" });
+      const response = await fetch("./app-base.html?v=virtual-museum-1", { cache: "no-store" });
       if (!response.ok) throw new Error("File aplikasi dasar tidak dapat dimuat (HTTP " + response.status + ").");
       let html = await response.text();
 
@@ -111,13 +111,163 @@
 
       html = html.slice(0, playerStart) + newPlayer + "\n \n" + html.slice(detailStart);
 
-      const oldTranscriptHeading = '<h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Transcript & Ringkasan</h3>';
-      const newTranscriptHeading = '<h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Ringkasan & Panduan Menonton</h3>';
-      html = html.replace(oldTranscriptHeading, newTranscriptHeading);
+      html = html.replace(
+        '<h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Transcript & Ringkasan</h3>',
+        '<h3 className="text-lg font-bold text-slate-800 mt-6 mb-2">Ringkasan & Panduan Menonton</h3>'
+      );
 
-      const oldTranscriptParagraph = '<p>Selamat datang di Modul Scholar. Pada sesi ini, kita akan menyelami kehidupan <strong>{activeLesson.name}</strong>, salah satu tokoh penting dalam sejarah peradaban Islam yang gagasan-gagasannya melintasi batas waktu dan ruang...</p>';
-      const newTranscriptParagraph = '<p>Simak video berbahasa Indonesia di atas untuk mengenal perjalanan hidup, karya, dan gagasan <strong>{activeLesson.name}</strong>. Catat tiga hal utama: latar kehidupan tokoh, kontribusi terpenting, dan relevansi pemikirannya untuk masa kini. Video dipilih sebagai bahan belajar eksternal; hak cipta tetap milik kanal YouTube masing-masing.</p>';
-      html = html.replace(oldTranscriptParagraph, newTranscriptParagraph);
+      html = html.replace(
+        '<p>Selamat datang di Modul Scholar. Pada sesi ini, kita akan menyelami kehidupan <strong>{activeLesson.name}</strong>, salah satu tokoh penting dalam sejarah peradaban Islam yang gagasan-gagasannya melintasi batas waktu dan ruang...</p>',
+        '<p>Simak video berbahasa Indonesia di atas untuk mengenal perjalanan hidup, karya, dan gagasan <strong>{activeLesson.name}</strong>. Catat tiga hal utama: latar kehidupan tokoh, kontribusi terpenting, dan relevansi pemikirannya untuk masa kini. Video dipilih sebagai bahan belajar eksternal; hak cipta tetap milik kanal YouTube masing-masing.</p>'
+      );
+
+      const museumStartMarker = "const VRMuseumView = () => {";
+      const museumEndMarker = "// --- AI COMPANY VIEW";
+      const museumStart = html.indexOf(museumStartMarker);
+      const museumEnd = html.indexOf(museumEndMarker, museumStart);
+
+      if (museumStart === -1 || museumEnd === -1) {
+        throw new Error("Komponen museum tidak ditemukan. Struktur app-base.html kemungkinan sudah berubah.");
+      }
+
+      const newMuseum = `const VIRTUAL_MUSEUM_APK_URL = "https://drive.google.com/uc?export=download&id=14mU2mCLBFPm30M5IJaDVGP8napY95Hi_";
+const VIRTUAL_MUSEUM_FILE_URL = "https://drive.google.com/file/d/14mU2mCLBFPm30M5IJaDVGP8napY95Hi_/view?usp=sharing";
+const VIRTUAL_MUSEUM_FOLDER_URL = "https://drive.google.com/drive/folders/1TUnVqPFUwThxC07uhW7C1G1ld41OStqE";
+
+const VRMuseumView = () => {
+  const installSteps = [
+    "Tekan tombol Unduh APK dari Google Drive.",
+    "Setelah selesai, buka file VR Museum.apk pada perangkat Android.",
+    "Izinkan pemasangan dari sumber ini apabila diminta oleh Android.",
+    "Selesaikan instalasi lalu buka aplikasi Virtual Museum."
+  ];
+
+  return (
+    <div className="space-y-6">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0E2A47] via-[#123b63] to-[#071b2e] rounded-3xl text-white shadow-xl">
+        <div className="absolute -right-24 -top-24 w-80 h-80 rounded-full bg-[#C99700]/20 blur-3xl" />
+        <div className="absolute -left-20 -bottom-24 w-72 h-72 rounded-full bg-blue-400/10 blur-3xl" />
+
+        <div className="relative grid grid-cols-1 lg:grid-cols-5 gap-8 p-7 md:p-10 items-center">
+          <div className="lg:col-span-3">
+            <div className="flex flex-wrap gap-2 mb-5">
+              <Badge color="bg-[#C99700] text-white border border-amber-300/30">
+                <Video className="w-3 h-3 mr-1" /> Virtual Museum
+              </Badge>
+              <Badge color="bg-white/10 text-blue-100 border border-white/10">
+                Android APK
+              </Badge>
+              <Badge color="bg-white/10 text-blue-100 border border-white/10">
+                93,6 MB
+              </Badge>
+            </div>
+
+            <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
+              Jelajahi Museum Virtual AVERRA
+            </h2>
+            <p className="text-blue-100 text-base md:text-lg leading-8 max-w-2xl">
+              Virtual Museum tersedia sebagai aplikasi Android dari folder Google Drive resmi AVERRA. Unduh aplikasinya untuk menikmati pengalaman museum secara lebih interaktif melalui perangkat Android.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 mt-7">
+              <a
+                href={VIRTUAL_MUSEUM_APK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center bg-[#C99700] hover:bg-[#b08400] text-white font-bold px-6 py-3.5 rounded-xl shadow-[0_4px_0_#967100] hover:translate-y-[2px] hover:shadow-[0_2px_0_#967100] transition-all"
+              >
+                <ArrowRight className="w-5 h-5 mr-2" />
+                Unduh APK dari Google Drive
+              </a>
+
+              <a
+                href={VIRTUAL_MUSEUM_FOLDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors"
+              >
+                <FileText className="w-5 h-5 mr-2" />
+                Buka Folder Drive
+              </a>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 flex justify-center">
+            <div className="relative w-64 h-80 rounded-[2.5rem] border-[10px] border-slate-950 bg-gradient-to-b from-slate-800 to-slate-950 shadow-2xl p-5 flex flex-col items-center justify-center text-center">
+              <div className="absolute top-2 w-24 h-5 rounded-full bg-black" />
+              <div className="w-24 h-24 rounded-3xl bg-[#C99700] flex items-center justify-center shadow-lg mb-5">
+                <Compass className="w-14 h-14 text-white" />
+              </div>
+              <p className="text-xs uppercase tracking-[0.22em] text-blue-300 mb-2">AVERRA</p>
+              <h3 className="text-2xl font-bold">Virtual Museum</h3>
+              <p className="text-sm text-slate-400 mt-3">Aplikasi museum untuk perangkat Android</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm p-6 md:p-8">
+          <h3 className="text-2xl font-bold text-[#0E2A47] mb-2">Cara Memasang Aplikasi</h3>
+          <p className="text-slate-500 mb-6">Ikuti langkah berikut melalui ponsel atau tablet Android.</p>
+
+          <div className="space-y-4">
+            {installSteps.map((step, index) => (
+              <div key={step} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="w-9 h-9 rounded-full bg-[#0E2A47] text-white flex items-center justify-center font-bold flex-shrink-0">
+                  {index + 1}
+                </div>
+                <p className="text-slate-700 leading-7 pt-1">{step}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div className="space-y-6">
+          <section className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+            <h3 className="font-bold text-lg text-[#0E2A47] mb-4 flex items-center">
+              <FileText className="w-5 h-5 mr-2 text-[#C99700]" /> Informasi File
+            </h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Nama</span>
+                <span className="font-semibold text-slate-800 text-right">VR Museum.apk</span>
+              </div>
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Format</span>
+                <span className="font-semibold text-slate-800">Android APK</span>
+              </div>
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Ukuran</span>
+                <span className="font-semibold text-slate-800">93,6 MB</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="text-slate-500">Sumber</span>
+                <a href={VIRTUAL_MUSEUM_FILE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-[#C99700] hover:underline">Google Drive</a>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6">
+            <h3 className="font-bold text-amber-900 mb-3 flex items-center">
+              <Shield className="w-5 h-5 mr-2" /> Catatan Penting
+            </h3>
+            <p className="text-sm text-amber-800 leading-6">
+              File APK hanya dapat dipasang pada Android dan tidak bisa dibuka langsung di browser atau iPhone. Unduh hanya melalui tautan resmi yang tersedia pada halaman ini.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+`;
+
+      html = html.slice(0, museumStart) + newMuseum + html.slice(museumEnd);
+      html = html.replace(/Virtual Reality Museum/g, "Virtual Museum");
+      html = html.replace(/VR Museum/g, "Virtual Museum");
+      html = html.replace(/Explore 3D Exhibits/g, "Unduh aplikasi museum Android");
 
       document.open();
       document.write(html);
