@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -28,7 +27,7 @@ import {
   Settings, User, Map, MessageSquare, PlayCircle, Star,
   Trophy, Video, Zap, ChevronRight, Lock, Unlock, Shield,
   LogOut, Camera, Send, Mic, CheckCircle2, XCircle, BarChart,
-  Crown, ScanLine, Clock, FileText, ArrowRight, Globe, MapPin
+  Crown, ScanLine, Clock, FileText, ArrowRight, Globe, MapPin, Square, Volume2
 } from "https://esm.sh/lucide-react@0.383.0?deps=react@18.2.0&bundle";
  
 // --- MOCK DATA ---
@@ -42,7 +41,7 @@ const MOCK_USER = {
   level: 5,
   xp: 2450,
   nextLevelXp: 3000,
-  currentPhase: 1, // 1: Scholar, 2: Technology, 3: Innovation, 4: Master
+  currentPhase: 1,
   streak: 12,
   badges: ["Scholar Explorer", "Early Bird", "Perfect Quiz"],
   avatar: "https://i.pravatar.cc/150?img=11"
@@ -72,7 +71,6 @@ const VR_ROOMS = [
   { id: 6, title: "Nusantara Scholars Hall", desc: "Legacy of Indonesian Ulama.", img: "https://images.unsplash.com/photo-1596404987216-53d9e262c5d1?auto=format&fit=crop&q=80&w=400" },
 ];
  
-// --- SCHOLARS DATA (Era Perkembangan | Tokoh Dunia | Tokoh Nusantara) ---
 const SCHOLARS_CURRICULUM = [
   {
     era: "Klasik (Abad 8 - 15 M)",
@@ -114,7 +112,6 @@ const SCHOLARS_CURRICULUM = [
     ]
   }
 ];
- 
  
 // --- REUSABLE UI COMPONENTS ---
 const Card = ({ children, className = "", onClick }) => (
@@ -186,7 +183,6 @@ const ScholarAvatar = ({ scholar, size = "w-14 h-14", textSize = "text-sm" }) =>
   );
 };
  
- 
 // --- LAYOUT COMPONENTS ---
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <div
@@ -205,7 +201,7 @@ const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
     { id: 'dashboard', icon: Home, label: 'Dashboard' },
     { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
     { id: 'vr', icon: Video, label: 'VR Museum' },
-    { id: 'ai', icon: MessageSquare, label: 'AI Companion' },
+    { id: 'ai', icon: MessageSquare, label: 'AI Company' },
     { id: 'board', icon: Map, label: 'Board Game' },
     { id: 'qr', icon: ScanLine, label: 'QR Scanner' },
     { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
@@ -274,9 +270,7 @@ const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
   );
 };
  
- 
 // --- VIEWS ---
- 
 const AuthView = ({ onLogin }) => (
   <div className="min-h-screen bg-[#0E2A47] flex items-center justify-center p-4 relative overflow-hidden">
     <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
@@ -311,7 +305,6 @@ const AuthView = ({ onLogin }) => (
     </div>
   </div>
 );
- 
  
 const DashboardView = ({ user, navigate }) => {
   return (
@@ -379,15 +372,14 @@ const DashboardView = ({ user, navigate }) => {
            </Card>
            <Card onClick={() => navigate('ai')} className="p-6 flex flex-col items-center justify-center text-center hover:bg-[#0E2A47] hover:text-white group transition-colors">
               <MessageSquare className="w-10 h-10 text-emerald-500 group-hover:text-emerald-300 mb-3" />
-              <h4 className="font-bold">AI Companion</h4>
-              <p className="text-xs text-slate-500 group-hover:text-slate-300 mt-1">Ask any question</p>
+              <h4 className="font-bold">AI Company</h4>
+              <p className="text-xs text-slate-500 group-hover:text-slate-300 mt-1">Voice Feedback & Evaluation</p>
            </Card>
         </div>
       </div>
     </div>
   );
 };
- 
  
 const LearningStudioView = () => {
   const [activeLesson, setActiveLesson] = useState(SCHOLARS_CURRICULUM[0].world[1]);
@@ -514,7 +506,6 @@ const LearningStudioView = () => {
   );
 };
  
- 
 const VRMuseumView = () => {
   const [activeRoom, setActiveRoom] = useState(null);
  
@@ -574,119 +565,248 @@ const VRMuseumView = () => {
   );
 };
  
- 
+// --- AI COMPANY VIEW (DENGAN PENILAIAN OPINI BERBASIS VN) ---
 const AICompanionView = () => {
-  const [messages, setMessages] = useState([
-    { sender: 'ai', text: "Assalamu'alaikum! I am your AVERRA Learning Companion. I can help you understand the history of scholars, explain technologies, or brainstorm innovations. How can I help you today?" }
-  ]);
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const endOfMessagesRef = useRef(null);
- 
-  const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
- 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
- 
-  const handleSend = () => {
-    if (!input.trim()) return;
- 
-    setMessages(prev => [...prev, { sender: 'user', text: input }]);
-    setInput("");
-    setIsTyping(true);
- 
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages(prev => [...prev, { sender: 'ai', text: "Pertanyaan yang sangat bagus! Pemikiran-pemikiran dari tokoh seperti Al-Ghazali, Ibnu Sina, maupun tokoh Nusantara seperti KH. Ahmad Dahlan dan KH. Hasyim Asy'ari memiliki benang merah dalam mengintegrasikan nilai-nilai spiritual dengan kemajuan peradaban. Apakah Anda ingin membahas tokoh tertentu secara lebih mendalam?" }]);
-    }, 1500);
-  };
- 
-  const suggestions = [
-    "Apa kontribusi Syekh Nawawi al-Bantani?",
-    "Jelaskan pemikiran Al-Ghazali (Hujjatul Islam).",
-    "Bagaimana gagasan Nurcholish Madjid (Cak Nur)?",
-    "Peran Ibnu Sina dalam Kedokteran Modern"
+  const QUESTIONS_TABLE = [
+    {
+      id: 1,
+      topic: "Ibnu Sina — Pengamatan dan Diagnosis",
+      level: "C3 — Menerapkan",
+      question: "Seorang mahasiswa melihat konten kesehatan yang viral di media sosial. Karena merasa memiliki beberapa gejala yang disebutkan, ia langsung menyimpulkan bahwa dirinya mengalami penyakit tertentu dan mengikuti saran pengobatan dari konten tersebut. Berdasarkan pendekatan Ibnu Sina dalam mengamati kondisi pasien dan mengenali gejala secara sistematis, tindakan apa yang seharusnya dilakukan mahasiswa tersebut?",
+      idealAnswer: "Mahasiswa tidak seharusnya langsung melakukan diagnosis mandiri atau mengikuti pengobatan dari konten media sosial. Ia perlu memeriksa kredibilitas sumber, mengamati kondisi secara menyeluruh, tidak menggunakan obat secara sembarangan, dan berkonsultasi dengan tenaga kesehatan yang kompeten. Pendekatan ini mencerminkan penerapan observasi, kehati-hatian, dan penalaran sistematis dalam mengambil keputusan kesehatan.",
+      keywords: ["kredibilitas", "sumber", "konsultasi", "tenaga kesehatan", "observasi", "sistematis", "mandiri"]
+    },
+    {
+      id: 2,
+      topic: "KH Hasyim Asy'ari – Etika Penggunaan AI Generatif dalam Pendidikan",
+      level: "C4 – Menganalisis",
+      question: "KH Hasyim Asy'ari menekankan pentingnya adab, kejujuran, tanggung jawab, dan kesungguhan dalam menuntut ilmu. Saat ini, AI generatif banyak dimanfaatkan mahasiswa untuk mencari referensi, memahami materi, dan membantu menyusun tugas. Menurut Anda, apa manfaat, risiko, dan bagaimana penggunaan AI generatif yang etis serta bertanggung jawab agar tetap sejalan dengan nilai-nilai tersebut?",
+      idealAnswer: "Manfaat: membantu memahami materi, memperoleh ide, dan menyusun kerangka tugas secara lebih efisien. Risiko: ketergantungan, informasi yang tidak akurat, plagiarisme, serta menurunnya kemampuan berpikir kritis. Penggunaan yang etis: AI digunakan sebagai alat bantu, bukan pengganti proses belajar; hasilnya diverifikasi, diolah dengan pemahaman sendiri, serta tetap menjaga kejujuran dan integritas akademik.",
+      keywords: ["manfaat", "risiko", "etis", "tanggung jawab", "verifikasi", "integritas", "alat bantu"]
+    },
+    {
+      id: 3,
+      topic: "Ismail Raji al-Faruqi — Integrasi Ilmu Pengetahuan dan Nilai",
+      level: "C5 (Mengevaluasi)",
+      question: "Menurut penelitian Amir, Miru, dan Sabara (2025) dalam kajian Urban Household Behavior in Indonesia: Drivers of Zero Waste Participation, pengelolaan sampah rumah tangga masih menjadi tantangan karena keberhasilan pola hidup berkelanjutan dipengaruhi oleh pengetahuan lingkungan, kesadaran, dan keterlibatan masyarakat. Berdasarkan gagasan Ismail Raji al-Faruqi tentang integrasi ilmu dan nilai, bagaimana Anda menilai inovasi pengelolaan sampah agar tidak hanya efektif mengurangi limbah, tetapi juga mencerminkan tanggung jawab manusia terhadap lingkungan? Jelaskan alasan Anda.",
+      idealAnswer: "Inovasi pengelolaan sampah dapat dinilai sebagai inovasi yang bertanggung jawab apabila tidak hanya memberikan manfaat praktis dalam mengurangi limbah, tetapi juga mempertimbangkan nilai etika, keberlanjutan, dan dampaknya bagi masyarakat. Berdasarkan pemikiran Ismail Raji al-Faruqi, ilmu dan inovasi harus diarahkan untuk memberikan kemaslahatan, sehingga solusi yang baik perlu memperhatikan keseimbangan antara manfaat manusia, tanggung jawab sosial, dan kepedulian terhadap lingkungan.",
+      keywords: ["tanggung jawab", "etika", "keberlanjutan", "kemaslahatan", "lingkungan", "integrasi"]
+    }
   ];
- 
+
+  const [selectedQuestionId, setSelectedQuestionId] = useState(1);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [audioBlobUrl, setAudioBlobUrl] = useState(null);
+  const [simulatedTranscript, setSimulatedTranscript] = useState("");
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluationResult, setEvaluationResult] = useState(null);
+  const timerRef = useRef(null);
+
+  const currentQ = QUESTIONS_TABLE.find(q => q.id === selectedQuestionId);
+
+  // Simulasi Rekaman VN
+  const startRecording = () => {
+    setIsRecording(true);
+    setRecordingTime(0);
+    setAudioBlobUrl(null);
+    setEvaluationResult(null);
+    setSimulatedTranscript("");
+    
+    timerRef.current = setInterval(() => {
+      setRecordingTime(prev => prev + 1);
+    }, 1000);
+  };
+
+  const stopRecording = () => {
+    clearInterval(timerRef.current);
+    setIsRecording(false);
+    // Buat URL dummy audio blob
+    setAudioBlobUrl("blob:https://averra.edu/voice-note-mock");
+    
+    // Set teks transkrip tiruan berdasarkan soal aktif agar penilaian relevan
+    if (selectedQuestionId === 1) {
+      setSimulatedTranscript("Menurut saya, mahasiswa itu tidak boleh langsung percaya sama konten viral di medsos untuk diagnosis diri. Harus konsultasi ke dokter atau tenaga medis yang ahli, serta mengecek sumber informasinya dengan teliti secara sistematis.");
+    } else if (selectedQuestionId === 2) {
+      setSimulatedTranscript("Manfaat AI itu membantu cari referensi dan ide tugas. Risikonya bisa bikin malas dan plagiat. Penggunaan yang etis yaitu AI cuma sebagai alat bantu saja, hasilnya tetap harus diverifikasi sendiri agar sesuai nilai kejujuran akademik.");
+    } else {
+      setSimulatedTranscript("Inovasi sampah harus memperhatikan etika dan tanggung jawab sosial. Sesuai gagasan al-Faruqi, ilmu dan teknologi harus membawa kemaslahatan dan keseimbangan lingkungan hidup manusia.");
+    }
+  };
+
+  // Proses Penilaian AI terhadap Opini Peserta dari VN
+  const evaluateVoiceNote = () => {
+    setIsEvaluating(true);
+    setTimeout(() => {
+      setIsEvaluating(false);
+      
+      // Hitung kecocokan keyword sederhana untuk menentukan Benar/Salah/Kurang Tepat
+      const transcriptLower = simulatedTranscript.toLowerCase();
+      let matchedCount = currentQ.keywords.filter(kw => transcriptLower.includes(kw.toLowerCase())).length;
+      let scorePercentage = Math.round((matchedCount / currentQ.keywords.length) * 100);
+      
+      let status = "Benar & Sesuai";
+      let badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+      if (scorePercentage < 40) {
+        status = "Kurang Tepat / Belum Sesuai";
+        badgeColor = "bg-red-100 text-red-800 border-red-300";
+      } else if (scorePercentage < 70) {
+        status = "Cukup Baik (Perlu Penyempurnaan)";
+        badgeColor = "bg-amber-100 text-amber-800 border-amber-300";
+      }
+
+      setEvaluationResult({
+        status,
+        badgeColor,
+        score: Math.max(scorePercentage, 65), // minimal apresiasi 65% jika beralasan
+        feedback: `Analisis VN AI Companion: Opini Anda menunjukkan pemahaman pada level ${currentQ.level}. ${scorePercentage >= 40 ? 'Argumen Anda sudah mencakup poin-poin kunci dan sejalan dengan keteladanan tokoh.' : 'Argumen perlu diperkuat dengan merujuk langsung pada prinsip atau nilai keteladanan tokoh terkait.'}`
+      });
+    }, 1800);
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="bg-[#0E2A47] text-white p-4 flex items-center justify-between shadow-md z-10">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-[#C99700] rounded-full flex items-center justify-center">
-            <Cpu className="w-6 h-6 text-white" />
+    <div className="space-y-6">
+      <div className="bg-[#0E2A47] text-white p-6 rounded-3xl shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+          <div className="flex items-center space-x-2 mb-2">
+            <span className="bg-[#C99700] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">AI Company Module</span>
           </div>
-          <div>
-            <h2 className="font-bold">Averra AI</h2>
-            <p className="text-xs text-blue-200 border border-blue-400/50 bg-blue-900/50 rounded-full px-2 inline-block">Online • Ready to help</p>
-          </div>
-        </div>
-        <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-white/10"><Settings className="w-5 h-5"/></Button>
-      </div>
- 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-50">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
-                msg.sender === 'user'
-                  ? 'bg-[#C99700] text-white rounded-br-none'
-                  : 'bg-white text-slate-800 border border-slate-100 rounded-bl-none'
-              }`}>
-                {msg.text}
-              </div>
-            </div>
-          ))}
- 
-          {isTyping && (
-            <div className="flex justify-start">
-              <div className="bg-white border border-slate-100 text-slate-500 rounded-2xl rounded-bl-none p-4 flex space-x-2">
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-              </div>
-            </div>
-          )}
-          <div ref={endOfMessagesRef} />
+          <h2 className="text-2xl font-bold">Evaluasi Opini Berbasis Voice Note (VN)</h2>
+          <p className="text-blue-200 text-sm mt-1">Rekam suara atau opini Anda untuk dinilai oleh AI Company berdasarkan tabel soal kurikulum AVERRA.</p>
         </div>
       </div>
- 
-      {messages.length < 3 && !isTyping && (
-        <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 overflow-x-auto whitespace-nowrap no-scrollbar">
-          {suggestions.map((sug, i) => (
-            <button key={i} onClick={() => setInput(sug)} className="inline-block bg-white border border-slate-200 text-sm text-slate-600 rounded-full px-4 py-2 mr-2 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-colors shadow-sm">
-              {sug}
-            </button>
-          ))}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Kolom Pilihan Soal dari Tabel */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+          <h3 className="font-bold text-lg text-[#0E2A47] flex items-center">
+            <FileText className="w-5 h-5 mr-2 text-[#C99700]" /> Pilih Soal / Kasus Tabel
+          </h3>
+          <div className="space-y-3">
+            {QUESTIONS_TABLE.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  setSelectedQuestionId(item.id);
+                  setAudioBlobUrl(null);
+                  setEvaluationResult(null);
+                  setSimulatedTranscript("");
+                }}
+                className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                  selectedQuestionId === item.id
+                    ? 'border-[#C99700] bg-amber-50/60 shadow-sm'
+                    : 'border-slate-100 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-bold text-slate-500">Soal #{item.id}</span>
+                  <Badge color="bg-blue-100 text-blue-800">{item.level}</Badge>
+                </div>
+                <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{item.topic}</h4>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
- 
-      <div className="p-4 bg-white border-t border-slate-200">
-        <div className="max-w-3xl mx-auto flex items-end space-x-2">
-          <button className="p-3 text-slate-400 hover:text-[#0E2A47] hover:bg-slate-100 rounded-xl transition-colors">
-            <Mic className="w-6 h-6" />
-          </button>
-          <div className="flex-1 bg-slate-100 rounded-2xl flex items-center pr-2 border border-transparent focus-within:border-[#C99700] focus-within:bg-white transition-all shadow-inner">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
-              placeholder="Tanyakan tentang tokoh ilmuwan muslim atau sejarah peradaban..."
-              className="w-full bg-transparent p-4 outline-none resize-none max-h-32"
-              rows="1"
-            />
-            <Button variant="primary" className="!p-3 !rounded-xl" onClick={handleSend} disabled={!input.trim()}>
-              <Send className="w-5 h-5" />
-            </Button>
+
+        {/* Kolom Detail Pertanyaan & Rekaman VN */}
+        <div className="md:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center border-b pb-3">
+              <div>
+                <span className="text-xs font-bold text-amber-600 uppercase tracking-wide">{currentQ.topic}</span>
+                <h3 className="text-xl font-bold text-slate-800">{currentQ.level}</h3>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <p className="text-sm font-semibold text-slate-700 mb-2">Pertanyaan / Kasus:</p>
+              <p className="text-slate-600 leading-relaxed text-sm">{currentQ.question}</p>
+            </div>
+
+            {/* Area Rekaman VN */}
+            <div className="bg-amber-50/40 p-6 rounded-2xl border border-amber-200 text-center space-y-4">
+              <div className="flex items-center justify-center space-x-2">
+                <Mic className={`w-6 h-6 ${isRecording ? 'text-red-500 animate-pulse' : 'text-slate-500'}`} />
+                <span className="font-bold text-slate-700">
+                  {isRecording ? `Merekam Suara... (${recordingTime}s)` : audioBlobUrl ? 'VN Selesai Direkam' : 'Tekan Tombol untuk Mulai Rekam Opini'}
+                </span>
+              </div>
+
+              <div className="flex justify-center gap-4">
+                {!isRecording ? (
+                  <Button variant="primary" onClick={startRecording}>
+                    <Mic className="w-4 h-4 mr-2" /> {audioBlobUrl ? 'Rekam Ulang VN' : 'Mulai Rekam VN'}
+                  </Button>
+                ) : (
+                  <Button variant="success" onClick={stopRecording} className="bg-red-500 hover:bg-red-600">
+                    <Square className="w-4 h-4 mr-2" /> Selesai / Stop Rekam
+                  </Button>
+                )}
+              </div>
+
+              {audioBlobUrl && !isRecording && (
+                <div className="mt-4 pt-4 border-t border-amber-200 text-left space-y-3">
+                  <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-amber-100">
+                    <div className="flex items-center space-x-3">
+                      <Volume2 className="w-5 h-5 text-amber-600" />
+                      <span className="text-xs font-medium text-slate-600">audio_opini_peserta.wav</span>
+                    </div>
+                    <span className="text-xs text-slate-400">{recordingTime} detik</span>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 mb-1">Transkrip Otomatis AI:</p>
+                    <p className="text-xs italic bg-white p-3 rounded-xl border border-slate-200 text-slate-700">"{simulatedTranscript}"</p>
+                  </div>
+
+                  <div className="text-center pt-2">
+                    <Button variant="secondary" onClick={evaluateVoiceNote} disabled={isEvaluating}>
+                      {isEvaluating ? 'AI Sedang Menilai Opini...' : 'Kirim & Nilai Opini VN'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Hasil Evaluasi AI */}
+            {evaluationResult && (
+              <div className="bg-white p-5 rounded-2xl border-2 border-emerald-400 shadow-md space-y-3 animate-fade-in">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                    <span className="font-bold text-lg text-slate-800">Hasil Penilaian AI Company</span>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}>
+                    {evaluationResult.status}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl text-sm">
+                  <div>
+                    <span className="text-slate-500 block text-xs">Skor Kecocokan Opini:</span>
+                    <span className="font-bold text-emerald-700 text-base">{evaluationResult.score} / 100</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-xs">Kategori Jawaban:</span>
+                    <span className="font-bold text-slate-800">Benar & Relevan</span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold text-slate-500 mb-1">Feedback AI & Kunci Jawaban Ideal:</p>
+                  <p className="text-xs text-slate-600 mb-2">{evaluationResult.feedback}</p>
+                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900">
+                    <strong>Jawaban Ideal / Pembahasan Tabel:</strong> {currentQ.idealAnswer}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 };
- 
  
 const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
   return (
@@ -754,7 +874,6 @@ const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
     </div>
   );
 };
- 
  
 // --- GAME CONTENT BANKS ---
 const CHALLENGE_QUESTION_BANKS = {
@@ -1127,8 +1246,6 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
   );
 };
  
- 
- 
 const LeaderboardView = () => (
   <div className="max-w-4xl mx-auto">
     <div className="text-center mb-10">
@@ -1219,7 +1336,6 @@ const QRScannerView = () => (
     </Button>
   </div>
 );
- 
  
 const ALL_BADGES = [
   { name: "Scholar Explorer", desc: "Menyelesaikan tantangan kuis tokoh ilmuwan.", icon: BookOpen },
