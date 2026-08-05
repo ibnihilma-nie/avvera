@@ -2087,7 +2087,7 @@ function App() {
     );
   }
  
-  coconst renderView = () => {
+  const renderView = () => {
   switch (activeView) {
     case 'dashboard':
       return <DashboardView user={user} navigate={setActiveView} />;
