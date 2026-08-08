@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Avatar kartun Dina Fitri">
+  <rect width="160" height="160" rx="80" fill="#F4EEFA"/>
+  <circle cx="80" cy="67" r="30" fill="#F0C4A1"/>
+  <path d="M45 65c2-30 17-45 36-45 21 0 35 16 36 43-10-11-23-17-37-17-13 0-25 6-35 19Z" fill="#4B2C5E"/>
+  <path d="M48 66c-2 20 3 34 14 43l7-17c-8-8-12-17-13-28Z" fill="#4B2C5E"/>
+  <path d="M112 66c2 20-3 34-14 43l-7-17c8-8 12-17 13-28Z" fill="#4B2C5E"/>
+  <circle cx="69" cy="68" r="3" fill="#18212F"/><circle cx="91" cy="68" r="3" fill="#18212F"/>
+  <path d="M71 83c6 5 12 5 18 0" fill="none" stroke="#A35F48" stroke-width="3" stroke-linecap="round"/>
+  <path d="M34 160c4-35 23-53 46-53s42 18 46 53" fill="#0E2A47"/>
+  <path d="M59 111c5 9 12 14 21 14s16-5 21-14" fill="#F0C4A1"/>
+  <circle cx="80" cy="139" r="7" fill="#C99700"/>
+</svg>
