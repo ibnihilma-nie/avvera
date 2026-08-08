@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AVERRA</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0E2A47; color: white; font-family: Inter, Arial, sans-serif; }
+    .loader { text-align: center; padding: 32px; }
+    .loader img { width: 84px; height: 84px; object-fit: contain; background: white; padding: 6px; border-radius: 22px; margin-bottom: 16px; }
+    .loader p { color: #c9d8e7; }
+  </style>
+  <script src="/scholar-card-patch.js?v=1"></script>
+</head>
+<body>
+  <div class="loader">
+    <img src="/assets/logo-avvera.jpeg" alt="Logo AVERRA" />
+    <div><strong>AVERRA</strong></div>
+    <p>Menyiapkan Scholar Card...</p>
+  </div>
+  <script>
+    fetch("/index.html?v=scholar-card-1", { cache: "no-store" })
+      .then(response => {
+        if (!response.ok) throw new Error("index.html tidak dapat dimuat.");
+        return response.text();
+      })
+      .then(source => {
+        document.open();
+        document.write(source);
+        document.close();
+      })
+      .catch(error => {
+        document.body.innerHTML = "<div style='max-width:680px;padding:24px;background:white;color:#18212f;border-radius:18px'><h2>AVERRA gagal dimuat</h2><p style='color:#475467'>" + error.message + "</p></div>";
+      });
+  </script>
+</body>
+</html>
