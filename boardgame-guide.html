@@ -4,10 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Buku Panduan Boardgame AVERRA</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/logo-averra.svg" />
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; font-family: Inter, Arial, sans-serif; background: #F8F9FA; color: #0E2A47; display: grid; place-items: center; padding: 24px; }
-    .card { width: min(760px, 100%); background: white; border: 1px solid #e2e8f0; border-radius: 28px; padding: 32px; box-shadow: 0 18px 50px rgba(14,42,71,.12); }
+    body { margin: 0; min-height: 100vh; font-family: Inter, Arial, sans-serif; background: linear-gradient(145deg, #071b2e, #0E2A47 48%, #163a5f); color: #0E2A47; display: grid; place-items: center; padding: 24px; }
+    .card { width: min(760px, 100%); background: white; border: 1px solid rgba(255,255,255,.25); border-radius: 30px; padding: 32px; box-shadow: 0 24px 70px rgba(0,0,0,.28); }
+    .brand { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+    .logo { width: 82px; height: 82px; border-radius: 22px; object-fit: cover; background: white; padding: 4px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(14,42,71,.16); }
+    .brand-name { font-size: 26px; font-weight: 800; letter-spacing: .08em; color: #0E2A47; }
+    .brand-sub { margin-top: 4px; color: #94a3b8; font-size: 11px; font-weight: 700; letter-spacing: .16em; }
     .badge { display: inline-block; background: #fff7db; color: #8a6500; border: 1px solid #f2d16b; border-radius: 999px; padding: 7px 12px; font-size: 12px; font-weight: 700; }
     h1 { margin: 16px 0 10px; font-size: clamp(28px, 5vw, 42px); }
     p { color: #64748b; line-height: 1.7; }
@@ -16,10 +21,18 @@
     .primary { background: #C99700; color: white; box-shadow: 0 4px 0 #967100; }
     .secondary { background: #0E2A47; color: white; }
     .note { margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; font-size: 14px; }
+    @media (max-width: 540px) { .card { padding: 24px; } .logo { width: 68px; height: 68px; } .brand-name { font-size: 22px; } }
   </style>
 </head>
 <body>
   <main class="card">
+    <div class="brand">
+      <img class="logo" src="./assets/logo-averra.svg" alt="Logo AVERRA" />
+      <div>
+        <div class="brand-name">AVERRA</div>
+        <div class="brand-sub">INTERACTIVE LEARNING BOARD GAME</div>
+      </div>
+    </div>
     <span class="badge">BOARD GAME COMPANION</span>
     <h1>Buku Panduan Permainan AVERRA</h1>
     <p>Buka buku panduan sebelum memulai permainan atau kapan pun pemain membutuhkan penjelasan aturan, alur permainan, dan penggunaan fitur pendamping digital.</p>
@@ -27,7 +40,7 @@
       <a class="primary" href="https://heyzine.com/flip-book/1c6887846e.html" target="_blank" rel="noopener noreferrer">Buka Buku Panduan ↗</a>
       <a class="secondary" href="./">Kembali ke AVERRA</a>
     </div>
-    <div class="note"><strong>Saran penempatan:</strong> akses buku panduan paling tepat ditampilkan pada bagian atas halaman <em>Board Game Companion</em>, sebelum status permainan dan tombol <em>Start Challenge</em>, sehingga mudah ditemukan sebelum maupun saat permainan berlangsung.</div>
+    <div class="note"><strong>Akses cepat:</strong> halaman ini terhubung langsung dari bagian atas <em>Board Game Companion</em>, sehingga panduan mudah ditemukan sebelum maupun saat permainan berlangsung.</div>
   </main>
 </body>
 </html>
