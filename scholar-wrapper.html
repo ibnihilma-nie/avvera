@@ -11,15 +11,16 @@
     .loader p { color: #c9d8e7; }
   </style>
   <script src="/scholar-card-patch.js?v=1"></script>
+  <script src="/scholar-exam-patch.js?v=1"></script>
 </head>
 <body>
   <div class="loader">
     <img src="/assets/logo-avvera.jpeg" alt="Logo AVERRA" />
     <div><strong>AVERRA</strong></div>
-    <p>Menyiapkan Scholar Card...</p>
+    <p>Menyiapkan Scholar Card dan Ujian Modul...</p>
   </div>
   <script>
-    fetch("/index.html?v=scholar-card-1", { cache: "no-store" })
+    fetch("/index.html?v=scholar-exam-1", { cache: "no-store" })
       .then(response => {
         if (!response.ok) throw new Error("index.html tidak dapat dimuat.");
         return response.text();
