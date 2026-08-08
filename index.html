@@ -4,21 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AVERRA</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/logo-averra.svg" />
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0E2A47; color: white; font-family: Inter, Arial, sans-serif; }
     .loader { text-align: center; padding: 32px; }
-    .compass { width: 58px; height: 58px; margin: 0 auto 18px; border-radius: 18px; display: grid; place-items: center; background: #C99700; font-size: 30px; animation: pulse 1.2s ease-in-out infinite; }
+    .brand-logo { width: 78px; height: 78px; margin: 0 auto 18px; border-radius: 22px; object-fit: cover; background: white; padding: 4px; box-shadow: 0 14px 35px rgba(0,0,0,.28); animation: pulse 1.2s ease-in-out infinite; }
     .loader h1 { margin: 0 0 8px; letter-spacing: .08em; }
     .loader p { margin: 0; color: #c9d8e7; }
     .error { max-width: 720px; background: white; color: #18212f; border-radius: 20px; padding: 28px; text-align: left; box-shadow: 0 24px 70px rgba(0,0,0,.35); }
     .error h2 { color: #b42318; }
-    @keyframes pulse { 50% { transform: scale(1.08) rotate(8deg); } }
+    @keyframes pulse { 50% { transform: scale(1.06); } }
   </style>
 </head>
 <body>
   <div id="boot" class="loader">
-    <div class="compass">🧭</div>
+    <img src="./assets/logo-averra.svg" alt="Logo AVERRA" class="brand-logo" />
     <h1>AVERRA</h1>
     <p>Menyiapkan aplikasi...</p>
   </div>
@@ -46,9 +47,52 @@
         "k-n-3": { youtubeId: "MGIBSmNc2H4", title: "Penulisan Biografi Kuntowijoyo: Sastrawan dan Ilmuwan Profetik", channel: "Agung Prihantoro", duration: "15:47" }
       };
 
-      const response = await fetch("./app-base.html?v=virtual-museum-1", { cache: "no-store" });
+      const response = await fetch("./app-base.html?v=brand-logo-1", { cache: "no-store" });
       if (!response.ok) throw new Error("File aplikasi dasar tidak dapat dimuat (HTTP " + response.status + ").");
       let html = await response.text();
+
+      const logoUrl = "./assets/logo-averra.svg";
+      html = html.replace(
+        '<link rel="icon" href="data:,">',
+        '<link rel="icon" type="image/svg+xml" href="' + logoUrl + '">'
+      );
+
+      const sidebarBrandMarker = `<div className="w-10 h-10 bg-[#C99700] rounded-xl flex items-center justify-center">
+            <Compass className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-2xl font-bold tracking-wider">AVERRA</span>`;
+      const sidebarBrandContent = `<div className="w-12 h-12 rounded-2xl overflow-hidden bg-white p-1 shadow-lg ring-1 ring-white/20 flex-shrink-0">
+            <img src="${logoUrl}" alt="Logo AVERRA" className="w-full h-full object-cover rounded-xl" />
+          </div>
+          <div className="hidden md:block">
+            <span className="text-2xl font-bold tracking-wider leading-none">AVERRA</span>
+            <p className="text-[10px] text-blue-200 tracking-[0.18em] mt-1">INTERACTIVE LEARNING</p>
+          </div>`;
+      if (!html.includes(sidebarBrandMarker)) throw new Error("Brand sidebar AVERRA tidak ditemukan.");
+      html = html.replace(sidebarBrandMarker, sidebarBrandContent);
+
+      const authBrandMarker = `<div className="w-16 h-16 bg-[#C99700] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <Compass className="w-10 h-10 text-white" />
+        </div>
+        <h1 className="text-3xl font-bold mb-2">AVERRA</h1>`;
+      const authBrandContent = `<div className="w-32 h-32 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-5 shadow-2xl p-2 ring-4 ring-white/10">
+          <img src="${logoUrl}" alt="Logo AVERRA" className="w-full h-full object-cover rounded-[1.5rem]" />
+        </div>
+        <h1 className="text-4xl font-bold mb-2 tracking-[0.08em]">AVERRA</h1>`;
+      if (!html.includes(authBrandMarker)) throw new Error("Brand login AVERRA tidak ditemukan.");
+      html = html.replace(authBrandMarker, authBrandContent);
+
+      const mobileHeaderMarker = `<h1 className="text-xl font-bold text-[#0E2A47] capitalize">
+            {activeTab.replace('-', ' ')}
+          </h1>`;
+      const mobileHeaderContent = `<div className="flex items-center gap-3 min-w-0">
+            <img src="${logoUrl}" alt="AVERRA" className="w-9 h-9 rounded-xl object-cover border border-slate-200 shadow-sm md:hidden flex-shrink-0" />
+            <h1 className="text-xl font-bold text-[#0E2A47] capitalize truncate">
+              {activeTab.replace('-', ' ')}
+            </h1>
+          </div>`;
+      if (!html.includes(mobileHeaderMarker)) throw new Error("Header aplikasi AVERRA tidak ditemukan.");
+      html = html.replace(mobileHeaderMarker, mobileHeaderContent);
 
       Object.entries(videos).forEach(([scholarId, video]) => {
         const escapedId = scholarId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -195,8 +239,8 @@ const VRMuseumView = () => {
           <div className="lg:col-span-2 flex justify-center">
             <div className="relative w-64 h-80 rounded-[2.5rem] border-[10px] border-slate-950 bg-gradient-to-b from-slate-800 to-slate-950 shadow-2xl p-5 flex flex-col items-center justify-center text-center">
               <div className="absolute top-2 w-24 h-5 rounded-full bg-black" />
-              <div className="w-24 h-24 rounded-3xl bg-[#C99700] flex items-center justify-center shadow-lg mb-5">
-                <Compass className="w-14 h-14 text-white" />
+              <div className="w-24 h-24 rounded-3xl bg-white flex items-center justify-center shadow-lg mb-5 p-1 overflow-hidden">
+                <img src="${logoUrl}" alt="Logo AVERRA" className="w-full h-full object-cover rounded-2xl" />
               </div>
               <p className="text-xs uppercase tracking-[0.22em] text-blue-300 mb-2">AVERRA</p>
               <h3 className="text-2xl font-bold">Virtual Museum</h3>
