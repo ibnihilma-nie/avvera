@@ -94,6 +94,21 @@
       if (!html.includes(mobileHeaderMarker)) throw new Error("Header aplikasi AVERRA tidak ditemukan.");
       html = html.replace(mobileHeaderMarker, mobileHeaderContent);
 
+      const avatarMap = {
+        "https://i.pravatar.cc/150?img=5": "./assets/avatar-siti.svg",
+        "https://i.pravatar.cc/150?img=8": "./assets/avatar-budi.svg",
+        "https://i.pravatar.cc/150?img=11": "./assets/avatar-aprizal.svg",
+        "https://i.pravatar.cc/150?img=9": "./assets/avatar-dina.svg",
+        "https://i.pravatar.cc/150?img=12": "./assets/avatar-faisal.svg"
+      };
+      Object.entries(avatarMap).forEach(([source, localAvatar]) => {
+        html = html.split(source).join(localAvatar);
+      });
+      html = html.replace(
+        /img: "https:\/\/(?:upload|commons)\.wikimedia\.org[^"]+"/g,
+        'img: "./assets/avatar-scholar.svg"'
+      );
+
       Object.entries(videos).forEach(([scholarId, video]) => {
         const escapedId = scholarId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const linePattern = new RegExp("\\{ id: \\\"" + escapedId + "\\\",([^\\n]+)\\}");
