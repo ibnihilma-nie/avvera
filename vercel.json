@@ -5,5 +5,11 @@
       "destination": "/assets/logo-avvera.jpeg",
       "permanent": false
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/scholar-wrapper.html"
+    }
   ]
 }
