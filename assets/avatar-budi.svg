@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Avatar kartun Budi Santoso">
+  <rect width="160" height="160" rx="80" fill="#EEF7F1"/>
+  <circle cx="80" cy="66" r="31" fill="#DDAE86"/>
+  <path d="M48 57c4-24 18-37 34-37 18 0 31 12 34 34-9-8-20-12-34-12-13 0-25 5-34 15Z" fill="#24364B"/>
+  <circle cx="68" cy="67" r="3" fill="#18212F"/><circle cx="92" cy="67" r="3" fill="#18212F"/>
+  <path d="M72 83c5 4 11 4 16 0" fill="none" stroke="#935640" stroke-width="3" stroke-linecap="round"/>
+  <path d="M34 160c4-35 23-53 46-53s42 18 46 53" fill="#0E2A47"/>
+  <path d="M58 111c6 9 13 14 22 14s16-5 22-14" fill="#DDAE86"/>
+  <path d="M58 128h44l-7 32H65Z" fill="#C99700" opacity=".9"/>
+</svg>
