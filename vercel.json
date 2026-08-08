@@ -1,1 +1,9 @@
-{}
+{
+  "redirects": [
+    {
+      "source": "/assets/logo-averra.svg",
+      "destination": "/assets/logo-avvera.jpeg",
+      "permanent": false
+    }
+  ]
+}
