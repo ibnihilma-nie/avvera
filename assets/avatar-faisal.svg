@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Avatar kartun Faisal Rahman">
+  <rect width="160" height="160" rx="80" fill="#EAF7F7"/>
+  <circle cx="80" cy="66" r="31" fill="#C99069"/>
+  <path d="M48 57c4-22 18-37 34-37 16 0 31 11 35 31-7-8-16-12-27-12-16 0-29 7-42 18Z" fill="#172334"/>
+  <path d="M53 49c7-13 17-20 29-20 9 0 18 4 24 12-15-4-32-1-53 8Z" fill="#26394E"/>
+  <circle cx="68" cy="67" r="3" fill="#18212F"/><circle cx="92" cy="67" r="3" fill="#18212F"/>
+  <path d="M71 83c6 4 12 4 18 0" fill="none" stroke="#8B503D" stroke-width="3" stroke-linecap="round"/>
+  <path d="M34 160c4-35 23-53 46-53s42 18 46 53" fill="#1C7C84"/>
+  <path d="M58 111c6 9 13 14 22 14s16-5 22-14" fill="#C99069"/>
+  <path d="M63 129h34v31H63z" fill="#0E2A47"/>
+</svg>
