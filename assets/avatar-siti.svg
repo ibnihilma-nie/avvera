@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Avatar kartun Siti Aminah">
+  <rect width="160" height="160" rx="80" fill="#E8F1FA"/>
+  <circle cx="80" cy="66" r="31" fill="#F3C9A8"/>
+  <path d="M42 68c2-31 18-48 38-48s37 17 39 48c-9-14-22-22-39-22-16 0-29 8-38 22Z" fill="#0E2A47"/>
+  <path d="M41 74c3-10 8-20 15-28 2 31 12 48 24 52-16 0-30-9-39-24Zm78 0c-3-10-8-20-15-28-2 31-12 48-24 52 16 0 30-9 39-24Z" fill="#123F77"/>
+  <circle cx="69" cy="67" r="3" fill="#18212F"/><circle cx="91" cy="67" r="3" fill="#18212F"/>
+  <path d="M71 82c6 5 12 5 18 0" fill="none" stroke="#A45A48" stroke-width="3" stroke-linecap="round"/>
+  <path d="M34 160c4-35 23-53 46-53s42 18 46 53" fill="#C99700"/>
+  <path d="M59 111c5 9 12 14 21 14s16-5 21-14" fill="#F3C9A8"/>
+</svg>
