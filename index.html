@@ -269,6 +269,30 @@ const VRMuseumView = () => {
       html = html.replace(/VR Museum/g, "Virtual Museum");
       html = html.replace(/Explore 3D Exhibits/g, "Unduh aplikasi museum Android");
 
+      const boardGuideMarker = '<p className="text-slate-600 mt-2">Track your physical board game progress and unlock digital challenges.</p>';
+      const boardGuideContent = `<p className="text-slate-600 mt-2">Track your physical board game progress and unlock digital challenges.</p>
+        <div className="mt-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+          <a
+            href="./boardgame-guide.html"
+            className="inline-flex items-center justify-center rounded-xl bg-[#0E2A47] px-5 py-3 text-white font-semibold hover:bg-[#163a5f] transition-colors"
+          >
+            <BookOpen className="w-5 h-5 mr-2" /> Buku Panduan AVERRA
+          </a>
+          <a
+            href="https://heyzine.com/flip-book/1c6887846e.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-xl bg-[#C99700] px-5 py-3 text-white font-semibold hover:bg-[#b08400] transition-colors"
+          >
+            <Globe className="w-5 h-5 mr-2" /> Versi Flipbook Heyzine ↗
+          </a>
+        </div>`;
+
+      if (!html.includes(boardGuideMarker)) {
+        throw new Error("Komponen Board Game Companion tidak ditemukan. Struktur app-base.html kemungkinan sudah berubah.");
+      }
+      html = html.replace(boardGuideMarker, boardGuideContent);
+
       document.open();
       document.write(html);
       document.close();
