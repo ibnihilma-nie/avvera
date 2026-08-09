@@ -18,15 +18,16 @@
     <p>Menyiapkan Scholar Card dan Ujian Modul...</p>
   </div>
   <script>
-    fetch("/index.html?v=scholar-exam-2", { cache: "no-store" })
+    fetch("/index.html?v=scholar-exam-3", { cache: "no-store" })
       .then(response => {
         if (!response.ok) throw new Error("index.html tidak dapat dimuat.");
         return response.text();
       })
       .then(source => {
+        const closeScript = "</" + "script>";
         const patchScripts = [
-          '<script src="/scholar-card-patch.js?v=2"><\\/script>',
-          '<script src="/scholar-exam-patch.js?v=2"><\\/script>'
+          '<script src="/scholar-card-patch.js?v=3">' + closeScript,
+          '<script src="/scholar-exam-patch.js?v=3">' + closeScript
         ].join("\n");
 
         const patchedSource = source.includes("</head>")
