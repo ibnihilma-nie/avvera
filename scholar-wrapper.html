@@ -10,8 +10,6 @@
     .loader img { width: 84px; height: 84px; object-fit: contain; background: white; padding: 6px; border-radius: 22px; margin-bottom: 16px; }
     .loader p { color: #c9d8e7; }
   </style>
-  <script src="/scholar-card-patch.js?v=1"></script>
-  <script src="/scholar-exam-patch.js?v=1"></script>
 </head>
 <body>
   <div class="loader">
@@ -20,14 +18,24 @@
     <p>Menyiapkan Scholar Card dan Ujian Modul...</p>
   </div>
   <script>
-    fetch("/index.html?v=scholar-exam-1", { cache: "no-store" })
+    fetch("/index.html?v=scholar-exam-3", { cache: "no-store" })
       .then(response => {
         if (!response.ok) throw new Error("index.html tidak dapat dimuat.");
         return response.text();
       })
       .then(source => {
+        const closeScript = "</" + "script>";
+        const patchScripts = [
+          '<script src="/scholar-card-patch.js?v=3">' + closeScript,
+          '<script src="/scholar-exam-patch.js?v=3">' + closeScript
+        ].join("\n");
+
+        const patchedSource = source.includes("</head>")
+          ? source.replace("</head>", patchScripts + "\n</head>")
+          : patchScripts + "\n" + source;
+
         document.open();
-        document.write(source);
+        document.write(patchedSource);
         document.close();
       })
       .catch(error => {
