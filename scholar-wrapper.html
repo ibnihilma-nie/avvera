@@ -25,7 +25,26 @@
       })
       .then(source => {
         const closeScript = "</" + "script>";
+        const brandPatch = '<script>\n' +
+          '(function () {\n' +
+          '  const OLD_TEXT = "Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif";\n' +
+          '  const NEW_TEXT = "AI and Virtual Educational for Religious & Rational Analysis";\n' +
+          '  function applyBranding() {\n' +
+          '    document.querySelectorAll("body *").forEach(function (el) {\n' +
+          '      if (el.children.length === 0 && el.textContent.includes(OLD_TEXT)) {\n' +
+          '        el.textContent = el.textContent.split(OLD_TEXT).join(NEW_TEXT);\n' +
+          '      }\n' +
+          '    });\n' +
+          '    if (document.title.includes(OLD_TEXT)) {\n' +
+          '      document.title = document.title.split(OLD_TEXT).join(NEW_TEXT);\n' +
+          '    }\n' +
+          '  }\n' +
+          '  new MutationObserver(applyBranding).observe(document.documentElement, { subtree: true, childList: true, characterData: true });\n' +
+          '  applyBranding();\n' +
+          '})();\n' +
+          closeScript;
         const patchScripts = [
+          brandPatch,
           '<script src="/scholar-card-patch.js?v=3">' + closeScript,
           '<script src="/scholar-exam-patch.js?v=3">' + closeScript
         ].join("\n");
