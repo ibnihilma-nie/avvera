@@ -18,40 +18,22 @@
     <p>Menyiapkan Scholar Card dan Ujian Modul...</p>
   </div>
   <script>
-    fetch("/index.html?v=scholar-exam-3", { cache: "no-store" })
+    fetch("/index.html?v=scholar-exam-4", { cache: "no-store" })
       .then(response => {
         if (!response.ok) throw new Error("index.html tidak dapat dimuat.");
         return response.text();
       })
       .then(source => {
-        const closeScript = "</" + "script>";
-        const brandPatch = '<script>\n' +
-          '(function () {\n' +
-          '  const OLD_TEXT = "Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif";\n' +
-          '  const NEW_TEXT = "AI and Virtual Educational for Religious & Rational Analysis";\n' +
-          '  function applyBranding() {\n' +
-          '    document.querySelectorAll("body *").forEach(function (el) {\n' +
-          '      if (el.children.length === 0 && el.textContent.includes(OLD_TEXT)) {\n' +
-          '        el.textContent = el.textContent.split(OLD_TEXT).join(NEW_TEXT);\n' +
-          '      }\n' +
-          '    });\n' +
-          '    if (document.title.includes(OLD_TEXT)) {\n' +
-          '      document.title = document.title.split(OLD_TEXT).join(NEW_TEXT);\n' +
-          '    }\n' +
-          '  }\n' +
-          '  new MutationObserver(applyBranding).observe(document.documentElement, { subtree: true, childList: true, characterData: true });\n' +
-          '  applyBranding();\n' +
-          '})();\n' +
-          closeScript;
-        const patchScripts = [
-          brandPatch,
-          '<script src="/scholar-card-patch.js?v=3">' + closeScript,
-          '<script src="/scholar-exam-patch.js?v=3">' + closeScript
-        ].join("\n");
-
-        const patchedSource = source.includes("</head>")
-          ? source.replace("</head>", patchScripts + "\n</head>")
-          : patchScripts + "\n" + source;
+        // index.html memuat app-base.html secara dinamis. Patch branding harus
+        // disisipkan ke script index.html agar diterapkan pada app-base.html.
+        const brandInjection = `
+          html = html.replaceAll("Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif", "AI and Virtual Educational for Religious & Rational Analysis");
+          html = html.replaceAll("AVERRA - Aplikasi Visual Eksplorasi Rihlah dan Realitas Interaktif", "AVERRA - AI and Virtual Educational for Religious & Rational Analysis");
+        `;
+        const indexMarker = "let html = await response.text();";
+        const patchedSource = source.includes(indexMarker)
+          ? source.replace(indexMarker, indexMarker + brandInjection)
+          : source;
 
         document.open();
         document.write(patchedSource);
