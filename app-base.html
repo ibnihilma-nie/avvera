@@ -1109,6 +1109,49 @@ const MateriScholarView = () => {
 
   const [activeSection, setActiveSection] = useState(null);
 
+  const references = {
+    materi: [
+      "Sejarah Peradaban Islam",
+      "Pemikiran Ibnu Sina",
+      "Pemikiran Al-Ghazali",
+      "Pemikiran Ibnu Khaldun",
+      "Ulama Nusantara"
+    ],
+
+    video: [
+      {
+        title: "Sejarah Peradaban Islam",
+        link: "https://www.youtube.com/results?search_query=sejarah+peradaban+islam"
+      },
+      {
+        title: "Pemikiran Ibnu Sina",
+        link: "https://www.youtube.com/results?search_query=ibnu+sina"
+      },
+      {
+        title: "Pemikiran Al-Ghazali",
+        link: "https://www.youtube.com/results?search_query=al+ghazali"
+      }
+    ],
+
+    artikel: [
+      {
+        title: "Kajian Pemikiran Islam Klasik - Google Scholar",
+        link: "https://scholar.google.com/scholar?q=pemikiran+islam+klasik"
+      },
+      {
+        title: "Sejarah Peradaban Islam - Google Scholar",
+        link: "https://scholar.google.com/scholar?q=sejarah+peradaban+islam"
+      }
+    ],
+
+    buku: [
+      "History of Islamic Philosophy - Henry Corbin",
+      "Sejarah Peradaban Islam - Badri Yatim",
+      "Filsafat Islam - Mulyadhi Kartanegara"
+    ]
+  };
+
+
   return (
     <div>
 
@@ -1153,102 +1196,100 @@ const MateriScholarView = () => {
           </p>
         </Card>
 
+
         <Card 
- className="p-6 cursor-pointer"
- onClick={() => setActiveSection("artikel")}
->
- <FileText className="w-10 h-10 text-[#C99700] mb-4"/>
+          className="p-6 cursor-pointer"
+          onClick={() => setActiveSection("artikel")}
+        >
+          <FileText className="w-10 h-10 text-[#C99700] mb-4"/>
 
- <h3 className="font-bold text-xl text-[#0E2A47]">
-   Artikel Terakreditasi
- </h3>
+          <h3 className="font-bold text-xl text-[#0E2A47]">
+            Artikel Terakreditasi
+          </h3>
 
- <p className="text-slate-600 mt-2">
-   Referensi jurnal dan artikel ilmiah terpercaya.
- </p>
+          <p className="text-slate-600 mt-2">
+            Referensi jurnal dan artikel ilmiah terpercaya.
+          </p>
+        </Card>
 
-</Card>
 
+        <Card 
+          className="p-6 cursor-pointer"
+          onClick={() => setActiveSection("buku")}
+        >
+          <GraduationCap className="w-10 h-10 text-[#C99700] mb-4"/>
 
-<Card 
- className="p-6 cursor-pointer"
- onClick={() => setActiveSection("buku")}
->
- <GraduationCap className="w-10 h-10 text-[#C99700] mb-4"/>
+          <h3 className="font-bold text-xl text-[#0E2A47]">
+            Buku Referensi
+          </h3>
 
- <h3 className="font-bold text-xl text-[#0E2A47]">
-   Buku Referensi
- </h3>
+          <p className="text-slate-600 mt-2">
+            Buku akademik sebagai sumber pendalaman materi.
+          </p>
+        </Card>
 
- <p className="text-slate-600 mt-2">
-   Buku akademik sebagai sumber pendalaman materi.
- </p>
-
-</Card>
-
- 
       </div>
 
 
-{activeSection && (
-  <div className="mt-8 bg-white rounded-2xl p-6">
+      {activeSection && (
+        <div className="mt-8 bg-white rounded-2xl p-6">
 
-    <h3 className="text-xl font-bold mb-4 text-[#0E2A47]">
-      Daftar Referensi
-    </h3>
+          <h3 className="text-xl font-bold mb-4 text-[#0E2A47]">
+            Daftar Referensi
+          </h3>
 
 
-    {activeSection === "video" && (
-      references.video.map((v)=>(
-        <div className="mb-3" key={v.title}>
-          <a 
-            href={v.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
-          >
-            🎥 {v.title}
-          </a>
+          {activeSection === "video" &&
+            references.video.map((v)=>(
+              <div className="mb-3" key={v.title}>
+                <a 
+                  href={v.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
+                >
+                  🎥 {v.title}
+                </a>
+              </div>
+            ))
+          }
+
+
+          {activeSection === "materi" &&
+            references.materi.map((m)=>(
+              <div className="mb-3" key={m}>
+                📘 {m}
+              </div>
+            ))
+          }
+
+
+          {activeSection === "artikel" &&
+            references.artikel.map((a)=>(
+              <div className="mb-3" key={a.title}>
+                <a
+                  href={a.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
+                >
+                  📄 {a.title}
+                </a>
+              </div>
+            ))
+          }
+
+
+          {activeSection === "buku" &&
+            references.buku.map((b)=>(
+              <div className="mb-3" key={b}>
+                📚 {b}
+              </div>
+            ))
+          }
+
         </div>
-      ))
-    )}
-
-
-    {activeSection === "materi" && (
-      references.materi.map((m)=>(
-        <div className="mb-3" key={m}>
-          📘 {m}
-        </div>
-      ))
-    )}
-
-
-    {activeSection === "artikel" && (
-      references.artikel.map((a)=>(
-        <div className="mb-3" key={a.title}>
-          <a
-            href={a.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
-          >
-            📄 {a.title}
-          </a>
-        </div>
-      ))
-    )}
-
-
-    {activeSection === "buku" && (
-      references.buku.map((b)=>(
-        <div className="mb-3" key={b}>
-          📚 {b}
-        </div>
-      ))
-    )}
-
-  </div>
-)}
+      )}
 
     </div>
   );
