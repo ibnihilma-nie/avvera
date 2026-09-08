@@ -1153,30 +1153,102 @@ const MateriScholarView = () => {
           </p>
         </Card>
 
+        <Card 
+ className="p-6 cursor-pointer"
+ onClick={() => setActiveSection("artikel")}
+>
+ <FileText className="w-10 h-10 text-[#C99700] mb-4"/>
 
+ <h3 className="font-bold text-xl text-[#0E2A47]">
+   Artikel Terakreditasi
+ </h3>
+
+ <p className="text-slate-600 mt-2">
+   Referensi jurnal dan artikel ilmiah terpercaya.
+ </p>
+
+</Card>
+
+
+<Card 
+ className="p-6 cursor-pointer"
+ onClick={() => setActiveSection("buku")}
+>
+ <GraduationCap className="w-10 h-10 text-[#C99700] mb-4"/>
+
+ <h3 className="font-bold text-xl text-[#0E2A47]">
+   Buku Referensi
+ </h3>
+
+ <p className="text-slate-600 mt-2">
+   Buku akademik sebagai sumber pendalaman materi.
+ </p>
+
+</Card>
+
+ 
       </div>
 
 
-      {activeSection && (
-        <div className="mt-8 bg-white rounded-2xl p-6">
+{activeSection && (
+  <div className="mt-8 bg-white rounded-2xl p-6">
 
-          {activeSection === "video" && (
-            references.video.map((v)=>(
-              <div className="mb-3" key={v.title}>
-                <a 
-                  href={v.link}
-                  target="_blank"
-                  className="text-[#0E2A47] font-semibold"
-                >
-                  🎥 {v.title}
-                </a>
-              </div>
-            ))
-          )}
+    <h3 className="text-xl font-bold mb-4 text-[#0E2A47]">
+      Daftar Referensi
+    </h3>
 
+
+    {activeSection === "video" && (
+      references.video.map((v)=>(
+        <div className="mb-3" key={v.title}>
+          <a 
+            href={v.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
+          >
+            🎥 {v.title}
+          </a>
         </div>
-      )}
+      ))
+    )}
 
+
+    {activeSection === "materi" && (
+      references.materi.map((m)=>(
+        <div className="mb-3" key={m}>
+          📘 {m}
+        </div>
+      ))
+    )}
+
+
+    {activeSection === "artikel" && (
+      references.artikel.map((a)=>(
+        <div className="mb-3" key={a.title}>
+          <a
+            href={a.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
+          >
+            📄 {a.title}
+          </a>
+        </div>
+      ))
+    )}
+
+
+    {activeSection === "buku" && (
+      references.buku.map((b)=>(
+        <div className="mb-3" key={b}>
+          📚 {b}
+        </div>
+      ))
+    )}
+
+  </div>
+)}
 
     </div>
   );
