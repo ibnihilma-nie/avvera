@@ -1105,82 +1105,94 @@ const MateriScholarView = () => {
   );
 };
 
- const ReferenceView = () => {
+ return (
+<div>
 
-  const [activeSection, setActiveSection] = useState(null);
+<div className="mb-8 text-center max-w-2xl mx-auto">
+<h2 className="text-3xl font-bold text-[#0E2A47] mb-4">
+Referensi Materi
+</h2>
 
-  return (
-    <div>
+<p className="text-slate-600">
+Kumpulan sumber belajar berupa materi, video pembelajaran,
+artikel terakreditasi, dan buku referensi.
+</p>
 
-      <div className="mb-8 text-center max-w-2xl mx-auto">
-        <h2 className="text-3xl font-bold text-[#0E2A47] mb-4">
-          Referensi Materi
-        </h2>
-
-        <p className="text-slate-600">
-          Kumpulan sumber belajar berupa materi, video pembelajaran,
-          artikel terakreditasi, dan buku referensi.
-        </p>
-      </div>
+</div>
 
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <Card 
-          className="p-6 cursor-pointer"
-          onClick={() => setActiveSection("materi")}
-        >
-          <BookOpen className="w-10 h-10 text-[#C99700] mb-4"/>
-          <h3 className="font-bold text-xl text-[#0E2A47]">
-            Materi Pembelajaran
-          </h3>
-          <p className="text-slate-600 mt-2">
-            Modul digital dan bahan pembelajaran AVERRA.
-          </p>
-        </Card>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
 
-        <Card 
-          className="p-6 cursor-pointer"
-          onClick={() => setActiveSection("video")}
-        >
-          <Video className="w-10 h-10 text-[#C99700] mb-4"/>
-          <h3 className="font-bold text-xl text-[#0E2A47]">
-            Video Pembelajaran
-          </h3>
-          <p className="text-slate-600 mt-2">
-            Video edukasi untuk memperkuat pemahaman.
-          </p>
-        </Card>
+<Card 
+className="p-6 cursor-pointer"
+onClick={()=>setActiveSection("materi")}
+>
+<BookOpen className="w-10 h-10 text-[#C99700] mb-4"/>
+
+<h3 className="font-bold text-xl">
+Materi Pembelajaran
+</h3>
+
+</Card>
 
 
-      </div>
+<Card 
+className="p-6 cursor-pointer"
+onClick={()=>setActiveSection("video")}
+>
+<Video className="w-10 h-10 text-[#C99700] mb-4"/>
+
+<h3 className="font-bold text-xl">
+Video Pembelajaran
+</h3>
+
+</Card>
 
 
-      {activeSection && (
-        <div className="mt-8 bg-white rounded-2xl p-6">
+<Card 
+className="p-6 cursor-pointer"
+onClick={()=>setActiveSection("artikel")}
+>
+<FileText className="w-10 h-10 text-[#C99700] mb-4"/>
 
-          {activeSection === "video" && (
-            references.video.map((v)=>(
-              <div className="mb-3" key={v.title}>
-                <a 
-                  href={v.link}
-                  target="_blank"
-                  className="text-[#0E2A47] font-semibold"
-                >
-                  🎥 {v.title}
-                </a>
-              </div>
-            ))
-          )}
+<h3 className="font-bold text-xl">
+Artikel Terakreditasi
+</h3>
 
-        </div>
-      )}
+</Card>
 
 
-    </div>
-  );
-};
+<Card 
+className="p-6 cursor-pointer"
+onClick={()=>setActiveSection("buku")}
+>
+<GraduationCap className="w-10 h-10 text-[#C99700] mb-4"/>
+
+<h3 className="font-bold text-xl">
+Buku Referensi
+</h3>
+
+</Card>
+
+
+</div>
+
+
+{activeSection && (
+<div className="mt-8 bg-white rounded-2xl p-6">
+
+<h3 className="text-xl font-bold mb-4">
+Daftar Referensi
+</h3>
+
+
+</div>
+)}
+
+
+</div>
+)
   
 const VRMuseumView = () => {
   const [activeRoom, setActiveRoom] = useState(null);
