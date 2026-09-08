@@ -5,41 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AVERRA - Referensi Materi</title>
 <style>
-body{font-family:Inter,Arial,sans-serif;background:#f4f7fb;color:#0E2A47;margin:0;padding:40px}.container{max-width:1100px;margin:auto}.card{background:white;border-radius:18px;padding:24px;margin:20px 0;box-shadow:0 8px 25px rgba(0,0,0,.08)}h1,h2,h3{color:#0E2A47}.tag{display:inline-block;background:#C99700;color:white;padding:6px 12px;border-radius:20px;font-size:12px;margin-bottom:10px}a{color:#0E2A47;text-decoration:none;font-weight:600}.item{padding:12px;border-left:4px solid #C99700;margin:12px 0;background:#fafafa;border-radius:8px}p{line-height:1.6}
+body{font-family:Inter,Arial,sans-serif;background:#f4f7fb;color:#0E2A47;margin:0;padding:40px}.container{max-width:1100px;margin:auto}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}.card{background:white;border-radius:18px;padding:25px;box-shadow:0 8px 25px rgba(0,0,0,.08);cursor:pointer;transition:.3s}.card:hover{transform:translateY(-5px);box-shadow:0 12px 30px rgba(0,0,0,.15)}.content{display:none;background:#fff;margin-top:15px;border-radius:18px;padding:25px;box-shadow:0 8px 25px rgba(0,0,0,.08)}.content.active{display:block}.item{padding:12px;margin:10px 0;background:#fafafa;border-left:4px solid #C99700;border-radius:8px}h1,h2,h3{color:#0E2A47}.tag{background:#C99700;color:white;padding:6px 12px;border-radius:20px;font-size:12px}a{color:#0E2A47;font-weight:600;text-decoration:none}
 </style>
+<script>function openRef(id){document.querySelectorAll('.content').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');}</script>
 </head>
 <body>
 <div class="container">
 <h1>📚 Referensi Materi AVERRA</h1>
-<p>Kumpulan sumber belajar pendukung berupa materi, video pembelajaran, artikel ilmiah terakreditasi, dan buku referensi.</p>
+<p>Kumpulan sumber belajar berupa materi, video pembelajaran, artikel terakreditasi, dan buku referensi.</p>
 
-<div class="card"><span class="tag">Materi Pembelajaran</span>
-<h2>📖 Modul Digital</h2>
-<div class="item"><b>Sejarah Pemikiran Islam Klasik</b><br>Materi Ibnu Sina, Al-Ghazali, dan Ibnu Khaldun.</div>
-<div class="item"><b>Pemikiran Islam Modern</b><br>Materi Muhammad Abduh, Muhammad Iqbal, dan pembaharuan Islam.</div>
-<div class="item"><b>Ulama Nusantara</b><br>Kajian KH Ahmad Dahlan, KH Hasyim Asy'ari, dan tokoh Islam Indonesia.</div>
+<div class="grid">
+<div class="card" onclick="openRef('materi')"><h2>📖 Materi Pembelajaran</h2><p>Modul digital dan bahan pembelajaran AVERRA.</p></div>
+<div class="card" onclick="openRef('video')"><h2>🎥 Video Pembelajaran</h2><p>Video e-learning pendukung materi.</p></div>
+<div class="card" onclick="openRef('artikel')"><h2>📄 Artikel Terakreditasi</h2><p>Jurnal dan penelitian ilmiah terpercaya.</p></div>
+<div class="card" onclick="openRef('buku')"><h2>📚 Buku Referensi</h2><p>Literatur akademik untuk pendalaman materi.</p></div>
 </div>
 
-<div class="card"><span class="tag">Video Pembelajaran</span>
-<h2>🎥 Video E-Learning</h2>
-<div class="item"><a href="https://www.youtube.com/results?search_query=sejarah+peradaban+islam" target="_blank">Sejarah Peradaban Islam - Video Pembelajaran</a></div>
-<div class="item"><a href="https://www.youtube.com/results?search_query=ibnu+sina+islamic+philosophy" target="_blank">Ibnu Sina dan Kontribusi Sains Islam</a></div>
-<div class="item"><a href="https://www.youtube.com/results?search_query=al+ghazali+pemikiran+islam" target="_blank">Pemikiran Al-Ghazali</a></div>
-</div>
+<div id="materi" class="content"><h2>📖 Materi Pembelajaran</h2><div class="item">Sejarah Pemikiran Islam Klasik: Ibnu Sina, Al-Ghazali, Ibnu Khaldun</div><div class="item">Pemikiran Islam Modern: Muhammad Abduh dan Muhammad Iqbal</div><div class="item">Ulama Nusantara: KH Ahmad Dahlan dan KH Hasyim Asy'ari</div></div>
 
-<div class="card"><span class="tag">Artikel Terakreditasi</span>
-<h2>📄 Jurnal & Artikel Ilmiah</h2>
-<div class="item"><a href="https://scholar.google.com/scholar?q=pemikiran+islam+klasik" target="_blank">Kajian Pemikiran Islam Klasik (Google Scholar)</a></div>
-<div class="item"><a href="https://scholar.google.com/scholar?q=sejarah+peradaban+islam" target="_blank">Penelitian Sejarah Peradaban Islam</a></div>
-<div class="item"><a href="https://garuda.kemdikbud.go.id/" target="_blank">Garuda Kemdikbud - Referensi Jurnal Nasional</a></div>
-</div>
+<div id="video" class="content"><h2>🎥 Video E-Learning</h2><div class="item"><a href="https://www.youtube.com/results?search_query=sejarah+peradaban+islam" target="_blank">Sejarah Peradaban Islam</a></div><div class="item"><a href="https://www.youtube.com/results?search_query=ibnu+sina+islamic+philosophy" target="_blank">Ibnu Sina dan Sains Islam</a></div><div class="item"><a href="https://www.youtube.com/results?search_query=al+ghazali+pemikiran+islam" target="_blank">Pemikiran Al-Ghazali</a></div></div>
 
-<div class="card"><span class="tag">Buku Referensi</span>
-<h2>📚 Literatur Akademik</h2>
-<div class="item"><b>History of Islamic Philosophy</b><br>Henry Corbin - kajian filsafat Islam.</div>
-<div class="item"><b>Sejarah Peradaban Islam</b><br>Badri Yatim - referensi sejarah Islam.</div>
-<div class="item"><b>Filsafat Islam</b><br>Mulyadhi Kartanegara - pengantar pemikiran filosofis Islam.</div>
-</div>
+<div id="artikel" class="content"><h2>📄 Artikel Terakreditasi</h2><div class="item"><a href="https://scholar.google.com/scholar?q=pemikiran+islam+klasik" target="_blank">Kajian Pemikiran Islam Klasik</a></div><div class="item"><a href="https://scholar.google.com/scholar?q=sejarah+peradaban+islam" target="_blank">Penelitian Sejarah Peradaban Islam</a></div><div class="item"><a href="https://garuda.kemdikbud.go.id/" target="_blank">Garuda Kemdikbud Jurnal Nasional</a></div></div>
+
+<div id="buku" class="content"><h2>📚 Buku Referensi</h2><div class="item"><b>History of Islamic Philosophy</b> - Henry Corbin</div><div class="item"><b>Sejarah Peradaban Islam</b> - Badri Yatim</div><div class="item"><b>Filsafat Islam</b> - Mulyadhi Kartanegara</div></div>
 
 </div>
 </body>
