@@ -1105,81 +1105,82 @@ const MateriScholarView = () => {
   );
 };
 
- 
-const ReferenceView = () => {
+ const ReferenceView = () => {
 
-const [activeSection, setActiveSection] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
 
-const references = {
-  materi: [
-    "Sejarah Pemikiran Islam Klasik",
-    "Ibnu Sina",
-    "Al-Ghazali",
-    "Ibnu Khaldun",
-    "Ulama Nusantara"
-  ],
+  return (
+    <div>
 
-  video: [
-    {
-      title:"Sejarah Peradaban Islam",
-      link:"https://youtube.com/results?search_query=sejarah+peradaban+islam"
-    },
-    {
-      title:"Pemikiran Ibnu Sina",
-      link:"https://youtube.com/results?search_query=ibnu+sina"
-    }
-  ],
+      <div className="mb-8 text-center max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#0E2A47] mb-4">
+          Referensi Materi
+        </h2>
 
-  artikel:[
-    {
-      title:"Kajian Pemikiran Islam Klasik",
-      link:"https://scholar.google.com/scholar?q=pemikiran+islam+klasik"
-    },
-    {
-      title:"Sejarah Peradaban Islam",
-      link:"https://scholar.google.com/scholar?q=sejarah+peradaban+islam"
-    }
-  ],
+        <p className="text-slate-600">
+          Kumpulan sumber belajar berupa materi, video pembelajaran,
+          artikel terakreditasi, dan buku referensi.
+        </p>
+      </div>
 
-  buku:[
-    "History of Islamic Philosophy - Henry Corbin",
-    "Sejarah Peradaban Islam - Badri Yatim",
-    "Filsafat Islam - Mulyadhi Kartanegara"
-  ]
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <Card 
+          className="p-6 cursor-pointer"
+          onClick={() => setActiveSection("materi")}
+        >
+          <BookOpen className="w-10 h-10 text-[#C99700] mb-4"/>
+          <h3 className="font-bold text-xl text-[#0E2A47]">
+            Materi Pembelajaran
+          </h3>
+          <p className="text-slate-600 mt-2">
+            Modul digital dan bahan pembelajaran AVERRA.
+          </p>
+        </Card>
+
+
+        <Card 
+          className="p-6 cursor-pointer"
+          onClick={() => setActiveSection("video")}
+        >
+          <Video className="w-10 h-10 text-[#C99700] mb-4"/>
+          <h3 className="font-bold text-xl text-[#0E2A47]">
+            Video Pembelajaran
+          </h3>
+          <p className="text-slate-600 mt-2">
+            Video edukasi untuk memperkuat pemahaman.
+          </p>
+        </Card>
+
+
+      </div>
+
+
+      {activeSection && (
+        <div className="mt-8 bg-white rounded-2xl p-6">
+
+          {activeSection === "video" && (
+            references.video.map((v)=>(
+              <div className="mb-3" key={v.title}>
+                <a 
+                  href={v.link}
+                  target="_blank"
+                  className="text-[#0E2A47] font-semibold"
+                >
+                  🎥 {v.title}
+                </a>
+              </div>
+            ))
+          )}
+
+        </div>
+      )}
+
+
+    </div>
+  );
 };
-
-
-return (
-<div>
-
-...
-
-<Card 
-onClick={()=>setActiveSection("materi")}
-className="p-6 cursor-pointer"
->
-<BookOpen />
-<h3>Materi Pembelajaran</h3>
-</Card>
-
-...
-
-{activeSection && (
-<div className="mt-8 bg-white rounded-2xl p-6">
-
-{activeSection==="video" &&
-references.video.map(v=>(
-<a href={v.link} target="_blank">
-{v.title}
-</a>
-))}
-
-</div>
-)}
-
-</div>
-)
-}
   
 const VRMuseumView = () => {
   const [activeRoom, setActiveRoom] = useState(null);
