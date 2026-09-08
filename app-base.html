@@ -201,14 +201,15 @@ const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
     { id: 'dashboard', icon: Home, label: 'Dashboard' },
     { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
     { id: 'materi', icon: BookOpen, label: 'Materi Scholar' },
+    { id: 'reference', icon: FileText, label: 'Referensi Materi' },
     { id: 'vr', icon: Video, label: 'VR Museum' },
     { id: 'ai', icon: MessageSquare, label: 'AI Company' },
     { id: 'board', icon: Map, label: 'Board Game' },
     { id: 'qr', icon: ScanLine, label: 'QR Scanner' },
     { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
     { id: 'profile', icon: User, label: 'Profile' },
-  ];
- 
+];
+  
   return (
     <div className="flex h-screen bg-[#F8F9FA] font-sans">
       <aside className="fixed bottom-0 w-full md:relative md:w-64 bg-[#0E2A47] text-white z-50 md:flex flex-col border-t md:border-r border-[#163a5f]">
