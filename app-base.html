@@ -1106,192 +1106,260 @@ const MateriScholarView = () => {
 };
 
 const ReferenceView = () => {
-
   const [activeSection, setActiveSection] = useState(null);
 
   const references = {
-
     materi: [
       {
-        title:"Sejarah Peradaban Islam",
-        link:"https://drive.google.com/"
+        title: "Sejarah Peradaban Islam: Perkembangan Ilmu Pengetahuan pada Masa Dinasti Bani Abbasiyah",
+        author: "Ainur Riska Amalia",
+        source: "Rihlah: Jurnal Sejarah dan Kebudayaan, 10(1), 53–64",
+        year: "2022",
+        note: "Bacaan materi sejarah peradaban Islam — akses artikel dan PDF.",
+        link: "https://journal.uin-alauddin.ac.id/index.php/rihlah/article/view/38405"
       },
       {
-        title:"Pemikiran Al-Ghazali",
-        link:"https://plato.stanford.edu/entries/al-ghazali/"
+        title: "Al-Ghazali",
+        author: "Stanford Encyclopedia of Philosophy",
+        source: "Stanford University",
+        year: "Referensi ensiklopedis",
+        note: "Ringkasan akademik tentang kehidupan, karya, teologi, dan filsafat Al-Ghazali.",
+        link: "https://plato.stanford.edu/entries/al-ghazali/"
       },
       {
-        title:"Pemikiran Ibnu Sina",
-        link:"https://plato.stanford.edu/entries/ibn-sina/"
+        title: "Ibn Sina [Avicenna]",
+        author: "Stanford Encyclopedia of Philosophy",
+        source: "Stanford University",
+        year: "Referensi ensiklopedis",
+        note: "Bacaan akademik tentang Ibnu Sina, metafisika, jiwa, dan tradisi filsafat Islam.",
+        link: "https://plato.stanford.edu/entries/ibn-sina/"
       },
       {
-        title:"Pemikiran Ibnu Khaldun",
-        link:"https://plato.stanford.edu/entries/ibn-khaldun/"
+        title: "Ibn Khaldun",
+        author: "Stanford Encyclopedia of Philosophy",
+        source: "Stanford University",
+        year: "Referensi ensiklopedis",
+        note: "Bacaan pendukung tentang Ibnu Khaldun dan pemikirannya mengenai sejarah serta masyarakat.",
+        link: "https://plato.stanford.edu/entries/ibn-khaldun/"
       }
     ],
 
-
-    video:[
+    video: [
       {
-        title:"Sejarah Peradaban Islam - Pembelajaran",
-        link:"https://www.youtube.com/results?search_query=sejarah+peradaban+islam+kuliah"
+        title: "Introduction to the History of Islamic Civilization | Online Lecture",
+        author: "Dr. Muhammad Faishal, M.Us",
+        source: "SALAM CERDAS — YouTube",
+        year: "2020",
+        note: "Kuliah pengantar Sejarah Peradaban Islam untuk mahasiswa.",
+        link: "https://www.youtube.com/watch?v=7NsV1eoJ6Hk"
       },
       {
-        title:"Al-Ghazali Biography and Philosophy",
-        link:"https://www.youtube.com/results?search_query=Al+Ghazali+Islamic+philosophy"
+        title: "Al-Ghazali — The Reviver of Religious Sciences",
+        author: "Let's Talk Religion",
+        source: "YouTube",
+        year: "2020",
+        note: "Video edukasi khusus Abu Hamid Al-Ghazali; tidak mengarah ke pencarian artis Indonesia.",
+        link: "https://www.youtube.com/watch?v=ZL-ZxXQ6HCU"
       },
       {
-        title:"Ibnu Sina (Avicenna) dan The Canon of Medicine",
-        link:"https://www.youtube.com/results?search_query=Avicenna+Canon+of+Medicine"
+        title: "Ibn Sina (Avicenna) — The Greatest Muslim Philosopher?",
+        author: "Let's Talk Religion",
+        source: "YouTube",
+        year: "2024",
+        note: "Pembahasan biografi, karya, filsafat, kedokteran, dan warisan Ibnu Sina.",
+        link: "https://www.youtube.com/watch?v=XH0YwsOSuxY"
       }
     ],
 
-
-    artikel:[
+    artikel: [
       {
-        title:"Kajian Pemikiran Al-Ghazali - Google Scholar",
-        link:"https://scholar.google.com/scholar?q=Al-Ghazali+Islamic+philosophy"
+        title: "Sejarah Peradaban Islam: Perkembangan Ilmu Pengetahuan pada Masa Pemerintahan Dinasti Bani Abbasiyah",
+        author: "Ainur Riska Amalia",
+        source: "Rihlah: Jurnal Sejarah dan Kebudayaan — SINTA 4",
+        year: "2022",
+        note: "DOI: 10.24252/rihlah.v10i01.38405 — artikel open access dengan PDF.",
+        link: "https://journal.uin-alauddin.ac.id/index.php/rihlah/article/view/38405"
       },
       {
-        title:"Sejarah Peradaban Islam - Google Scholar",
-        link:"https://scholar.google.com/scholar?q=Islamic+civilization+history"
+        title: "Historiografi Kritis Ibn Khaldun (Jembatan Intelektual antara Tradisi Islam dan Sejarah Modern)",
+        author: "Muh. Ilham Majid Dohe, Musafir Pababbari, Ahmad Yani, Umar",
+        source: "Rihlah: Jurnal Sejarah dan Kebudayaan — SINTA 4",
+        year: "2026",
+        note: "DOI: 10.24252/rihlah.v14i01.64840 — artikel open access dengan PDF.",
+        link: "https://journal.uin-alauddin.ac.id/index.php/rihlah/article/view/64840"
       },
       {
-        title:"Jurnal Studi Islam Indonesia - GARUDA",
-        link:"https://garuda.kemdikbud.go.id/"
+        title: "Perkembangan Pemikiran dan Peradaban Islam dalam Perspektif Sejarah",
+        author: "Mugiyono",
+        source: "Jurnal Ilmu Agama UIN Raden Fatah Palembang — SINTA 4",
+        year: "2016",
+        note: "DOI: 10.19109/jia.v14i1.457 — artikel ilmiah yang dapat diakses secara daring.",
+        link: "https://jurnal.radenfatah.ac.id/index.php/JIA/article/view/457"
       }
     ],
 
-
-    buku:[
+    buku: [
       {
-        title:"Sejarah Peradaban Islam - Badri Yatim",
-        link:"https://books.google.com/books?q=Sejarah+Peradaban+Islam+Badri+Yatim"
+        title: "Sejarah Peradaban Islam",
+        author: "Badri Yatim",
+        source: "Google Books",
+        year: "Referensi buku",
+        note: "Akses katalog/preview buku melalui Google Books.",
+        link: "https://books.google.com/books?q=Sejarah+Peradaban+Islam+Badri+Yatim"
       },
       {
-        title:"The Incoherence of the Philosophers - Al-Ghazali",
-        link:"https://books.google.com/books?q=The+Incoherence+of+the+Philosophers+Al+Ghazali"
+        title: "The Incoherence of the Philosophers (Tahafut al-Falasifah)",
+        author: "Abu Hamid Al-Ghazali",
+        source: "Google Books",
+        year: "Referensi buku",
+        note: "Akses katalog dan edisi terjemahan melalui Google Books.",
+        link: "https://books.google.com/books?q=The+Incoherence+of+the+Philosophers+Al+Ghazali"
       },
       {
-        title:"The Muqaddimah - Ibn Khaldun",
-        link:"https://books.google.com/books?q=Ibn+Khaldun+Muqaddimah"
+        title: "The Muqaddimah: An Introduction to History",
+        author: "Ibn Khaldun",
+        source: "Google Books",
+        year: "Referensi buku",
+        note: "Akses katalog/preview berbagai edisi Muqaddimah melalui Google Books.",
+        link: "https://books.google.com/books?q=Ibn+Khaldun+Muqaddimah"
       }
     ]
-
   };
 
+  const sectionMeta = {
+    materi: {
+      title: "Daftar Pustaka Materi Pembelajaran",
+      icon: BookOpen,
+      button: "Akses Materi"
+    },
+    video: {
+      title: "Daftar Video Pembelajaran",
+      icon: Video,
+      button: "Tonton Video"
+    },
+    artikel: {
+      title: "Daftar Artikel Terakreditasi",
+      icon: FileText,
+      button: "Baca Artikel"
+    },
+    buku: {
+      title: "Daftar Buku Referensi",
+      icon: GraduationCap,
+      button: "Akses Buku"
+    }
+  };
+
+  const activeMeta = activeSection ? sectionMeta[activeSection] : null;
+  const ActiveIcon = activeMeta?.icon;
 
   return (
     <div>
-
       <div className="mb-8 text-center max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold text-[#0E2A47] mb-4">
           Referensi Materi
         </h2>
-
         <p className="text-slate-600">
-          Kumpulan sumber belajar berupa materi, video pembelajaran,
-          artikel terakreditasi, dan buku referensi.
+          Daftar pustaka digital AVERRA yang dapat diakses langsung sebagai
+          sumber materi, video pembelajaran, artikel terakreditasi, dan buku referensi.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <Card 
-          className="p-6 cursor-pointer"
-          onClick={() => setActiveSection("materi")}
+        <Card
+          className={`p-6 cursor-pointer ${activeSection === "materi" ? "ring-2 ring-[#C99700]" : ""}`}
+          onClick={() => setActiveSection(activeSection === "materi" ? null : "materi")}
         >
-          <BookOpen className="w-10 h-10 text-[#C99700] mb-4"/>
-          <h3 className="font-bold text-xl text-[#0E2A47]">
-            Materi Pembelajaran
-          </h3>
-          <p className="text-slate-600 mt-2">
-            Modul digital dan bahan pembelajaran AVERRA.
-          </p>
+          <BookOpen className="w-10 h-10 text-[#C99700] mb-4" />
+          <h3 className="font-bold text-xl text-[#0E2A47]">Materi Pembelajaran</h3>
+          <p className="text-slate-600 mt-2">Bacaan akademik dan materi pendukung yang dapat diakses langsung.</p>
+          <p className="text-sm font-semibold text-[#C99700] mt-4">{references.materi.length} referensi • Klik untuk lihat</p>
         </Card>
 
-        <Card 
-          className="p-6 cursor-pointer"
-          onClick={() => setActiveSection("video")}
+        <Card
+          className={`p-6 cursor-pointer ${activeSection === "video" ? "ring-2 ring-[#C99700]" : ""}`}
+          onClick={() => setActiveSection(activeSection === "video" ? null : "video")}
         >
-          <Video className="w-10 h-10 text-[#C99700] mb-4"/>
-          <h3 className="font-bold text-xl text-[#0E2A47]">
-            Video Pembelajaran
-          </h3>
-          <p className="text-slate-600 mt-2">
-            Video edukasi untuk memperkuat pemahaman.
-          </p>
+          <Video className="w-10 h-10 text-[#C99700] mb-4" />
+          <h3 className="font-bold text-xl text-[#0E2A47]">Video Pembelajaran</h3>
+          <p className="text-slate-600 mt-2">Video edukasi terpilih dengan tautan langsung, bukan hasil pencarian umum.</p>
+          <p className="text-sm font-semibold text-[#C99700] mt-4">{references.video.length} video • Klik untuk lihat</p>
         </Card>
 
-        <Card 
-          className="p-6 cursor-pointer"
-          onClick={() => setActiveSection("artikel")}
+        <Card
+          className={`p-6 cursor-pointer ${activeSection === "artikel" ? "ring-2 ring-[#C99700]" : ""}`}
+          onClick={() => setActiveSection(activeSection === "artikel" ? null : "artikel")}
         >
-          <FileText className="w-10 h-10 text-[#C99700] mb-4"/>
-
-          <h3 className="font-bold text-xl text-[#0E2A47]">
-            Artikel Terakreditasi
-          </h3>
-
-          <p className="text-slate-600 mt-2">
-            Referensi jurnal dan artikel ilmiah terpercaya.
-          </p>
+          <FileText className="w-10 h-10 text-[#C99700] mb-4" />
+          <h3 className="font-bold text-xl text-[#0E2A47]">Artikel Terakreditasi</h3>
+          <p className="text-slate-600 mt-2">Artikel ilmiah open access dari jurnal nasional terakreditasi.</p>
+          <p className="text-sm font-semibold text-[#C99700] mt-4">{references.artikel.length} artikel • Klik untuk lihat</p>
         </Card>
 
-        <Card 
-          className="p-6 cursor-pointer"
-          onClick={() => setActiveSection("buku")}
+        <Card
+          className={`p-6 cursor-pointer ${activeSection === "buku" ? "ring-2 ring-[#C99700]" : ""}`}
+          onClick={() => setActiveSection(activeSection === "buku" ? null : "buku")}
         >
-          <GraduationCap className="w-10 h-10 text-[#C99700] mb-4"/>
-
-          <h3 className="font-bold text-xl text-[#0E2A47]">
-            Buku Referensi
-          </h3>
-
-          <p className="text-slate-600 mt-2">
-            Buku akademik sebagai sumber pendalaman materi.
-          </p>
+          <GraduationCap className="w-10 h-10 text-[#C99700] mb-4" />
+          <h3 className="font-bold text-xl text-[#0E2A47]">Buku Referensi</h3>
+          <p className="text-slate-600 mt-2">Daftar buku akademik dengan tautan katalog atau preview yang dapat diakses.</p>
+          <p className="text-sm font-semibold text-[#C99700] mt-4">{references.buku.length} buku • Klik untuk lihat</p>
         </Card>
-
       </div>
 
-      {activeSection && (
-
-        <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm">
-
-          <h3 className="text-xl font-bold mb-4 text-[#0E2A47]">
-            Daftar Referensi
-          </h3>
-
-
-
-          {references[activeSection].map((item)=>(
-            <div 
-              className="mb-3"
-              key={item.title}
-            >
-
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
-              >
-
-                {activeSection === "video" && "🎥 "}
-                {activeSection === "materi" && "📘 "}
-                {activeSection === "artikel" && "📄 "}
-                {activeSection === "buku" && "📚 "}
-
-                {item.title}
-              </a>
+      {activeSection && activeMeta && (
+        <section className="mt-8 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                {ActiveIcon && <ActiveIcon className="w-6 h-6 text-[#C99700]" />}
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-[#0E2A47]">{activeMeta.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">Klik tombol akses pada setiap referensi untuk membuka sumber asli di tab baru.</p>
+              </div>
             </div>
-          ))}
-        </div>
+            <button
+              onClick={() => setActiveSection(null)}
+              className="text-sm font-semibold text-slate-500 hover:text-[#0E2A47] px-3 py-2 rounded-lg hover:bg-slate-100"
+            >
+              Tutup
+            </button>
+          </div>
+
+          <div className="divide-y divide-slate-100">
+            {references[activeSection].map((item, index) => (
+              <div key={`${activeSection}-${item.title}`} className="p-6 hover:bg-slate-50/70 transition-colors">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
+                  <div className="flex gap-4 flex-1 min-w-0">
+                    <div className="w-9 h-9 rounded-full bg-[#0E2A47] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                      {index + 1}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-[#0E2A47] text-lg leading-snug">{item.title}</h4>
+                      <p className="text-slate-700 mt-2"><span className="font-semibold">Penulis/Sumber:</span> {item.author}</p>
+                      <p className="text-sm text-slate-500 mt-1">{item.source} • {item.year}</p>
+                      <p className="text-sm text-slate-600 mt-3 leading-relaxed">{item.note}</p>
+                    </div>
+                  </div>
+
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center whitespace-nowrap bg-[#0E2A47] text-white font-semibold px-5 py-3 rounded-xl hover:bg-[#163a5f] transition-colors lg:min-w-[150px]"
+                  >
+                    {activeMeta.button}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );
-}; 
+};
   
 const VRMuseumView = () => {
   const [activeRoom, setActiveRoom] = useState(null);
