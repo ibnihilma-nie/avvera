@@ -1105,50 +1105,79 @@ const MateriScholarView = () => {
   );
 };
 
- const ReferenceView = () => {
+const ReferenceView = () => {
 
   const [activeSection, setActiveSection] = useState(null);
 
   const references = {
+
     materi: [
-      "Sejarah Peradaban Islam",
-      "Pemikiran Ibnu Sina",
-      "Pemikiran Al-Ghazali",
-      "Pemikiran Ibnu Khaldun",
-      "Ulama Nusantara"
-    ],
-
-    video: [
       {
-        title: "Sejarah Peradaban Islam",
-        link: "https://www.youtube.com/results?search_query=sejarah+peradaban+islam"
+        title:"Sejarah Peradaban Islam",
+        link:"https://drive.google.com/"
       },
       {
-        title: "Pemikiran Ibnu Sina",
-        link: "https://www.youtube.com/results?search_query=ibnu+sina"
+        title:"Pemikiran Al-Ghazali",
+        link:"https://plato.stanford.edu/entries/al-ghazali/"
       },
       {
-        title: "Pemikiran Al-Ghazali",
-        link: "https://www.youtube.com/results?search_query=al+ghazali"
+        title:"Pemikiran Ibnu Sina",
+        link:"https://plato.stanford.edu/entries/ibn-sina/"
+      },
+      {
+        title:"Pemikiran Ibnu Khaldun",
+        link:"https://plato.stanford.edu/entries/ibn-khaldun/"
       }
     ],
 
-    artikel: [
+
+    video:[
       {
-        title: "Kajian Pemikiran Islam Klasik - Google Scholar",
-        link: "https://scholar.google.com/scholar?q=pemikiran+islam+klasik"
+        title:"Sejarah Peradaban Islam - Pembelajaran",
+        link:"https://www.youtube.com/results?search_query=sejarah+peradaban+islam+kuliah"
       },
       {
-        title: "Sejarah Peradaban Islam - Google Scholar",
-        link: "https://scholar.google.com/scholar?q=sejarah+peradaban+islam"
+        title:"Al-Ghazali Biography and Philosophy",
+        link:"https://www.youtube.com/results?search_query=Al+Ghazali+Islamic+philosophy"
+      },
+      {
+        title:"Ibnu Sina (Avicenna) dan The Canon of Medicine",
+        link:"https://www.youtube.com/results?search_query=Avicenna+Canon+of+Medicine"
       }
     ],
 
-    buku: [
-      "History of Islamic Philosophy - Henry Corbin",
-      "Sejarah Peradaban Islam - Badri Yatim",
-      "Filsafat Islam - Mulyadhi Kartanegara"
+
+    artikel:[
+      {
+        title:"Kajian Pemikiran Al-Ghazali - Google Scholar",
+        link:"https://scholar.google.com/scholar?q=Al-Ghazali+Islamic+philosophy"
+      },
+      {
+        title:"Sejarah Peradaban Islam - Google Scholar",
+        link:"https://scholar.google.com/scholar?q=Islamic+civilization+history"
+      },
+      {
+        title:"Jurnal Studi Islam Indonesia - GARUDA",
+        link:"https://garuda.kemdikbud.go.id/"
+      }
+    ],
+
+
+    buku:[
+      {
+        title:"Sejarah Peradaban Islam - Badri Yatim",
+        link:"https://books.google.com/books?q=Sejarah+Peradaban+Islam+Badri+Yatim"
+      },
+      {
+        title:"The Incoherence of the Philosophers - Al-Ghazali",
+        link:"https://books.google.com/books?q=The+Incoherence+of+the+Philosophers+Al+Ghazali"
+      },
+      {
+        title:"The Muqaddimah - Ibn Khaldun",
+        link:"https://books.google.com/books?q=Ibn+Khaldun+Muqaddimah"
+      }
     ]
+
   };
 
 
@@ -1166,7 +1195,6 @@ const MateriScholarView = () => {
         </p>
       </div>
 
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         <Card 
@@ -1182,7 +1210,6 @@ const MateriScholarView = () => {
           </p>
         </Card>
 
-
         <Card 
           className="p-6 cursor-pointer"
           onClick={() => setActiveSection("video")}
@@ -1195,7 +1222,6 @@ const MateriScholarView = () => {
             Video edukasi untuk memperkuat pemahaman.
           </p>
         </Card>
-
 
         <Card 
           className="p-6 cursor-pointer"
@@ -1211,7 +1237,6 @@ const MateriScholarView = () => {
             Referensi jurnal dan artikel ilmiah terpercaya.
           </p>
         </Card>
-
 
         <Card 
           className="p-6 cursor-pointer"
@@ -1230,70 +1255,43 @@ const MateriScholarView = () => {
 
       </div>
 
-
       {activeSection && (
-        <div className="mt-8 bg-white rounded-2xl p-6">
+
+        <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm">
 
           <h3 className="text-xl font-bold mb-4 text-[#0E2A47]">
             Daftar Referensi
           </h3>
 
 
-          {activeSection === "video" &&
-            references.video.map((v)=>(
-              <div className="mb-3" key={v.title}>
-                <a 
-                  href={v.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
-                >
-                  🎥 {v.title}
-                </a>
-              </div>
-            ))
-          }
 
+          {references[activeSection].map((item)=>(
+            <div 
+              className="mb-3"
+              key={item.title}
+            >
 
-          {activeSection === "materi" &&
-            references.materi.map((m)=>(
-              <div className="mb-3" key={m}>
-                📘 {m}
-              </div>
-            ))
-          }
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
+              >
 
+                {activeSection === "video" && "🎥 "}
+                {activeSection === "materi" && "📘 "}
+                {activeSection === "artikel" && "📄 "}
+                {activeSection === "buku" && "📚 "}
 
-          {activeSection === "artikel" &&
-            references.artikel.map((a)=>(
-              <div className="mb-3" key={a.title}>
-                <a
-                  href={a.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0E2A47] font-semibold hover:text-[#C99700]"
-                >
-                  📄 {a.title}
-                </a>
-              </div>
-            ))
-          }
-
-
-          {activeSection === "buku" &&
-            references.buku.map((b)=>(
-              <div className="mb-3" key={b}>
-                📚 {b}
-              </div>
-            ))
-          }
-
+                {item.title}
+              </a>
+            </div>
+          ))}
         </div>
       )}
-
     </div>
   );
-};
+}; 
   
 const VRMuseumView = () => {
   const [activeRoom, setActiveRoom] = useState(null);
