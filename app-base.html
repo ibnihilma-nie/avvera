@@ -1106,7 +1106,30 @@ const MateriScholarView = () => {
 };
 
 const ReferenceView = () => {
+
   const [activeSection, setActiveSection] = useState(null);
+
+  const referenceRef = useRef(null);
+
+
+  const handleSectionClick = (section) => {
+
+    setActiveSection(
+      activeSection === section ? null : section
+    );
+
+
+    setTimeout(() => {
+
+      referenceRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    }, 150);
+
+  };
+
 
   const references = {
     materi: [
@@ -1267,7 +1290,7 @@ const ReferenceView = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card
           className={`p-6 cursor-pointer ${activeSection === "materi" ? "ring-2 ring-[#C99700]" : ""}`}
-          onClick={() => setActiveSection(activeSection === "materi" ? null : "materi")}
+          onClick={() => handleSectionClick("materi")}
         >
           <BookOpen className="w-10 h-10 text-[#C99700] mb-4" />
           <h3 className="font-bold text-xl text-[#0E2A47]">Materi Pembelajaran</h3>
@@ -1277,7 +1300,7 @@ const ReferenceView = () => {
 
         <Card
           className={`p-6 cursor-pointer ${activeSection === "video" ? "ring-2 ring-[#C99700]" : ""}`}
-          onClick={() => setActiveSection(activeSection === "video" ? null : "video")}
+          onClick={() => handleSectionClick ("video")}
         >
           <Video className="w-10 h-10 text-[#C99700] mb-4" />
           <h3 className="font-bold text-xl text-[#0E2A47]">Video Pembelajaran</h3>
@@ -1287,7 +1310,7 @@ const ReferenceView = () => {
 
         <Card
           className={`p-6 cursor-pointer ${activeSection === "artikel" ? "ring-2 ring-[#C99700]" : ""}`}
-          onClick={() => setActiveSection(activeSection === "artikel" ? null : "artikel")}
+          onClick={() => handleSectionClick ("artikel")}
         >
           <FileText className="w-10 h-10 text-[#C99700] mb-4" />
           <h3 className="font-bold text-xl text-[#0E2A47]">Artikel Terakreditasi</h3>
@@ -1297,7 +1320,7 @@ const ReferenceView = () => {
 
         <Card
           className={`p-6 cursor-pointer ${activeSection === "buku" ? "ring-2 ring-[#C99700]" : ""}`}
-          onClick={() => setActiveSection(activeSection === "buku" ? null : "buku")}
+          onClick={() => handleSectionClick ("buku")}
         >
           <GraduationCap className="w-10 h-10 text-[#C99700] mb-4" />
           <h3 className="font-bold text-xl text-[#0E2A47]">Buku Referensi</h3>
