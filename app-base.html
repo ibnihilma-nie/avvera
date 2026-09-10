@@ -1557,35 +1557,72 @@ const AICompanionView = () => {
 
   const currentQ = QUESTIONS_TABLE.find(q => q.id === selectedQuestionId);
 
-  // Simulasi Rekaman VN
   const startRecording = () => {
-    setIsRecording(true);
-    setRecordingTime(0);
-    setAudioBlobUrl(null);
-    setEvaluationResult(null);
-    setSimulatedTranscript("");
-    
-    timerRef.current = setInterval(() => {
-      setRecordingTime(prev => prev + 1);
-    }, 1000);
-  };
 
-  const stopRecording = () => {
-    clearInterval(timerRef.current);
-    setIsRecording(false);
-    // Buat URL dummy audio blob
-    setAudioBlobUrl("blob:https://averra.edu/voice-note-mock");
-    
-    // Set teks transkrip tiruan berdasarkan soal aktif agar penilaian relevan
-    if (selectedQuestionId === 1) {
-      setSimulatedTranscript("Menurut saya, mahasiswa itu tidak boleh langsung percaya sama konten viral di medsos untuk diagnosis diri. Harus konsultasi ke dokter atau tenaga medis yang ahli, serta mengecek sumber informasinya dengan teliti secara sistematis.");
-    } else if (selectedQuestionId === 2) {
-      setSimulatedTranscript("Manfaat AI itu membantu cari referensi dan ide tugas. Risikonya bisa bikin malas dan plagiat. Penggunaan yang etis yaitu AI cuma sebagai alat bantu saja, hasilnya tetap harus diverifikasi sendiri agar sesuai nilai kejujuran akademik.");
-    } else {
-      setSimulatedTranscript("Inovasi sampah harus memperhatikan etika dan tanggung jawab sosial. Sesuai gagasan al-Faruqi, ilmu dan teknologi harus membawa kemaslahatan dan keseimbangan lingkungan hidup manusia.");
+  setIsRecording(true);
+  setRecordingTime(0);
+  setAudioBlobUrl(null);
+  setEvaluationResult(null);
+  setSimulatedTranscript("");
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Browser tidak mendukung voice recognition");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "id-ID";
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onresult = (event) => {
+
+    let transcript = "";
+
+    for(
+      let i = event.resultIndex;
+      i < event.results.length;
+      i++
+    ){
+      transcript += event.results[i][0].transcript;
     }
+
+    setSimulatedTranscript(transcript);
+
   };
 
+  recognition.start();
+
+
+  window.voiceRecognition = recognition;
+
+  timerRef.current = setInterval(()=>{
+    setRecordingTime(prev => prev + 1);
+  },1000);
+
+};
+
+const stopRecording = () => {
+
+  clearInterval(timerRef.current);
+  
+  setIsRecording(false);
+
+  if(window.voiceRecognition){
+    window.voiceRecognition.stop();
+  }
+
+  setAudioBlobUrl(
+    "voice-note-recorded"
+  );
+
+};
+  
   // Proses Penilaian AI terhadap Opini Peserta dari VN
 const evaluateVoiceNote = () => {
 
