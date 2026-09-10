@@ -1587,34 +1587,116 @@ const AICompanionView = () => {
   };
 
   // Proses Penilaian AI terhadap Opini Peserta dari VN
-  const evaluateVoiceNote = () => {
-    setIsEvaluating(true);
-    setTimeout(() => {
-      setIsEvaluating(false);
-      
-      // Hitung kecocokan keyword sederhana untuk menentukan Benar/Salah/Kurang Tepat
-      const transcriptLower = simulatedTranscript.toLowerCase();
-      let matchedCount = currentQ.keywords.filter(kw => transcriptLower.includes(kw.toLowerCase())).length;
-      let scorePercentage = Math.round((matchedCount / currentQ.keywords.length) * 100);
-      
-      let status = "Benar & Sesuai";
-      let badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
-      if (scorePercentage < 40) {
-        status = "Kurang Tepat / Belum Sesuai";
-        badgeColor = "bg-red-100 text-red-800 border-red-300";
-      } else if (scorePercentage < 70) {
-        status = "Cukup Baik (Perlu Penyempurnaan)";
-        badgeColor = "bg-amber-100 text-amber-800 border-amber-300";
-      }
+const evaluateVoiceNote = () => {
 
-      setEvaluationResult({
-        status,
-        badgeColor,
-        score: Math.max(scorePercentage, 65), // minimal apresiasi 65% jika beralasan
-        feedback: `Analisis VN AI Companion: Opini Anda menunjukkan pemahaman pada level ${currentQ.level}. ${scorePercentage >= 40 ? 'Argumen Anda sudah mencakup poin-poin kunci dan sejalan dengan keteladanan tokoh.' : 'Argumen perlu diperkuat dengan merujuk langsung pada prinsip atau nilai keteladanan tokoh terkait.'}`
-      });
-    }, 1800);
-  };
+  setIsEvaluating(true);
+
+  setTimeout(() => {
+
+    setIsEvaluating(false);
+
+
+    const transcriptLower = simulatedTranscript.toLowerCase();
+
+    // 1. Penilaian berdasarkan keyword
+    const matchedKeywords = currentQ.keywords.filter(
+      kw => transcriptLower.includes(kw.toLowerCase())
+    );
+
+
+    const keywordScore =
+      (matchedKeywords.length / currentQ.keywords.length) * 70;
+
+    // 2. Penilaian berdasarkan panjang dan kelengkapan argumentasi
+    let explanationScore = 0;
+
+    if (simulatedTranscript.length > 250) {
+      explanationScore = 20;
+    } 
+    else if (simulatedTranscript.length > 120) {
+      explanationScore = 15;
+    } 
+    else if (simulatedTranscript.length > 50) {
+      explanationScore = 10;
+    }
+    else {
+      explanationScore = 5;
+    }
+
+    // 3. Penilaian struktur opini
+    let reasoningScore = 0;
+
+    if (
+      transcriptLower.includes("karena") ||
+      transcriptLower.includes("menurut") ||
+      transcriptLower.includes("sehingga") ||
+      transcriptLower.includes("contohnya")
+    ) {
+      reasoningScore = 10;
+    } 
+    else {
+      reasoningScore = 5;
+    }
+
+    // Total skor 0-100
+    const scorePercentage = Math.min(
+      Math.round(
+        keywordScore +
+        explanationScore +
+        reasoningScore
+      ),
+      100
+    );
+
+    let status = "Benar & Sesuai";
+    let badgeColor =
+      "bg-emerald-100 text-emerald-800 border-emerald-300";
+
+    if(scorePercentage < 40){
+
+      status = "Kurang Tepat / Belum Sesuai";
+
+      badgeColor =
+      "bg-red-100 text-red-800 border-red-300";
+
+    }
+
+    else if(scorePercentage < 70){
+
+      status =
+      "Cukup Baik (Perlu Penyempurnaan)";
+
+      badgeColor =
+      "bg-amber-100 text-amber-800 border-amber-300";
+
+    }
+
+    setEvaluationResult({
+
+      status,
+
+      badgeColor,
+
+      // sudah tidak ada minimal 65
+      score: scorePercentage,
+
+      feedback:
+
+      scorePercentage >= 80
+
+      ? `Analisis VN AI Companion: Opini Anda sangat baik dan menunjukkan pemahaman mendalam terhadap level ${currentQ.level}. Argumen telah mencakup poin penting dan nilai keteladanan tokoh.`
+
+      : scorePercentage >= 60
+
+      ? `Analisis VN AI Companion: Opini Anda cukup baik pada level ${currentQ.level}. Tambahkan contoh penerapan agar argumen lebih kuat.`
+
+      : `Analisis VN AI Companion: Opini perlu diperkuat dengan konsep utama, nilai keteladanan tokoh, dan contoh penerapan.`
+
+    });
+
+  },1800);
+
+};
 
   return (
     <div className="space-y-6">
