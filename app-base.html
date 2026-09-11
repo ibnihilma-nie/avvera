@@ -202,13 +202,14 @@ const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
     { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
     { id: 'materi', icon: BookOpen, label: 'Materi Scholar' },
     { id: 'reference', icon: FileText, label: 'Referensi Materi' },
-    { id: 'vr', icon: Video, label: 'Virtual Museum' },
+    { id: 'vr', icon: Video, label: 'VR Museum' },
     { id: 'ai', icon: MessageSquare, label: 'AI Company' },
     { id: 'board', icon: Map, label: 'Innovation Mission' },
-    { id: 'qr', icon: ScanLine, label: 'AR Scanner' },
+    { id: 'qr', icon: ScanLine, label: 'QR Scanner' },
     { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
     { id: 'profile', icon: User, label: 'Profile' },
-];  
+];
+  
   return (
     <div className="flex h-screen bg-[#F8F9FA] font-sans">
       <aside className="fixed bottom-0 w-full md:relative md:w-64 bg-[#0E2A47] text-white z-50 md:flex flex-col border-t md:border-r border-[#163a5f]">
@@ -1556,191 +1557,64 @@ const AICompanionView = () => {
 
   const currentQ = QUESTIONS_TABLE.find(q => q.id === selectedQuestionId);
 
+  // Simulasi Rekaman VN
   const startRecording = () => {
-
-  setIsRecording(true);
-  setRecordingTime(0);
-  setAudioBlobUrl(null);
-  setEvaluationResult(null);
-  setSimulatedTranscript("");
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    alert("Browser tidak mendukung voice recognition");
-    return;
-  }
-
-  const recognition = new SpeechRecognition();
-
-  recognition.lang = "id-ID";
-  recognition.continuous = true;
-  recognition.interimResults = true;
-
-  recognition.onresult = (event) => {
-
-    let transcript = "";
-
-    for(
-      let i = event.resultIndex;
-      i < event.results.length;
-      i++
-    ){
-      transcript += event.results[i][0].transcript;
-    }
-
-    setSimulatedTranscript(transcript);
-
+    setIsRecording(true);
+    setRecordingTime(0);
+    setAudioBlobUrl(null);
+    setEvaluationResult(null);
+    setSimulatedTranscript("");
+    
+    timerRef.current = setInterval(() => {
+      setRecordingTime(prev => prev + 1);
+    }, 1000);
   };
 
-  recognition.start();
+  const stopRecording = () => {
+    clearInterval(timerRef.current);
+    setIsRecording(false);
+    // Buat URL dummy audio blob
+    setAudioBlobUrl("blob:https://averra.edu/voice-note-mock");
+    
+    // Set teks transkrip tiruan berdasarkan soal aktif agar penilaian relevan
+    if (selectedQuestionId === 1) {
+      setSimulatedTranscript("Menurut saya, mahasiswa itu tidak boleh langsung percaya sama konten viral di medsos untuk diagnosis diri. Harus konsultasi ke dokter atau tenaga medis yang ahli, serta mengecek sumber informasinya dengan teliti secara sistematis.");
+    } else if (selectedQuestionId === 2) {
+      setSimulatedTranscript("Manfaat AI itu membantu cari referensi dan ide tugas. Risikonya bisa bikin malas dan plagiat. Penggunaan yang etis yaitu AI cuma sebagai alat bantu saja, hasilnya tetap harus diverifikasi sendiri agar sesuai nilai kejujuran akademik.");
+    } else {
+      setSimulatedTranscript("Inovasi sampah harus memperhatikan etika dan tanggung jawab sosial. Sesuai gagasan al-Faruqi, ilmu dan teknologi harus membawa kemaslahatan dan keseimbangan lingkungan hidup manusia.");
+    }
+  };
 
-
-  window.voiceRecognition = recognition;
-
-  timerRef.current = setInterval(()=>{
-    setRecordingTime(prev => prev + 1);
-  },1000);
-
-};
-
-const stopRecording = () => {
-
-  clearInterval(timerRef.current);
-  
-  setIsRecording(false);
-
-  if(window.voiceRecognition){
-    window.voiceRecognition.stop();
-  }
-
-  setAudioBlobUrl(
-    "voice-note-recorded"
-  );
-
-};
-  
   // Proses Penilaian AI terhadap Opini Peserta dari VN
-const evaluateVoiceNote = () => {
+  const evaluateVoiceNote = () => {
+    setIsEvaluating(true);
+    setTimeout(() => {
+      setIsEvaluating(false);
+      
+      // Hitung kecocokan keyword sederhana untuk menentukan Benar/Salah/Kurang Tepat
+      const transcriptLower = simulatedTranscript.toLowerCase();
+      let matchedCount = currentQ.keywords.filter(kw => transcriptLower.includes(kw.toLowerCase())).length;
+      let scorePercentage = Math.round((matchedCount / currentQ.keywords.length) * 100);
+      
+      let status = "Benar & Sesuai";
+      let badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+      if (scorePercentage < 40) {
+        status = "Kurang Tepat / Belum Sesuai";
+        badgeColor = "bg-red-100 text-red-800 border-red-300";
+      } else if (scorePercentage < 70) {
+        status = "Cukup Baik (Perlu Penyempurnaan)";
+        badgeColor = "bg-amber-100 text-amber-800 border-amber-300";
+      }
 
-  setIsEvaluating(true);
-
-  setTimeout(() => {
-
-    setIsEvaluating(false);
-
-
-    const transcriptLower = simulatedTranscript.toLowerCase();
-
-    // 1. Penilaian berdasarkan keyword
-    const matchedKeywords = currentQ.keywords.filter(
-      kw => transcriptLower.includes(kw.toLowerCase())
-    );
-
-
-    const keywordScore =
-      (matchedKeywords.length / currentQ.keywords.length) * 70;
-
-    // 2. Penilaian berdasarkan panjang dan kelengkapan argumentasi
-    let explanationScore = 0;
-
-    if (simulatedTranscript.length > 250) {
-      explanationScore = 20;
-    } 
-    else if (simulatedTranscript.length > 120) {
-      explanationScore = 15;
-    } 
-    else if (simulatedTranscript.length > 50) {
-      explanationScore = 10;
-    }
-    else {
-      explanationScore = 5;
-    }
-
-    // 3. Penilaian struktur opini
-    let reasoningScore = 0;
-
-    if (
-      transcriptLower.includes("karena") ||
-      transcriptLower.includes("menurut") ||
-      transcriptLower.includes("sehingga") ||
-      transcriptLower.includes("contohnya")
-    ) {
-      reasoningScore = 10;
-    } 
-    else {
-      reasoningScore = 5;
-    }
-
-    // Total skor 0-100
-    const scorePercentage = Math.min(
-      Math.round(
-        keywordScore +
-        explanationScore +
-        reasoningScore
-      ),
-      100
-    );
-
-    let status = "";
-let badgeColor = "";
-
-if(scorePercentage >= 80){
-
-  status = "Benar & Relevan";
-  badgeColor =
-  "bg-emerald-100 text-emerald-800 border-emerald-300";
-
-}
-else if(scorePercentage >= 60){
-
-  status = "Cukup Baik (Perlu Penyempurnaan)";
-  badgeColor =
-  "bg-amber-100 text-amber-800 border-amber-300";
-
-}
-else if(scorePercentage >= 40){
-
-  status = "Kurang Tepat";
-  badgeColor =
-  "bg-orange-100 text-orange-800 border-orange-300";
-
-}
-else{
-
-  status = "Belum Sesuai";
-  badgeColor =
-  "bg-red-100 text-red-800 border-red-300";
-
-}
-    setEvaluationResult({
-
-      status,
-
-      badgeColor,
-
-      // sudah tidak ada minimal 65
-      score: scorePercentage,
-
-      feedback:
-
-      scorePercentage >= 80
-
-      ? `Analisis VN AI Companion: Opini Anda sangat baik dan menunjukkan pemahaman mendalam terhadap level ${currentQ.level}. Argumen telah mencakup poin penting dan nilai keteladanan tokoh.`
-
-      : scorePercentage >= 60
-
-      ? `Analisis VN AI Companion: Opini Anda cukup baik pada level ${currentQ.level}. Tambahkan contoh penerapan agar argumen lebih kuat.`
-
-      : `Analisis VN AI Companion: Opini perlu diperkuat dengan konsep utama, nilai keteladanan tokoh, dan contoh penerapan.`
-
-    });
-
-  },1800);
-
-};
+      setEvaluationResult({
+        status,
+        badgeColor,
+        score: Math.max(scorePercentage, 65), // minimal apresiasi 65% jika beralasan
+        feedback: `Analisis VN AI Companion: Opini Anda menunjukkan pemahaman pada level ${currentQ.level}. ${scorePercentage >= 40 ? 'Argumen Anda sudah mencakup poin-poin kunci dan sejalan dengan keteladanan tokoh.' : 'Argumen perlu diperkuat dengan merujuk langsung pada prinsip atau nilai keteladanan tokoh terkait.'}`
+      });
+    }, 1800);
+  };
 
   return (
     <div className="space-y-6">
@@ -1849,93 +1723,39 @@ else{
             {/* Hasil Evaluasi AI */}
             {evaluationResult && (
               <div className="bg-white p-5 rounded-2xl border-2 border-emerald-400 shadow-md space-y-3 animate-fade-in">
-
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2">
                     <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-
-                    <span className="font-bold text-lg text-slate-800">
-                      Hasil Penilaian AI Company
-                    </span>
+                    <span className="font-bold text-lg text-slate-800">Hasil Penilaian AI Company</span>
                   </div>
-
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}
-                  >
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}>
                     {evaluationResult.status}
                   </span>
                 </div>
 
-
                 <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl text-sm">
-
                   <div>
-                    <span className="text-slate-500 block text-xs">
-                      Skor Kecocokan Opini:
-                    </span>
-
-                    <span
-                      className={`font-bold text-base ${
-                        evaluationResult.score >= 80
-                          ? "text-emerald-700"
-                          : evaluationResult.score >= 60
-                          ? "text-amber-600"
-                          : evaluationResult.score >= 40
-                          ? "text-orange-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {evaluationResult.score} / 100
-                    </span>
+                    <span className="text-slate-500 block text-xs">Skor Kecocokan Opini:</span>
+                    <span className="font-bold text-emerald-700 text-base">{evaluationResult.score} / 100</span>
                   </div>
-
-
                   <div>
-                    <span className="text-slate-500 block text-xs">
-                      Kategori Jawaban:
-                    </span>
-
-                    <span className="font-bold text-slate-800">
-                      {evaluationResult.status}
-                    </span>
+                    <span className="text-slate-500 block text-xs">Kategori Jawaban:</span>
+                    <span className="font-bold text-slate-800">Benar & Relevan</span>
                   </div>
-
                 </div>
-
 
                 <div>
-
-                  <p className="text-xs font-bold text-slate-500 mb-1">
-                    Feedback AI:
-                  </p>
-
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {evaluationResult.feedback}
-                  </p>
-
-
-                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900 mt-3">
-
-                    <strong>
-                      Jawaban Ideal / Pembahasan Tabel:
-                    </strong>
-
-                    <p className="mt-1">
-                      {currentQ.idealAnswer}
-                    </p>
-
+                  <p className="text-xs font-bold text-slate-500 mb-1">Feedback AI & Kunci Jawaban Ideal:</p>
+                  <p className="text-xs text-slate-600 mb-2">{evaluationResult.feedback}</p>
+                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900">
+                    <strong>Jawaban Ideal / Pembahasan Tabel:</strong> {currentQ.idealAnswer}
                   </div>
-
                 </div>
-
               </div>
             )}
-
           </div>
         </div>
-
       </div>
-
     </div>
   );
 };
@@ -2010,220 +1830,29 @@ const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
 // --- GAME CONTENT BANKS ---
 const CHALLENGE_QUESTION_BANKS = {
   scholar: [
-{
-q:"Seorang mahasiswa menggunakan AI generatif untuk menyusun artikel tentang pemikiran Al-Ghazali. Ia hanya menerima jawaban AI tanpa memeriksa sumber dan memasukkannya langsung ke tugas. Berdasarkan kritik Al-Ghazali terhadap hubungan ilmu dan tanggung jawab moral, evaluasi paling tepat terhadap tindakan mahasiswa tersebut adalah...",
-options:[
-"Tindakan tersebut benar karena AI mempercepat proses akademik",
-"Tindakan tersebut dapat diterima selama hasilnya terlihat ilmiah",
-"Tindakan tersebut bermasalah karena penggunaan ilmu tidak disertai verifikasi, tanggung jawab, dan etika akademik",
-"Tindakan tersebut salah hanya karena menggunakan teknologi modern"
-],
-answer:2
-},
-    
-{
-q:"Sebuah universitas ingin membuat kurikulum yang menggabungkan ilmu agama, teknologi, dan sains modern. Jika menggunakan pendekatan pemikiran Muhammad Abduh tentang pembaruan pendidikan, strategi yang paling sesuai adalah...",
-options:[
-"Menghapus pendidikan tradisional dan mengganti seluruhnya dengan ilmu modern",
-"Mempertahankan pendidikan lama tanpa perubahan",
-"Mengintegrasikan nilai keilmuan, rasionalitas, dan kebutuhan masyarakat modern secara kritis",
-"Mengutamakan hafalan teks dibandingkan kemampuan berpikir"
-],
-answer:2
-},
-    
-{
-q:"Dalam sebuah penelitian sosial mengenai perubahan perilaku mahasiswa akibat media digital, seorang peneliti hanya menggunakan data teknologi tanpa melihat faktor budaya dan sejarah masyarakat. Berdasarkan pemikiran Ibnu Khaldun, kelemahan utama penelitian tersebut adalah...",
-options:[
-"Penelitian terlalu menggunakan teknologi",
-"Penelitian mengabaikan hubungan antara kondisi sosial, budaya, dan faktor sejarah yang memengaruhi masyarakat",
-"Penelitian terlalu banyak menggunakan data",
-"Penelitian tidak membutuhkan teori sosial"
-],
-answer:1
-},
-    
-{
-q:"Anda menjadi ketua tim inovasi kampus yang ingin membuat aplikasi edukasi sejarah Islam. Agar sesuai dengan prinsip ilmuwan Muslim klasik, keputusan desain yang paling tepat adalah...",
-options:[
-"Membuat aplikasi yang menarik secara visual tanpa memperhatikan validitas informasi",
-"Mengutamakan jumlah pengguna meskipun sumber informasi belum jelas",
-"Mengembangkan aplikasi berbasis riset, validasi sumber, dan memberikan manfaat pendidikan bagi masyarakat",
-"Menghindari teknologi digital karena tidak sesuai dengan tradisi ilmu Islam"
-],
-answer:2
-},
-
-{
-q:"Seorang mahasiswa berpendapat bahwa kemajuan teknologi selalu membawa dampak positif bagi masyarakat. Jika dianalisis menggunakan perspektif Al-Ghazali mengenai hubungan ilmu dan kemaslahatan, kritik yang paling tepat adalah...",
-options:[
-"Teknologi harus selalu ditolak karena berbahaya",
-"Teknologi harus dinilai berdasarkan tujuan, manfaat, dan dampaknya terhadap manusia",
-"Semua inovasi pasti memberikan manfaat",
-"Ilmu tidak memiliki hubungan dengan nilai moral"
-],
-answer:1
-},
-    
-{
-q:"Sebuah komunitas mahasiswa ingin menyelesaikan masalah sampah kampus dengan membuat teknologi pengolahan limbah. Agar mencerminkan konsep keilmuan Ibnu Sina dan Ibnu Khaldun, pendekatan terbaik adalah...",
-options:[
-"Membuat teknologi berdasarkan tren tanpa analisis kebutuhan",
-"Menggabungkan observasi ilmiah, pemahaman kondisi masyarakat, dan solusi berkelanjutan",
-"Menggunakan teknologi mahal agar terlihat modern",
-"Menyelesaikan masalah hanya berdasarkan pendapat individu"
-],
-answer:1
-}
-],
-    
-technology: [
-
-{
-question:
-"Seorang mahasiswa informatika ingin membuat sistem AI yang mampu mengambil keputusan secara logis. Jika mengambil inspirasi dari kontribusi Al-Khawarizmi, prinsip utama yang harus diterapkan adalah...",
-options:[
-"Menggunakan algoritma terstruktur untuk menyelesaikan masalah secara sistematis",
-"Menggantikan seluruh proses berpikir manusia dengan mesin",
-"Mengutamakan kecepatan tanpa mempertimbangkan akurasi",
-"Menghindari penggunaan matematika dalam teknologi"
-],
-answer:0
-},
-
-{
-question:
-"Sebuah perusahaan kamera digital ingin meningkatkan kualitas pencitraan menggunakan prinsip Ibn Al-Haytham. Pendekatan ilmiah yang paling sesuai adalah...",
-options:[
-"Mengandalkan desain visual tanpa eksperimen",
-"Menganalisis konsep cahaya, optik, dan pembentukan gambar berdasarkan penelitian ilmiah",
-"Menggunakan teknologi terbaru tanpa memahami prinsip dasarnya",
-"Mengurangi proses pengujian agar produksi lebih cepat"
-],
-answer:1
-},
-
-{
-question:
-"Tim robotika kampus membuat robot pelayanan publik. Jika menggunakan inspirasi dari Al-Jazari, aspek utama yang perlu diperhatikan adalah...",
-options:[
-"Mengembangkan mekanisme otomatis yang menggabungkan rekayasa dan kebutuhan manusia",
-"Membuat robot hanya untuk hiburan",
-"Mengabaikan keamanan sistem agar inovasi cepat dibuat",
-"Mengurangi fungsi robot agar tidak kompleks"
-],
-answer:0
-},
-
-
-{
-question:
-"Seorang peneliti lingkungan menggunakan teknologi pemetaan wilayah untuk mitigasi bencana. Kontribusi Al-Biruni dapat dijadikan inspirasi melalui...",
-options:[
-"Pengukuran bumi berdasarkan observasi, matematika, dan data geografis",
-"Penggunaan teknologi tanpa pengumpulan data",
-"Pengambilan keputusan hanya berdasarkan perkiraan",
-"Mengabaikan kondisi geografis wilayah"
-],
-answer:0
-}
-
-],
-    
-  innovation:[
-{
-title:"Rekonstruksi Inovasi Ilmu Klasik",
-
-challenge:
-"Sebuah universitas ingin membuat pusat inovasi yang menggabungkan ilmu kesehatan, filsafat, dan ilmu sosial. Susun pendekatan berdasarkan kontribusi tokoh Islam klasik.",
-
-items:[
-"Ibnu Sina → pengembangan ilmu kedokteran berbasis observasi dan penelitian",
-"Al-Ghazali → integrasi ilmu dengan nilai etika dan tanggung jawab",
-"Ibnu Khaldun → analisis masyarakat berdasarkan sejarah dan faktor sosial"
-]
-
-},
-
-{
-title:"Transformasi Ilmu Islam di Era Modern",
-
-challenge:
-"Bagaimana menerapkan semangat pembaruan pemikiran Islam dalam menghadapi perkembangan teknologi modern?",
-
-items:[
-"Muhammad Abduh → rasionalitas dan reformasi pendidikan",
-"Fazlur Rahman → pendekatan kontekstual terhadap pemikiran Islam",
-"Nurcholish Madjid → dialog antara tradisi dan modernitas"
-]
-
-},
-
-{
-title:"Inovasi Sosial Berbasis Nilai",
-
-challenge:
-"Mahasiswa diminta membuat solusi sosial yang tidak hanya efektif tetapi juga memiliki nilai kemanusiaan.",
-
-items:[
-"KH Ahmad Dahlan → pendidikan dan pemberdayaan masyarakat",
-"KH Hasyim Asy'ari → penguatan nilai keilmuan dan karakter"
-]
-
-}
-
-],
-    
-  master:[
-
-{
-id:1,
-name:"Ibnu Sina",
-challenge:
-"Jelaskan bagaimana metode ilmiah Ibnu Sina dapat diterapkan dalam penelitian kesehatan modern."
-},
-
-
-{
-id:2,
-name:"Al-Ghazali",
-challenge:
-"Analisis bagaimana konsep etika ilmu Al-Ghazali dapat diterapkan dalam penggunaan AI."
-},
-
-
-{
-id:3,
-name:"Al-Khawarizmi",
-challenge:
-"Jelaskan hubungan algoritma Al-Khawarizmi dengan perkembangan teknologi komputasi modern."
-},
-
-
-{
-id:4,
-name:"Ibnu Khaldun",
-challenge:
-"Analisis bagaimana teori sosial Ibnu Khaldun dapat digunakan memahami fenomena masyarakat digital."
-},
-
-
-{
-id:5,
-name:"KH. Ahmad Dahlan",
-challenge:
-"Evaluasi kontribusi pendidikan KH Ahmad Dahlan terhadap perubahan sosial masyarakat."
-},
-
-
-{
-id:6,
-name:"KH. Hasyim Asy'ari",
-challenge:
-"Jelaskan relevansi pendidikan karakter KH Hasyim Asy'ari dalam pendidikan modern."
-}
-
-],
+    { q: "Siapakah tokoh pemikir Islam yang dikenal dengan gelar Hujjatul Islam?", options: ["Ibnu Sina", "Al-Ghazali", "Ibnu Khaldun", "Muhammad Abduh"], answer: 1 },
+    { q: "Tokoh ulama asal Banten yang pernah menjadi Imam Masjidil Haram adalah...", options: ["Hamzah Fansuri", "Nuruddin ar-Raniri", "Syekh Nawawi al-Bantani", "KH. Hasyim Asy'ari"], answer: 2 },
+    { q: "Ibnu Sina dikenal sebagai bapak dari bidang ilmu...", options: ["Sosiologi", "Kedokteran Modern", "Astronomi", "Ekonomi"], answer: 1 },
+    { q: "Ibnu Khaldun adalah peletak dasar ilmu...", options: ["Kedokteran", "Optik", "Sosiologi & Sejarah", "Aljabar"], answer: 2 },
+    { q: "Pendiri organisasi Nahdlatul Ulama (NU) adalah...", options: ["KH. Ahmad Dahlan", "KH. Hasyim Asy'ari", "Nurcholish Madjid", "Harun Nasution"], answer: 1 },
+    { q: "Pendiri organisasi Muhammadiyah adalah...", options: ["KH. Hasyim Asy'ari", "KH. Ahmad Dahlan", "Kuntowijoyo", "Fazlur Rahman"], answer: 1 },
+  ],
+  technology: [
+    { left: "Al-Khawarizmi", right: "Computer Algorithms", id: 1 },
+    { left: "Ibn Al-Haytham", right: "Camera & Optics", id: 2 },
+    { left: "Al-Jazari", right: "Robotics & Automata", id: 3 },
+    { left: "Al-Biruni", right: "Geodesy & Earth Measurement", id: 4 },
+  ],
+  innovation: [
+    { title: "Sejarah Peradaban Klasik", items: ["Ibnu Sina lahir & menulis Canon of Medicine", "Al-Ghazali menulis Ihya Ulumuddin", "Ibnu Khaldun menulis Muqaddimah"] },
+    { title: "Gerakan Pembaruan Nusantara", items: ["Syekh Nawawi al-Bantani menjadi Imam Masjidil Haram", "KH. Ahmad Dahlan mendirikan Muhammadiyah", "KH. Hasyim Asy'ari mendirikan Nahdlatul Ulama"] },
+    { title: "Pemikiran Islam Kontemporer", items: ["Muhammad Abduh menggagas pembaruan pemikiran Islam", "Fazlur Rahman mengembangkan neo-modernisme", "Nurcholish Madjid mempopulerkan sekularisasi terbatas"] },
+  ],
+  master: [
+    { id: 1, name: "Ibnu Sina" }, { id: 2, name: "Al-Ghazali" },
+    { id: 3, name: "Al-Khawarizmi" }, { id: 4, name: "Ibnu Khaldun" },
+    { id: 5, name: "KH. Ahmad Dahlan" }, { id: 6, name: "KH. Hasyim Asy'ari" },
+  ],
 };
  
 const ACHIEVEMENT_RULES = {
@@ -2251,32 +1880,22 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
   const [earnedBadge, setEarnedBadge] = useState(null);
  
   const scholarQuestions = CHALLENGE_QUESTION_BANKS.scholar;
-  const techQuestions = CHALLENGE_QUESTION_BANKS.technology;
-  const innovationQuestions = CHALLENGE_QUESTION_BANKS.innovation;
-  const masterQuestions = CHALLENGE_QUESTION_BANKS.master;
+  const techPairs = CHALLENGE_QUESTION_BANKS.technology;
+  const timelineRounds = CHALLENGE_QUESTION_BANKS.innovation;
+  const memoryScholars = CHALLENGE_QUESTION_BANKS.master;
  
-  const [challengeQuestions, setChallengeQuestions] = useState([]);
-
-useEffect(() => {
-
-if(type === "scholar"){
- setChallengeQuestions(CHALLENGE_QUESTION_BANKS.scholar);
-}
-
-if(type === "technology"){
- setChallengeQuestions(CHALLENGE_QUESTION_BANKS.technology);
-}
-
-if(type === "innovation"){
- setChallengeQuestions(CHALLENGE_QUESTION_BANKS.innovation);
-}
-
-if(type === "master"){
- setChallengeQuestions(CHALLENGE_QUESTION_BANKS.master);
-}
-
-},[type]);
-  
+  const [matches, setMatches] = useState([]);
+  const [selectedLeft, setSelectedLeft] = useState(null);
+  const [shuffledRight] = useState(() => shuffleArray(techPairs));
+ 
+  const [orderedItems, setOrderedItems] = useState(() => shuffleArray(timelineRounds[0].items));
+  const [draggedIdx, setDraggedIdx] = useState(null);
+  const [timelineChecked, setTimelineChecked] = useState(false);
+  const [timelineCorrect, setTimelineCorrect] = useState(false);
+ 
+  const [cards, setCards] = useState(() => shuffleArray(
+    memoryScholars.flatMap(s => [{ ...s, key: s.id + '-a' }, { ...s, key: s.id + '-b' }])
+  ));
   const [flipped, setFlipped] = useState([]);
   const [solved, setSolved] = useState([]);
   const [moves, setMoves] = useState(0);
@@ -2288,37 +1907,6 @@ if(type === "master"){
   };
  
   const handleQuizAnswer = (idx) => {
-  const handleHOTSAnswer = (idx)=>{
-  const current = challengeQuestions[step];
-  const correct = idx === current.answer;
-  setShowFeedback(correct ? "correct":"wrong");
-
-if(correct){
-
-setScore(s=>s+50);
-
-}
-
-
-setTimeout(()=>{
-
-setShowFeedback(null);
-
-if(step < challengeQuestions.length-1){
-
-setStep(s=>s+1);
-
-}
-
-else{
-
-finishWithScore(score + (correct ? 50:0));
-
-}
-
-},1200);
-
-};
     const isCorrect = idx === scholarQuestions[step].answer;
     setShowFeedback(isCorrect ? 'correct' : 'wrong');
     let gained = 0;
