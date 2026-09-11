@@ -1972,31 +1972,159 @@ const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
 // --- GAME CONTENT BANKS ---
 const CHALLENGE_QUESTION_BANKS = {
   scholar: [
-    { q: "Siapakah tokoh pemikir Islam yang dikenal dengan gelar Hujjatul Islam?", options: ["Ibnu Sina", "Al-Ghazali", "Ibnu Khaldun", "Muhammad Abduh"], answer: 1 },
-    { q: "Tokoh ulama asal Banten yang pernah menjadi Imam Masjidil Haram adalah...", options: ["Hamzah Fansuri", "Nuruddin ar-Raniri", "Syekh Nawawi al-Bantani", "KH. Hasyim Asy'ari"], answer: 2 },
-    { q: "Ibnu Sina dikenal sebagai bapak dari bidang ilmu...", options: ["Sosiologi", "Kedokteran Modern", "Astronomi", "Ekonomi"], answer: 1 },
-    { q: "Ibnu Khaldun adalah peletak dasar ilmu...", options: ["Kedokteran", "Optik", "Sosiologi & Sejarah", "Aljabar"], answer: 2 },
-    { q: "Pendiri organisasi Nahdlatul Ulama (NU) adalah...", options: ["KH. Ahmad Dahlan", "KH. Hasyim Asy'ari", "Nurcholish Madjid", "Harun Nasution"], answer: 1 },
-    { q: "Pendiri organisasi Muhammadiyah adalah...", options: ["KH. Hasyim Asy'ari", "KH. Ahmad Dahlan", "Kuntowijoyo", "Fazlur Rahman"], answer: 1 },
+    {
+      q: "Seorang mahasiswa menggunakan AI untuk merangkum karya Al-Ghazali, tetapi ia hanya menerima hasil AI tanpa melakukan verifikasi sumber. Berdasarkan pemikiran Al-Ghazali mengenai hubungan ilmu dan tanggung jawab moral, tindakan yang paling tepat adalah...",
+      options: [
+        "Menggunakan hasil AI sepenuhnya karena teknologi dapat mempercepat pembelajaran",
+        "Menolak semua penggunaan AI karena ilmu harus berasal dari manusia",
+        "Melakukan verifikasi sumber dan menggunakan AI sebagai alat bantu berpikir kritis",
+        "Menyebarkan hasil AI selama informasi terlihat meyakinkan"
+      ],
+      answer: 2
+    },
+
+    {
+      q: "Ibnu Sina dikenal melalui kontribusinya dalam bidang kedokteran. Jika seorang peneliti modern ingin menerapkan prinsip keilmuan Ibnu Sina, pendekatan yang paling sesuai adalah...",
+      options: [
+        "Mengandalkan pengalaman tanpa melakukan penelitian",
+        "Menggabungkan observasi, analisis, dan bukti ilmiah dalam mengambil keputusan",
+        "Mengikuti teori lama tanpa mempertimbangkan perkembangan ilmu",
+        "Mengutamakan opini pribadi dibandingkan data"
+      ],
+      answer: 1
+    },
+
+    {
+      q: "Pemikiran Ibnu Khaldun dalam Muqaddimah membahas perkembangan masyarakat dan peradaban. Konsep tersebut paling relevan digunakan untuk...",
+      options: [
+        "Menganalisis faktor sosial yang menyebabkan perubahan suatu masyarakat",
+        "Mengembangkan teknologi mesin modern",
+        "Menggantikan seluruh metode penelitian sejarah",
+        "Mempelajari struktur tubuh manusia"
+      ],
+      answer: 0
+    },
+
+    {
+      q: "KH. Ahmad Dahlan mendirikan Muhammadiyah dengan pendekatan pembaruan pendidikan Islam. Jika diterapkan pada masa kini, nilai utama yang dapat dikembangkan adalah...",
+      options: [
+        "Mempertahankan metode lama tanpa perubahan",
+        "Mengintegrasikan nilai agama dengan ilmu pengetahuan modern",
+        "Menghindari perkembangan teknologi pendidikan",
+        "Membatasi pendidikan hanya pada kelompok tertentu"
+      ],
+      answer: 1
+    },
+
+    {
+      q: "Syekh Nawawi al-Bantani memiliki pengaruh besar dalam perkembangan ilmu Islam di dunia internasional. Pelajaran utama dari perjalanan beliau bagi mahasiswa adalah...",
+      options: [
+        "Ilmu hanya berkembang di wilayah tertentu",
+        "Penguasaan ilmu dapat membangun kontribusi lintas negara",
+        "Tradisi akademik tidak membutuhkan kolaborasi",
+        "Pendidikan cukup dilakukan tanpa penelitian"
+      ],
+      answer: 1
+    },
+
+    {
+      q: "Seorang mahasiswa menemukan perbedaan antara teori modern dan pemikiran ilmuwan Islam klasik. Sikap akademik yang sesuai dengan tradisi keilmuan Islam adalah...",
+      options: [
+        "Menolak teori baru karena berbeda dengan masa lalu",
+        "Menerima semua teori tanpa evaluasi",
+        "Mengkaji bukti dan membandingkan berbagai perspektif secara kritis",
+        "Mengikuti pendapat mayoritas tanpa penelitian"
+      ],
+      answer: 2
+    }
   ],
+
   technology: [
-    { left: "Al-Khawarizmi", right: "Computer Algorithms", id: 1 },
-    { left: "Ibn Al-Haytham", right: "Camera & Optics", id: 2 },
-    { left: "Al-Jazari", right: "Robotics & Automata", id: 3 },
-    { left: "Al-Biruni", right: "Geodesy & Earth Measurement", id: 4 },
+    {
+      left: "Al-Khawarizmi",
+      right: "Konsep algoritma menjadi dasar logika pemrograman modern",
+      id: 1
+    },
+    {
+      left: "Ibn Al-Haytham",
+      right: "Eksperimen optik menjadi dasar teknologi kamera dan sistem pencitraan",
+      id: 2
+    },
+    {
+      left: "Al-Jazari",
+      right: "Konsep mekanisme otomatis menjadi inspirasi robotika modern",
+      id: 3
+    },
+    {
+      left: "Al-Biruni",
+      right: "Metode pengukuran bumi mendukung perkembangan geodesi modern",
+      id: 4
+    }
   ],
+
   innovation: [
-    { title: "Sejarah Peradaban Klasik", items: ["Ibnu Sina lahir & menulis Canon of Medicine", "Al-Ghazali menulis Ihya Ulumuddin", "Ibnu Khaldun menulis Muqaddimah"] },
-    { title: "Gerakan Pembaruan Nusantara", items: ["Syekh Nawawi al-Bantani menjadi Imam Masjidil Haram", "KH. Ahmad Dahlan mendirikan Muhammadiyah", "KH. Hasyim Asy'ari mendirikan Nahdlatul Ulama"] },
-    { title: "Pemikiran Islam Kontemporer", items: ["Muhammad Abduh menggagas pembaruan pemikiran Islam", "Fazlur Rahman mengembangkan neo-modernisme", "Nurcholish Madjid mempopulerkan sekularisasi terbatas"] },
+    {
+      title: "Perkembangan Ilmu dan Peradaban",
+      items: [
+        "Ibnu Sina mengembangkan kajian kedokteran berbasis observasi dan penelitian",
+        "Al-Ghazali mengembangkan pemikiran tentang hubungan ilmu dan etika",
+        "Ibnu Khaldun menganalisis perkembangan masyarakat melalui pendekatan sosial"
+      ]
+    },
+
+    {
+      title: "Transformasi Pendidikan Nusantara",
+      items: [
+        "KH. Ahmad Dahlan mengembangkan pendidikan Islam modern melalui Muhammadiyah",
+        "KH. Hasyim Asy'ari membangun pendidikan pesantren melalui Nahdlatul Ulama",
+        "Syekh Nawawi al-Bantani menunjukkan kontribusi ulama Nusantara dalam dunia global"
+      ]
+    },
+
+    {
+      title: "Pemikiran Islam Kontemporer",
+      items: [
+        "Muhammad Abduh mendorong pembaruan pemikiran Islam",
+        "Fazlur Rahman mengembangkan pendekatan neo-modernisme",
+        "Nurcholish Madjid mengembangkan gagasan pembaruan pemikiran Islam"
+      ]
+    }
   ],
+
   master: [
-    { id: 1, name: "Ibnu Sina" }, { id: 2, name: "Al-Ghazali" },
-    { id: 3, name: "Al-Khawarizmi" }, { id: 4, name: "Ibnu Khaldun" },
-    { id: 5, name: "KH. Ahmad Dahlan" }, { id: 6, name: "KH. Hasyim Asy'ari" },
-  ],
+    {
+      id: 1,
+      name: "Ibnu Sina",
+      clue: "Tokoh yang mengembangkan metode observasi dalam kedokteran dan menulis Canon of Medicine"
+    },
+    {
+      id: 2,
+      name: "Al-Ghazali",
+      clue: "Tokoh yang menekankan keseimbangan antara ilmu, moral, dan tanggung jawab manusia"
+    },
+    {
+      id: 3,
+      name: "Al-Khawarizmi",
+      clue: "Tokoh yang pemikirannya menjadi dasar perkembangan algoritma komputer"
+    },
+    {
+      id: 4,
+      name: "Ibnu Khaldun",
+      clue: "Tokoh yang menganalisis masyarakat dan perkembangan peradaban melalui pendekatan sosial"
+    },
+    {
+      id: 5,
+      name: "KH. Ahmad Dahlan",
+      clue: "Tokoh pembaru pendidikan Islam yang mengintegrasikan ilmu agama dan ilmu modern"
+    },
+    {
+      id: 6,
+      name: "KH. Hasyim Asy'ari",
+      clue: "Tokoh pendiri organisasi Islam yang berperan dalam pendidikan pesantren"
+    }
+  ]
 };
- 
+  
 const ACHIEVEMENT_RULES = {
   scholar: { badge: "Scholar Explorer", desc: "Menyelesaikan tantangan kuis tokoh ilmuwan." },
   technology: { badge: "Tech Historian", desc: "Menghubungkan semua warisan teknologi dengan benar." },
