@@ -2011,158 +2011,219 @@ const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
 // --- GAME CONTENT BANKS ---
 const CHALLENGE_QUESTION_BANKS = {
   scholar: [
-
 {
-q:"Seorang mahasiswa menggunakan AI untuk membuat ringkasan pemikiran Al-Ghazali. Ia menemukan jawaban AI yang terlihat meyakinkan, tetapi tidak mencantumkan sumber referensi. Berdasarkan konsep hubungan ilmu dan etika menurut Al-Ghazali, tindakan paling tepat adalah...",
+q:"Seorang mahasiswa menggunakan AI generatif untuk menyusun artikel tentang pemikiran Al-Ghazali. Ia hanya menerima jawaban AI tanpa memeriksa sumber dan memasukkannya langsung ke tugas. Berdasarkan kritik Al-Ghazali terhadap hubungan ilmu dan tanggung jawab moral, evaluasi paling tepat terhadap tindakan mahasiswa tersebut adalah...",
 options:[
-"Langsung menggunakan hasil AI karena teknologi dapat mempercepat pembelajaran",
-"Menggunakan hasil AI selama bahasa yang digunakan terlihat akademik",
-"Melakukan verifikasi sumber dan mempertimbangkan tanggung jawab moral dalam penggunaan ilmu",
-"Menolak seluruh penggunaan teknologi dalam kegiatan akademik"
+"Tindakan tersebut benar karena AI mempercepat proses akademik",
+"Tindakan tersebut dapat diterima selama hasilnya terlihat ilmiah",
+"Tindakan tersebut bermasalah karena penggunaan ilmu tidak disertai verifikasi, tanggung jawab, dan etika akademik",
+"Tindakan tersebut salah hanya karena menggunakan teknologi modern"
+],
+answer:2
+},
+    
+{
+q:"Sebuah universitas ingin membuat kurikulum yang menggabungkan ilmu agama, teknologi, dan sains modern. Jika menggunakan pendekatan pemikiran Muhammad Abduh tentang pembaruan pendidikan, strategi yang paling sesuai adalah...",
+options:[
+"Menghapus pendidikan tradisional dan mengganti seluruhnya dengan ilmu modern",
+"Mempertahankan pendidikan lama tanpa perubahan",
+"Mengintegrasikan nilai keilmuan, rasionalitas, dan kebutuhan masyarakat modern secara kritis",
+"Mengutamakan hafalan teks dibandingkan kemampuan berpikir"
+],
+answer:2
+},
+    
+{
+q:"Dalam sebuah penelitian sosial mengenai perubahan perilaku mahasiswa akibat media digital, seorang peneliti hanya menggunakan data teknologi tanpa melihat faktor budaya dan sejarah masyarakat. Berdasarkan pemikiran Ibnu Khaldun, kelemahan utama penelitian tersebut adalah...",
+options:[
+"Penelitian terlalu menggunakan teknologi",
+"Penelitian mengabaikan hubungan antara kondisi sosial, budaya, dan faktor sejarah yang memengaruhi masyarakat",
+"Penelitian terlalu banyak menggunakan data",
+"Penelitian tidak membutuhkan teori sosial"
+],
+answer:1
+},
+    
+{
+q:"Anda menjadi ketua tim inovasi kampus yang ingin membuat aplikasi edukasi sejarah Islam. Agar sesuai dengan prinsip ilmuwan Muslim klasik, keputusan desain yang paling tepat adalah...",
+options:[
+"Membuat aplikasi yang menarik secara visual tanpa memperhatikan validitas informasi",
+"Mengutamakan jumlah pengguna meskipun sumber informasi belum jelas",
+"Mengembangkan aplikasi berbasis riset, validasi sumber, dan memberikan manfaat pendidikan bagi masyarakat",
+"Menghindari teknologi digital karena tidak sesuai dengan tradisi ilmu Islam"
 ],
 answer:2
 },
 
 {
-q:"Sebuah universitas ingin mengembangkan pendidikan berbasis teknologi dengan tetap mempertahankan nilai keilmuan Islam. Berdasarkan gagasan pembaruan Muhammad Abduh, strategi yang paling tepat adalah...",
+q:"Seorang mahasiswa berpendapat bahwa kemajuan teknologi selalu membawa dampak positif bagi masyarakat. Jika dianalisis menggunakan perspektif Al-Ghazali mengenai hubungan ilmu dan kemaslahatan, kritik yang paling tepat adalah...",
 options:[
-"Menggantikan seluruh ilmu tradisional dengan teknologi modern",
-"Menggabungkan rasionalitas, ilmu pengetahuan, dan nilai pendidikan secara seimbang",
-"Membatasi mahasiswa hanya mempelajari ilmu agama",
-"Menghindari perubahan agar tradisi lama tetap terjaga"
+"Teknologi harus selalu ditolak karena berbahaya",
+"Teknologi harus dinilai berdasarkan tujuan, manfaat, dan dampaknya terhadap manusia",
+"Semua inovasi pasti memberikan manfaat",
+"Ilmu tidak memiliki hubungan dengan nilai moral"
+],
+answer:1
+},
+    
+{
+q:"Sebuah komunitas mahasiswa ingin menyelesaikan masalah sampah kampus dengan membuat teknologi pengolahan limbah. Agar mencerminkan konsep keilmuan Ibnu Sina dan Ibnu Khaldun, pendekatan terbaik adalah...",
+options:[
+"Membuat teknologi berdasarkan tren tanpa analisis kebutuhan",
+"Menggabungkan observasi ilmiah, pemahaman kondisi masyarakat, dan solusi berkelanjutan",
+"Menggunakan teknologi mahal agar terlihat modern",
+"Menyelesaikan masalah hanya berdasarkan pendapat individu"
+],
+answer:1
+}
+],
+    
+technology: [
+
+{
+question:
+"Seorang mahasiswa informatika ingin membuat sistem AI yang mampu mengambil keputusan secara logis. Jika mengambil inspirasi dari kontribusi Al-Khawarizmi, prinsip utama yang harus diterapkan adalah...",
+options:[
+"Menggunakan algoritma terstruktur untuk menyelesaikan masalah secara sistematis",
+"Menggantikan seluruh proses berpikir manusia dengan mesin",
+"Mengutamakan kecepatan tanpa mempertimbangkan akurasi",
+"Menghindari penggunaan matematika dalam teknologi"
+],
+answer:0
+},
+
+{
+question:
+"Sebuah perusahaan kamera digital ingin meningkatkan kualitas pencitraan menggunakan prinsip Ibn Al-Haytham. Pendekatan ilmiah yang paling sesuai adalah...",
+options:[
+"Mengandalkan desain visual tanpa eksperimen",
+"Menganalisis konsep cahaya, optik, dan pembentukan gambar berdasarkan penelitian ilmiah",
+"Menggunakan teknologi terbaru tanpa memahami prinsip dasarnya",
+"Mengurangi proses pengujian agar produksi lebih cepat"
 ],
 answer:1
 },
 
 {
-q:"Seorang peneliti menganalisis perilaku masyarakat digital hanya berdasarkan data statistik tanpa memahami latar belakang budaya masyarakat tersebut. Jika menggunakan pendekatan Ibnu Khaldun, kelemahan penelitian tersebut adalah...",
+question:
+"Tim robotika kampus membuat robot pelayanan publik. Jika menggunakan inspirasi dari Al-Jazari, aspek utama yang perlu diperhatikan adalah...",
 options:[
-"Kurangnya penggunaan teknologi modern",
-"Terlalu banyak menggunakan data penelitian",
-"Tidak mempertimbangkan faktor sosial, budaya, dan sejarah masyarakat",
-"Tidak membutuhkan teori dalam penelitian sosial"
+"Mengembangkan mekanisme otomatis yang menggabungkan rekayasa dan kebutuhan manusia",
+"Membuat robot hanya untuk hiburan",
+"Mengabaikan keamanan sistem agar inovasi cepat dibuat",
+"Mengurangi fungsi robot agar tidak kompleks"
 ],
-answer:2
+answer:0
 },
 
-{
-q:"Tim mahasiswa membuat aplikasi edukasi sejarah Islam. Namun mereka hanya fokus pada tampilan aplikasi dan mengabaikan validasi sumber sejarah. Berdasarkan prinsip ilmuwan Muslim klasik, evaluasi terbaik terhadap proyek tersebut adalah...",
-options:[
-"Sudah tepat karena inovasi utama adalah desain aplikasi",
-"Kurang tepat karena inovasi harus disertai penelitian dan validitas informasi",
-"Benar karena teknologi lebih penting daripada isi",
-"Salah karena teknologi tidak diperlukan dalam pembelajaran sejarah"
-],
-answer:1
-},
 
 {
-q:"Sebuah teknologi baru memberikan keuntungan ekonomi besar tetapi menyebabkan dampak sosial negatif. Berdasarkan pemikiran Al-Ghazali mengenai kemaslahatan ilmu, keputusan terbaik adalah...",
+question:
+"Seorang peneliti lingkungan menggunakan teknologi pemetaan wilayah untuk mitigasi bencana. Kontribusi Al-Biruni dapat dijadikan inspirasi melalui...",
 options:[
-"Menerima teknologi karena keuntungan ekonomi adalah tujuan utama",
-"Menolak seluruh perkembangan teknologi",
-"Mengevaluasi manfaat dan dampaknya terhadap kehidupan manusia",
-"Menggunakan teknologi tanpa mempertimbangkan nilai moral"
+"Pengukuran bumi berdasarkan observasi, matematika, dan data geografis",
+"Penggunaan teknologi tanpa pengumpulan data",
+"Pengambilan keputusan hanya berdasarkan perkiraan",
+"Mengabaikan kondisi geografis wilayah"
 ],
-answer:2
+answer:0
 }
 
 ],
     
-technology:[
+  innovation:[
 {
-left:"Al-Khawarizmi",
-right:"Computer Algorithms",
-desc:"Konsep algoritma menjadi dasar penyelesaian masalah komputasi modern"
+title:"Rekonstruksi Inovasi Ilmu Klasik",
+
+challenge:
+"Sebuah universitas ingin membuat pusat inovasi yang menggabungkan ilmu kesehatan, filsafat, dan ilmu sosial. Susun pendekatan berdasarkan kontribusi tokoh Islam klasik.",
+
+items:[
+"Ibnu Sina → pengembangan ilmu kedokteran berbasis observasi dan penelitian",
+"Al-Ghazali → integrasi ilmu dengan nilai etika dan tanggung jawab",
+"Ibnu Khaldun → analisis masyarakat berdasarkan sejarah dan faktor sosial"
+]
+
 },
 
 {
-left:"Ibn Al-Haytham",
-right:"Camera & Optics",
-desc:"Kajian cahaya dan optik menjadi dasar teknologi pencitraan"
+title:"Transformasi Ilmu Islam di Era Modern",
+
+challenge:
+"Bagaimana menerapkan semangat pembaruan pemikiran Islam dalam menghadapi perkembangan teknologi modern?",
+
+items:[
+"Muhammad Abduh → rasionalitas dan reformasi pendidikan",
+"Fazlur Rahman → pendekatan kontekstual terhadap pemikiran Islam",
+"Nurcholish Madjid → dialog antara tradisi dan modernitas"
+]
+
 },
 
 {
-left:"Al-Jazari",
-right:"Robotics & Automata",
-desc:"Mekanisme otomatis menjadi inspirasi sistem robot modern"
-},
+title:"Inovasi Sosial Berbasis Nilai",
 
-{
-left:"Al-Biruni",
-right:"Geodesy & Earth Measurement",
-desc:"Pengukuran bumi berbasis matematika dan observasi ilmiah"
+challenge:
+"Mahasiswa diminta membuat solusi sosial yang tidak hanya efektif tetapi juga memiliki nilai kemanusiaan.",
+
+items:[
+"KH Ahmad Dahlan → pendidikan dan pemberdayaan masyarakat",
+"KH Hasyim Asy'ari → penguatan nilai keilmuan dan karakter"
+]
+
 }
+
 ],
-  
-technology:[
-{
-left:"Al-Khawarizmi",
-right:"Computer Algorithms",
-desc:"Konsep algoritma menjadi dasar penyelesaian masalah komputasi modern"
-},
-
-{
-left:"Ibn Al-Haytham",
-right:"Camera & Optics",
-desc:"Kajian cahaya dan optik menjadi dasar teknologi pencitraan"
-},
-
-{
-left:"Al-Jazari",
-right:"Robotics & Automata",
-desc:"Mekanisme otomatis menjadi inspirasi sistem robot modern"
-},
-
-{
-left:"Al-Biruni",
-right:"Geodesy & Earth Measurement",
-desc:"Pengukuran bumi berbasis matematika dan observasi ilmiah"
-}
-],
-  
+    
   master:[
+
 {
 id:1,
 name:"Ibnu Sina",
 challenge:
-"Analisis bagaimana metode observasi Ibnu Sina dapat diterapkan dalam penelitian kesehatan modern."
+"Jelaskan bagaimana metode ilmiah Ibnu Sina dapat diterapkan dalam penelitian kesehatan modern."
 },
+
 
 {
 id:2,
 name:"Al-Ghazali",
 challenge:
-"Jelaskan mengapa perkembangan teknologi tetap membutuhkan pertimbangan etika."
+"Analisis bagaimana konsep etika ilmu Al-Ghazali dapat diterapkan dalam penggunaan AI."
 },
+
 
 {
 id:3,
 name:"Al-Khawarizmi",
 challenge:
-"Hubungkan konsep algoritma dengan sistem teknologi digital saat ini."
+"Jelaskan hubungan algoritma Al-Khawarizmi dengan perkembangan teknologi komputasi modern."
 },
+
 
 {
 id:4,
 name:"Ibnu Khaldun",
 challenge:
-"Gunakan teori sosial Ibnu Khaldun untuk menjelaskan perubahan masyarakat digital."
+"Analisis bagaimana teori sosial Ibnu Khaldun dapat digunakan memahami fenomena masyarakat digital."
 },
+
 
 {
 id:5,
-name:"KH Ahmad Dahlan",
+name:"KH. Ahmad Dahlan",
 challenge:
-"Evaluasi bagaimana pendidikan dapat menjadi alat perubahan sosial."
+"Evaluasi kontribusi pendidikan KH Ahmad Dahlan terhadap perubahan sosial masyarakat."
 },
+
 
 {
 id:6,
-name:"KH Hasyim Asy'ari",
+name:"KH. Hasyim Asy'ari",
 challenge:
-"Jelaskan pentingnya karakter dalam pendidikan modern."
+"Jelaskan relevansi pendidikan karakter KH Hasyim Asy'ari dalam pendidikan modern."
 }
+
 ],
 };
  
@@ -2373,121 +2434,41 @@ finishWithScore(score + (correct ? 50:0));
             )}
           </div>
         )}
- {type === 'scholar' && (
-  <div className="flex flex-col h-full">
-
-    <div className="mb-8">
-      <ProgressBar 
-        progress={(step / scholarQuestions.length) * 100}
-        height="h-2"
-        color="bg-blue-500"
-      />
-
-      <p className="text-right text-sm text-slate-500 mt-2">
-        Question {step + 1} of {scholarQuestions.length}
-      </p>
-    </div>
-
-
-    <h2 className="
-      text-xl
-      md:text-2xl
-      font-bold
-      text-center
-      mb-8
-      leading-relaxed
-      text-slate-800
-    ">
-      {scholarQuestions[step].q}
-    </h2>
-
-
-    <div className="
-      grid 
-      grid-cols-1 
-      md:grid-cols-2 
-      gap-5
-      mt-4
-    ">
-
-      {scholarQuestions[step].options.map((opt, idx)=>(
-        <Button
-          key={idx}
-          variant="outline"
-          className={`
-            min-h-[120px]
-            h-auto
-            px-6
-            py-5
-            text-base
-            leading-relaxed
-            whitespace-normal
-            text-center
-            flex
-            items-center
-            justify-center
-            border-2
-            rounded-xl
-            ${showFeedback ? 'pointer-events-none' : ''}
-          `}
-          onClick={()=>handleQuizAnswer(idx)}
-        >
-          {opt}
-        </Button>
-      ))}
-
-    </div>
-
-
-    {showFeedback && (
-      <div 
-        className={`
-          absolute 
-          bottom-0 
-          left-0 
-          right-0 
-          p-6 
-          flex 
-          items-center 
-          justify-between
-          ${showFeedback === 'correct'
-          ? 'bg-emerald-500 text-white'
-          : 'bg-red-500 text-white'}
-        `}
-        style={{
-          animation:'slideUp 0.3s ease-out forwards'
-        }}
-      >
-
-        <div className="flex items-center">
-
-          {
-          showFeedback === 'correct'
-          ?
-          <CheckCircle2 className="w-10 h-10 mr-4"/>
-          :
-          <XCircle className="w-10 h-10 mr-4"/>
-          }
-
-          <h3 className="text-2xl font-bold">
-          {
-          showFeedback === 'correct'
-          ?
-          (streak + 1 >=3 
-            ? 'Excellent! +Streak Bonus'
-            :'Excellent!')
-          :
-          'Not quite right'
-          }
-          </h3>
-
-        </div>
-
-      </div>
-    )}
-
-  </div>
-)}
+ 
+        {type === 'scholar' && (
+          <div className="flex flex-col h-full">
+            <div className="mb-8">
+              <ProgressBar progress={(step / scholarQuestions.length) * 100} height="h-2" color="bg-blue-500" />
+              <p className="text-right text-sm text-slate-500 mt-2">Question {step + 1} of {scholarQuestions.length}</p>
+            </div>
+ 
+            <h2 className="text-2xl font-bold text-center mb-8">{scholarQuestions[step].q}</h2>
+ 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
+              {scholarQuestions[step].options.map((opt, idx) => (
+                <Button
+                  key={idx}
+                  variant="outline"
+                  className={`h-20 text-lg border-2 ${showFeedback ? 'pointer-events-none' : ''}`}
+                  onClick={() => handleQuizAnswer(idx)}
+                >
+                  {opt}
+                </Button>
+              ))}
+            </div>
+ 
+            {showFeedback && (
+              <div className={`absolute bottom-0 left-0 right-0 p-6 flex items-center justify-between
+                ${showFeedback === 'correct' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}
+              `} style={{animation: 'slideUp 0.3s ease-out forwards'}}>
+                <div className="flex items-center">
+                  {showFeedback === 'correct' ? <CheckCircle2 className="w-10 h-10 mr-4"/> : <XCircle className="w-10 h-10 mr-4"/>}
+                  <h3 className="text-2xl font-bold">{showFeedback === 'correct' ? (streak + 1 >= 3 ? 'Excellent! +Streak Bonus' : 'Excellent!') : 'Not quite right'}</h3>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
  
         {type === 'technology' && (
           <div>
