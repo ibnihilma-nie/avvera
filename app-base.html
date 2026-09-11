@@ -202,10 +202,10 @@ const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
     { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
     { id: 'materi', icon: BookOpen, label: 'Materi Scholar' },
     { id: 'reference', icon: FileText, label: 'Referensi Materi' },
-    { id: 'Virtual Museum', icon: Video, label: 'Virtual Museum' },
-    { id: 'ai companion', icon: MessageSquare, label: 'AI Companion' },
+    { id: 'vr', icon: Video, label: 'VR Museum' },
+    { id: 'ai', icon: MessageSquare, label: 'AI Company' },
     { id: 'board', icon: Map, label: 'Innovation Mission' },
-    { id: 'AR', icon: ScanLine, label: 'AR Scanner' },
+    { id: 'qr', icon: ScanLine, label: 'QR Scanner' },
     { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
     { id: 'profile', icon: User, label: 'Profile' },
 ];
@@ -1685,37 +1685,29 @@ const evaluateVoiceNote = () => {
       100
     );
 
-    let status = "";
-let badgeColor = "";
+    let status = "Benar & Sesuai";
+    let badgeColor =
+      "bg-emerald-100 text-emerald-800 border-emerald-300";
 
-if(scorePercentage >= 80){
+    if(scorePercentage < 40){
 
-  status = "Benar & Relevan";
-  badgeColor =
-  "bg-emerald-100 text-emerald-800 border-emerald-300";
+      status = "Kurang Tepat / Belum Sesuai";
 
-}
-else if(scorePercentage >= 60){
+      badgeColor =
+      "bg-red-100 text-red-800 border-red-300";
 
-  status = "Cukup Baik (Perlu Penyempurnaan)";
-  badgeColor =
-  "bg-amber-100 text-amber-800 border-amber-300";
+    }
 
-}
-else if(scorePercentage >= 40){
+    else if(scorePercentage < 70){
 
-  status = "Kurang Tepat";
-  badgeColor =
-  "bg-orange-100 text-orange-800 border-orange-300";
+      status =
+      "Cukup Baik (Perlu Penyempurnaan)";
 
-}
-else{
+      badgeColor =
+      "bg-amber-100 text-amber-800 border-amber-300";
 
-  status = "Belum Sesuai";
-  badgeColor =
-  "bg-red-100 text-red-800 border-red-300";
+    }
 
-}
     setEvaluationResult({
 
       status,
@@ -1850,93 +1842,39 @@ else{
             {/* Hasil Evaluasi AI */}
             {evaluationResult && (
               <div className="bg-white p-5 rounded-2xl border-2 border-emerald-400 shadow-md space-y-3 animate-fade-in">
-
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2">
                     <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-
-                    <span className="font-bold text-lg text-slate-800">
-                      Hasil Penilaian AI Company
-                    </span>
+                    <span className="font-bold text-lg text-slate-800">Hasil Penilaian AI Company</span>
                   </div>
-
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}
-                  >
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}>
                     {evaluationResult.status}
                   </span>
                 </div>
 
-
                 <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl text-sm">
-
                   <div>
-                    <span className="text-slate-500 block text-xs">
-                      Skor Kecocokan Opini:
-                    </span>
-
-                    <span
-                      className={`font-bold text-base ${
-                        evaluationResult.score >= 80
-                          ? "text-emerald-700"
-                          : evaluationResult.score >= 60
-                          ? "text-amber-600"
-                          : evaluationResult.score >= 40
-                          ? "text-orange-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {evaluationResult.score} / 100
-                    </span>
+                    <span className="text-slate-500 block text-xs">Skor Kecocokan Opini:</span>
+                    <span className="font-bold text-emerald-700 text-base">{evaluationResult.score} / 100</span>
                   </div>
-
-
                   <div>
-                    <span className="text-slate-500 block text-xs">
-                      Kategori Jawaban:
-                    </span>
-
-                    <span className="font-bold text-slate-800">
-                      {evaluationResult.status}
-                    </span>
+                    <span className="text-slate-500 block text-xs">Kategori Jawaban:</span>
+                    <span className="font-bold text-slate-800">Benar & Relevan</span>
                   </div>
-
                 </div>
-
 
                 <div>
-
-                  <p className="text-xs font-bold text-slate-500 mb-1">
-                    Feedback AI:
-                  </p>
-
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {evaluationResult.feedback}
-                  </p>
-
-
-                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900 mt-3">
-
-                    <strong>
-                      Jawaban Ideal / Pembahasan Tabel:
-                    </strong>
-
-                    <p className="mt-1">
-                      {currentQ.idealAnswer}
-                    </p>
-
+                  <p className="text-xs font-bold text-slate-500 mb-1">Feedback AI & Kunci Jawaban Ideal:</p>
+                  <p className="text-xs text-slate-600 mb-2">{evaluationResult.feedback}</p>
+                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900">
+                    <strong>Jawaban Ideal / Pembahasan Tabel:</strong> {currentQ.idealAnswer}
                   </div>
-
                 </div>
-
               </div>
             )}
-
           </div>
         </div>
-
       </div>
-
     </div>
   );
 };
