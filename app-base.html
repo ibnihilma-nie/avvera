@@ -2011,29 +2011,220 @@ const BoardGameProgressView = ({ user, setView, setActiveChallenge }) => {
 // --- GAME CONTENT BANKS ---
 const CHALLENGE_QUESTION_BANKS = {
   scholar: [
-    { q: "Siapakah tokoh pemikir Islam yang dikenal dengan gelar Hujjatul Islam?", options: ["Ibnu Sina", "Al-Ghazali", "Ibnu Khaldun", "Muhammad Abduh"], answer: 1 },
-    { q: "Tokoh ulama asal Banten yang pernah menjadi Imam Masjidil Haram adalah...", options: ["Hamzah Fansuri", "Nuruddin ar-Raniri", "Syekh Nawawi al-Bantani", "KH. Hasyim Asy'ari"], answer: 2 },
-    { q: "Ibnu Sina dikenal sebagai bapak dari bidang ilmu...", options: ["Sosiologi", "Kedokteran Modern", "Astronomi", "Ekonomi"], answer: 1 },
-    { q: "Ibnu Khaldun adalah peletak dasar ilmu...", options: ["Kedokteran", "Optik", "Sosiologi & Sejarah", "Aljabar"], answer: 2 },
-    { q: "Pendiri organisasi Nahdlatul Ulama (NU) adalah...", options: ["KH. Ahmad Dahlan", "KH. Hasyim Asy'ari", "Nurcholish Madjid", "Harun Nasution"], answer: 1 },
-    { q: "Pendiri organisasi Muhammadiyah adalah...", options: ["KH. Hasyim Asy'ari", "KH. Ahmad Dahlan", "Kuntowijoyo", "Fazlur Rahman"], answer: 1 },
-  ],
-  technology: [
-    { left: "Al-Khawarizmi", right: "Computer Algorithms", id: 1 },
-    { left: "Ibn Al-Haytham", right: "Camera & Optics", id: 2 },
-    { left: "Al-Jazari", right: "Robotics & Automata", id: 3 },
-    { left: "Al-Biruni", right: "Geodesy & Earth Measurement", id: 4 },
-  ],
-  innovation: [
-    { title: "Sejarah Peradaban Klasik", items: ["Ibnu Sina lahir & menulis Canon of Medicine", "Al-Ghazali menulis Ihya Ulumuddin", "Ibnu Khaldun menulis Muqaddimah"] },
-    { title: "Gerakan Pembaruan Nusantara", items: ["Syekh Nawawi al-Bantani menjadi Imam Masjidil Haram", "KH. Ahmad Dahlan mendirikan Muhammadiyah", "KH. Hasyim Asy'ari mendirikan Nahdlatul Ulama"] },
-    { title: "Pemikiran Islam Kontemporer", items: ["Muhammad Abduh menggagas pembaruan pemikiran Islam", "Fazlur Rahman mengembangkan neo-modernisme", "Nurcholish Madjid mempopulerkan sekularisasi terbatas"] },
-  ],
-  master: [
-    { id: 1, name: "Ibnu Sina" }, { id: 2, name: "Al-Ghazali" },
-    { id: 3, name: "Al-Khawarizmi" }, { id: 4, name: "Ibnu Khaldun" },
-    { id: 5, name: "KH. Ahmad Dahlan" }, { id: 6, name: "KH. Hasyim Asy'ari" },
-  ],
+{
+q:"Seorang mahasiswa menggunakan AI generatif untuk menyusun artikel tentang pemikiran Al-Ghazali. Ia hanya menerima jawaban AI tanpa memeriksa sumber dan memasukkannya langsung ke tugas. Berdasarkan kritik Al-Ghazali terhadap hubungan ilmu dan tanggung jawab moral, evaluasi paling tepat terhadap tindakan mahasiswa tersebut adalah...",
+options:[
+"Tindakan tersebut benar karena AI mempercepat proses akademik",
+"Tindakan tersebut dapat diterima selama hasilnya terlihat ilmiah",
+"Tindakan tersebut bermasalah karena penggunaan ilmu tidak disertai verifikasi, tanggung jawab, dan etika akademik",
+"Tindakan tersebut salah hanya karena menggunakan teknologi modern"
+],
+answer:2
+},
+    
+{
+q:"Sebuah universitas ingin membuat kurikulum yang menggabungkan ilmu agama, teknologi, dan sains modern. Jika menggunakan pendekatan pemikiran Muhammad Abduh tentang pembaruan pendidikan, strategi yang paling sesuai adalah...",
+options:[
+"Menghapus pendidikan tradisional dan mengganti seluruhnya dengan ilmu modern",
+"Mempertahankan pendidikan lama tanpa perubahan",
+"Mengintegrasikan nilai keilmuan, rasionalitas, dan kebutuhan masyarakat modern secara kritis",
+"Mengutamakan hafalan teks dibandingkan kemampuan berpikir"
+],
+answer:2
+},
+    
+{
+q:"Dalam sebuah penelitian sosial mengenai perubahan perilaku mahasiswa akibat media digital, seorang peneliti hanya menggunakan data teknologi tanpa melihat faktor budaya dan sejarah masyarakat. Berdasarkan pemikiran Ibnu Khaldun, kelemahan utama penelitian tersebut adalah...",
+options:[
+"Penelitian terlalu menggunakan teknologi",
+"Penelitian mengabaikan hubungan antara kondisi sosial, budaya, dan faktor sejarah yang memengaruhi masyarakat",
+"Penelitian terlalu banyak menggunakan data",
+"Penelitian tidak membutuhkan teori sosial"
+],
+answer:1
+},
+    
+{
+q:"Anda menjadi ketua tim inovasi kampus yang ingin membuat aplikasi edukasi sejarah Islam. Agar sesuai dengan prinsip ilmuwan Muslim klasik, keputusan desain yang paling tepat adalah...",
+options:[
+"Membuat aplikasi yang menarik secara visual tanpa memperhatikan validitas informasi",
+"Mengutamakan jumlah pengguna meskipun sumber informasi belum jelas",
+"Mengembangkan aplikasi berbasis riset, validasi sumber, dan memberikan manfaat pendidikan bagi masyarakat",
+"Menghindari teknologi digital karena tidak sesuai dengan tradisi ilmu Islam"
+],
+answer:2
+},
+
+{
+q:"Seorang mahasiswa berpendapat bahwa kemajuan teknologi selalu membawa dampak positif bagi masyarakat. Jika dianalisis menggunakan perspektif Al-Ghazali mengenai hubungan ilmu dan kemaslahatan, kritik yang paling tepat adalah...",
+options:[
+"Teknologi harus selalu ditolak karena berbahaya",
+"Teknologi harus dinilai berdasarkan tujuan, manfaat, dan dampaknya terhadap manusia",
+"Semua inovasi pasti memberikan manfaat",
+"Ilmu tidak memiliki hubungan dengan nilai moral"
+],
+answer:1
+},
+    
+{
+q:"Sebuah komunitas mahasiswa ingin menyelesaikan masalah sampah kampus dengan membuat teknologi pengolahan limbah. Agar mencerminkan konsep keilmuan Ibnu Sina dan Ibnu Khaldun, pendekatan terbaik adalah...",
+options:[
+"Membuat teknologi berdasarkan tren tanpa analisis kebutuhan",
+"Menggabungkan observasi ilmiah, pemahaman kondisi masyarakat, dan solusi berkelanjutan",
+"Menggunakan teknologi mahal agar terlihat modern",
+"Menyelesaikan masalah hanya berdasarkan pendapat individu"
+],
+answer:1
+}
+],
+    
+technology: [
+
+{
+question:
+"Seorang mahasiswa informatika ingin membuat sistem AI yang mampu mengambil keputusan secara logis. Jika mengambil inspirasi dari kontribusi Al-Khawarizmi, prinsip utama yang harus diterapkan adalah...",
+options:[
+"Menggunakan algoritma terstruktur untuk menyelesaikan masalah secara sistematis",
+"Menggantikan seluruh proses berpikir manusia dengan mesin",
+"Mengutamakan kecepatan tanpa mempertimbangkan akurasi",
+"Menghindari penggunaan matematika dalam teknologi"
+],
+answer:0
+},
+
+{
+question:
+"Sebuah perusahaan kamera digital ingin meningkatkan kualitas pencitraan menggunakan prinsip Ibn Al-Haytham. Pendekatan ilmiah yang paling sesuai adalah...",
+options:[
+"Mengandalkan desain visual tanpa eksperimen",
+"Menganalisis konsep cahaya, optik, dan pembentukan gambar berdasarkan penelitian ilmiah",
+"Menggunakan teknologi terbaru tanpa memahami prinsip dasarnya",
+"Mengurangi proses pengujian agar produksi lebih cepat"
+],
+answer:1
+},
+
+{
+question:
+"Tim robotika kampus membuat robot pelayanan publik. Jika menggunakan inspirasi dari Al-Jazari, aspek utama yang perlu diperhatikan adalah...",
+options:[
+"Mengembangkan mekanisme otomatis yang menggabungkan rekayasa dan kebutuhan manusia",
+"Membuat robot hanya untuk hiburan",
+"Mengabaikan keamanan sistem agar inovasi cepat dibuat",
+"Mengurangi fungsi robot agar tidak kompleks"
+],
+answer:0
+},
+
+
+{
+question:
+"Seorang peneliti lingkungan menggunakan teknologi pemetaan wilayah untuk mitigasi bencana. Kontribusi Al-Biruni dapat dijadikan inspirasi melalui...",
+options:[
+"Pengukuran bumi berdasarkan observasi, matematika, dan data geografis",
+"Penggunaan teknologi tanpa pengumpulan data",
+"Pengambilan keputusan hanya berdasarkan perkiraan",
+"Mengabaikan kondisi geografis wilayah"
+],
+answer:0
+}
+
+],
+    
+  innovation:[
+{
+title:"Rekonstruksi Inovasi Ilmu Klasik",
+
+challenge:
+"Sebuah universitas ingin membuat pusat inovasi yang menggabungkan ilmu kesehatan, filsafat, dan ilmu sosial. Susun pendekatan berdasarkan kontribusi tokoh Islam klasik.",
+
+items:[
+"Ibnu Sina → pengembangan ilmu kedokteran berbasis observasi dan penelitian",
+"Al-Ghazali → integrasi ilmu dengan nilai etika dan tanggung jawab",
+"Ibnu Khaldun → analisis masyarakat berdasarkan sejarah dan faktor sosial"
+]
+
+},
+
+{
+title:"Transformasi Ilmu Islam di Era Modern",
+
+challenge:
+"Bagaimana menerapkan semangat pembaruan pemikiran Islam dalam menghadapi perkembangan teknologi modern?",
+
+items:[
+"Muhammad Abduh → rasionalitas dan reformasi pendidikan",
+"Fazlur Rahman → pendekatan kontekstual terhadap pemikiran Islam",
+"Nurcholish Madjid → dialog antara tradisi dan modernitas"
+]
+
+},
+
+{
+title:"Inovasi Sosial Berbasis Nilai",
+
+challenge:
+"Mahasiswa diminta membuat solusi sosial yang tidak hanya efektif tetapi juga memiliki nilai kemanusiaan.",
+
+items:[
+"KH Ahmad Dahlan → pendidikan dan pemberdayaan masyarakat",
+"KH Hasyim Asy'ari → penguatan nilai keilmuan dan karakter"
+]
+
+}
+
+],
+    
+  master:[
+
+{
+id:1,
+name:"Ibnu Sina",
+challenge:
+"Jelaskan bagaimana metode ilmiah Ibnu Sina dapat diterapkan dalam penelitian kesehatan modern."
+},
+
+
+{
+id:2,
+name:"Al-Ghazali",
+challenge:
+"Analisis bagaimana konsep etika ilmu Al-Ghazali dapat diterapkan dalam penggunaan AI."
+},
+
+
+{
+id:3,
+name:"Al-Khawarizmi",
+challenge:
+"Jelaskan hubungan algoritma Al-Khawarizmi dengan perkembangan teknologi komputasi modern."
+},
+
+
+{
+id:4,
+name:"Ibnu Khaldun",
+challenge:
+"Analisis bagaimana teori sosial Ibnu Khaldun dapat digunakan memahami fenomena masyarakat digital."
+},
+
+
+{
+id:5,
+name:"KH. Ahmad Dahlan",
+challenge:
+"Evaluasi kontribusi pendidikan KH Ahmad Dahlan terhadap perubahan sosial masyarakat."
+},
+
+
+{
+id:6,
+name:"KH. Hasyim Asy'ari",
+challenge:
+"Jelaskan relevansi pendidikan karakter KH Hasyim Asy'ari dalam pendidikan modern."
+}
+
+],
 };
  
 const ACHIEVEMENT_RULES = {
@@ -2061,22 +2252,32 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
   const [earnedBadge, setEarnedBadge] = useState(null);
  
   const scholarQuestions = CHALLENGE_QUESTION_BANKS.scholar;
-  const techPairs = CHALLENGE_QUESTION_BANKS.technology;
-  const timelineRounds = CHALLENGE_QUESTION_BANKS.innovation;
-  const memoryScholars = CHALLENGE_QUESTION_BANKS.master;
+  const techQuestions = CHALLENGE_QUESTION_BANKS.technology;
+  const innovationQuestions = CHALLENGE_QUESTION_BANKS.innovation;
+  const masterQuestions = CHALLENGE_QUESTION_BANKS.master;
  
-  const [matches, setMatches] = useState([]);
-  const [selectedLeft, setSelectedLeft] = useState(null);
-  const [shuffledRight] = useState(() => shuffleArray(techPairs));
- 
-  const [orderedItems, setOrderedItems] = useState(() => shuffleArray(timelineRounds[0].items));
-  const [draggedIdx, setDraggedIdx] = useState(null);
-  const [timelineChecked, setTimelineChecked] = useState(false);
-  const [timelineCorrect, setTimelineCorrect] = useState(false);
- 
-  const [cards, setCards] = useState(() => shuffleArray(
-    memoryScholars.flatMap(s => [{ ...s, key: s.id + '-a' }, { ...s, key: s.id + '-b' }])
-  ));
+  const [challengeQuestions, setChallengeQuestions] = useState([]);
+
+useEffect(() => {
+
+if(type === "scholar"){
+ setChallengeQuestions(CHALLENGE_QUESTION_BANKS.scholar);
+}
+
+if(type === "technology"){
+ setChallengeQuestions(CHALLENGE_QUESTION_BANKS.technology);
+}
+
+if(type === "innovation"){
+ setChallengeQuestions(CHALLENGE_QUESTION_BANKS.innovation);
+}
+
+if(type === "master"){
+ setChallengeQuestions(CHALLENGE_QUESTION_BANKS.master);
+}
+
+},[type]);
+  
   const [flipped, setFlipped] = useState([]);
   const [solved, setSolved] = useState([]);
   const [moves, setMoves] = useState(0);
@@ -2088,6 +2289,37 @@ const ChallengeRunner = ({ type, onComplete, onCancel }) => {
   };
  
   const handleQuizAnswer = (idx) => {
+  const handleHOTSAnswer = (idx)=>{
+  const current = challengeQuestions[step];
+  const correct = idx === current.answer;
+  setShowFeedback(correct ? "correct":"wrong");
+
+if(correct){
+
+setScore(s=>s+50);
+
+}
+
+
+setTimeout(()=>{
+
+setShowFeedback(null);
+
+if(step < challengeQuestions.length-1){
+
+setStep(s=>s+1);
+
+}
+
+else{
+
+finishWithScore(score + (correct ? 50:0));
+
+}
+
+},1200);
+
+};
     const isCorrect = idx === scholarQuestions[step].answer;
     setShowFeedback(isCorrect ? 'correct' : 'wrong');
     let gained = 0;
