@@ -202,10 +202,10 @@ const Layout = ({ children, activeTab, setActiveTab, user, onLogout }) => {
     { id: 'learning', icon: PlayCircle, label: 'Learning Studio' },
     { id: 'materi', icon: BookOpen, label: 'Materi Scholar' },
     { id: 'reference', icon: FileText, label: 'Referensi Materi' },
-    { id: 'vr', icon: Video, label: 'VR Museum' },
-    { id: 'ai', icon: MessageSquare, label: 'AI Company' },
+    { id: 'Virtual Museum', icon: Video, label: 'Virtual Museum' },
+    { id: 'ai companion', icon: MessageSquare, label: 'AI Companion' },
     { id: 'board', icon: Map, label: 'Innovation Mission' },
-    { id: 'qr', icon: ScanLine, label: 'QR Scanner' },
+    { id: 'AR', icon: ScanLine, label: 'AR Scanner' },
     { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
     { id: 'profile', icon: User, label: 'Profile' },
 ];
@@ -1557,35 +1557,72 @@ const AICompanionView = () => {
 
   const currentQ = QUESTIONS_TABLE.find(q => q.id === selectedQuestionId);
 
-  // Simulasi Rekaman VN
   const startRecording = () => {
-    setIsRecording(true);
-    setRecordingTime(0);
-    setAudioBlobUrl(null);
-    setEvaluationResult(null);
-    setSimulatedTranscript("");
-    
-    timerRef.current = setInterval(() => {
-      setRecordingTime(prev => prev + 1);
-    }, 1000);
-  };
 
-  const stopRecording = () => {
-    clearInterval(timerRef.current);
-    setIsRecording(false);
-    // Buat URL dummy audio blob
-    setAudioBlobUrl("blob:https://averra.edu/voice-note-mock");
-    
-    // Set teks transkrip tiruan berdasarkan soal aktif agar penilaian relevan
-    if (selectedQuestionId === 1) {
-      setSimulatedTranscript("Menurut saya, mahasiswa itu tidak boleh langsung percaya sama konten viral di medsos untuk diagnosis diri. Harus konsultasi ke dokter atau tenaga medis yang ahli, serta mengecek sumber informasinya dengan teliti secara sistematis.");
-    } else if (selectedQuestionId === 2) {
-      setSimulatedTranscript("Manfaat AI itu membantu cari referensi dan ide tugas. Risikonya bisa bikin malas dan plagiat. Penggunaan yang etis yaitu AI cuma sebagai alat bantu saja, hasilnya tetap harus diverifikasi sendiri agar sesuai nilai kejujuran akademik.");
-    } else {
-      setSimulatedTranscript("Inovasi sampah harus memperhatikan etika dan tanggung jawab sosial. Sesuai gagasan al-Faruqi, ilmu dan teknologi harus membawa kemaslahatan dan keseimbangan lingkungan hidup manusia.");
+  setIsRecording(true);
+  setRecordingTime(0);
+  setAudioBlobUrl(null);
+  setEvaluationResult(null);
+  setSimulatedTranscript("");
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Browser tidak mendukung voice recognition");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "id-ID";
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onresult = (event) => {
+
+    let transcript = "";
+
+    for(
+      let i = event.resultIndex;
+      i < event.results.length;
+      i++
+    ){
+      transcript += event.results[i][0].transcript;
     }
+
+    setSimulatedTranscript(transcript);
+
   };
 
+  recognition.start();
+
+
+  window.voiceRecognition = recognition;
+
+  timerRef.current = setInterval(()=>{
+    setRecordingTime(prev => prev + 1);
+  },1000);
+
+};
+
+const stopRecording = () => {
+
+  clearInterval(timerRef.current);
+  
+  setIsRecording(false);
+
+  if(window.voiceRecognition){
+    window.voiceRecognition.stop();
+  }
+
+  setAudioBlobUrl(
+    "voice-note-recorded"
+  );
+
+};
+  
   // Proses Penilaian AI terhadap Opini Peserta dari VN
 const evaluateVoiceNote = () => {
 
@@ -1648,29 +1685,37 @@ const evaluateVoiceNote = () => {
       100
     );
 
-    let status = "Benar & Sesuai";
-    let badgeColor =
-      "bg-emerald-100 text-emerald-800 border-emerald-300";
+    let status = "";
+let badgeColor = "";
 
-    if(scorePercentage < 40){
+if(scorePercentage >= 80){
 
-      status = "Kurang Tepat / Belum Sesuai";
+  status = "Benar & Relevan";
+  badgeColor =
+  "bg-emerald-100 text-emerald-800 border-emerald-300";
 
-      badgeColor =
-      "bg-red-100 text-red-800 border-red-300";
+}
+else if(scorePercentage >= 60){
 
-    }
+  status = "Cukup Baik (Perlu Penyempurnaan)";
+  badgeColor =
+  "bg-amber-100 text-amber-800 border-amber-300";
 
-    else if(scorePercentage < 70){
+}
+else if(scorePercentage >= 40){
 
-      status =
-      "Cukup Baik (Perlu Penyempurnaan)";
+  status = "Kurang Tepat";
+  badgeColor =
+  "bg-orange-100 text-orange-800 border-orange-300";
 
-      badgeColor =
-      "bg-amber-100 text-amber-800 border-amber-300";
+}
+else{
 
-    }
+  status = "Belum Sesuai";
+  badgeColor =
+  "bg-red-100 text-red-800 border-red-300";
 
+}
     setEvaluationResult({
 
       status,
@@ -1805,39 +1850,93 @@ const evaluateVoiceNote = () => {
             {/* Hasil Evaluasi AI */}
             {evaluationResult && (
               <div className="bg-white p-5 rounded-2xl border-2 border-emerald-400 shadow-md space-y-3 animate-fade-in">
+
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2">
                     <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-                    <span className="font-bold text-lg text-slate-800">Hasil Penilaian AI Company</span>
+
+                    <span className="font-bold text-lg text-slate-800">
+                      Hasil Penilaian AI Company
+                    </span>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}>
+
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-bold border ${evaluationResult.badgeColor}`}
+                  >
                     {evaluationResult.status}
                   </span>
                 </div>
 
+
                 <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl text-sm">
+
                   <div>
-                    <span className="text-slate-500 block text-xs">Skor Kecocokan Opini:</span>
-                    <span className="font-bold text-emerald-700 text-base">{evaluationResult.score} / 100</span>
+                    <span className="text-slate-500 block text-xs">
+                      Skor Kecocokan Opini:
+                    </span>
+
+                    <span
+                      className={`font-bold text-base ${
+                        evaluationResult.score >= 80
+                          ? "text-emerald-700"
+                          : evaluationResult.score >= 60
+                          ? "text-amber-600"
+                          : evaluationResult.score >= 40
+                          ? "text-orange-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {evaluationResult.score} / 100
+                    </span>
                   </div>
+
+
                   <div>
-                    <span className="text-slate-500 block text-xs">Kategori Jawaban:</span>
-                    <span className="font-bold text-slate-800">Benar & Relevan</span>
+                    <span className="text-slate-500 block text-xs">
+                      Kategori Jawaban:
+                    </span>
+
+                    <span className="font-bold text-slate-800">
+                      {evaluationResult.status}
+                    </span>
                   </div>
+
                 </div>
 
+
                 <div>
-                  <p className="text-xs font-bold text-slate-500 mb-1">Feedback AI & Kunci Jawaban Ideal:</p>
-                  <p className="text-xs text-slate-600 mb-2">{evaluationResult.feedback}</p>
-                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900">
-                    <strong>Jawaban Ideal / Pembahasan Tabel:</strong> {currentQ.idealAnswer}
+
+                  <p className="text-xs font-bold text-slate-500 mb-1">
+                    Feedback AI:
+                  </p>
+
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {evaluationResult.feedback}
+                  </p>
+
+
+                  <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900 mt-3">
+
+                    <strong>
+                      Jawaban Ideal / Pembahasan Tabel:
+                    </strong>
+
+                    <p className="mt-1">
+                      {currentQ.idealAnswer}
+                    </p>
+
                   </div>
+
                 </div>
+
               </div>
             )}
+
           </div>
         </div>
+
       </div>
+
     </div>
   );
 };
