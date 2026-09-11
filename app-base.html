@@ -324,9 +324,38 @@ const DashboardView = ({ user, navigate }) => {
            <Compass className="w-96 h-96" />
         </div>
       </section>
- 
-      <section>
-        <h3 className="text-xl font-bold text-slate-800 mb-4">Your Journey Map</h3>
+
+{/* AVERRA Introduction Video */}
+<section className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+  <div className="p-6">
+    <div className="flex items-center gap-3 mb-2">
+      <Video className="w-6 h-6 text-[#C99700]" />
+      <h3 className="text-xl font-bold text-[#0E2A47]">
+        Mengenal AVERRA
+      </h3>
+    </div>
+
+    <p className="text-sm text-slate-500">
+      Saksikan video pengenalan untuk memahami konsep pembelajaran,
+      eksplorasi peradaban, dan pengalaman belajar interaktif dalam AVERRA.
+    </p>
+  </div>
+
+  <div className="aspect-video bg-black">
+    <iframe
+      className="w-full h-full"
+      src="https://www.youtube.com/embed/8vojargl1rw"
+      title="AVERRA Introduction Video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+    ></iframe>
+  </div>
+</section>
+
+<section>
+  <h3 className="text-xl font-bold text-slate-800 mb-4">
+    Your Journey Map
+  </h3>
         <div className="relative">
           <div className="absolute top-1/2 left-0 w-full h-2 bg-slate-200 -translate-y-1/2 rounded-full hidden md:block"></div>
           <div className="absolute top-1/2 left-0 h-2 bg-[#C99700] -translate-y-1/2 rounded-full hidden md:block transition-all duration-1000" style={{ width: `${(user.currentPhase - 1) * 33}%` }}></div>
